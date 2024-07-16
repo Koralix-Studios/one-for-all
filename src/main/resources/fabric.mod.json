@@ -1,0 +1,20 @@
+{
+    "schemaVersion": 1,
+    "id": "${id}",
+    "version": "${version}",
+    "name": "${name}",
+    "description": "One Mod to rule them all, One Mod to find them, One Mod to bring them all and in the darkness bind them.",
+    "authors": [
+        "JohanVonElectrum"
+    ],
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "${group}.platform.Initializer"
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=0.15.0",
+        "minecraft": "${minecraft_dependency}"
+    }
+}

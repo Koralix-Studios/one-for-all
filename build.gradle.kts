@@ -1,79 +1,113 @@
 plugins {
-    id("fabric-loom") version("1.7-SNAPSHOT") apply(false)
+    id("dev.architectury.loom") version("1.7-SNAPSHOT")
+}
+
+class ModData {
+    val id = property("mod.id").toString()
+    val name = property("mod.name").toString()
+    val version = property("mod.version").toString()
+    val group = property("mod.group").toString()
+    val minecraftDependency = property("minecraft.dependency").toString()
+    val minMinecraft = property("minecraft.min").toString()
+    val maxMinecraft = property("minecraft.max").toString()
+}
+
+class LoaderData {
+    private val name = loom.platform.get().name.lowercase()
+    val isFabric = name == "fabric"
+
+    override fun toString(): String {
+        return name
+    }
+}
+
+class MinecraftVersionData {
+    private val name = stonecutter.current.version.substringBeforeLast("-")
+    val javaVersion = if (greaterThan("1.20.4")) 21 else 17
+
+    fun greaterThan(version: String): Boolean {
+        return stonecutter.compare(name, version.lowercase()) > 0
+    }
+
+    fun lessThan(version: String): Boolean {
+        return stonecutter.compare(name, version.lowercase()) < 0
+    }
+
+    override fun toString(): String {
+        return name
+    }
+}
+
+val mod = ModData()
+val loader = LoaderData()
+val minecraftVersion = MinecraftVersionData()
+
+version = "${mod.version}-$loader+$minecraftVersion"
+group = mod.group
+base {
+    archivesName.set(mod.name)
 }
 
 repositories {
     mavenCentral()
 }
 
-val fabricApiVersion: String by extra
-val fabricLoaderVersion: String by extra
-val githubUrl: String by extra
-val minecraftVersion: String by extra
-val minecraftVersionRange: String by extra
-val modAuthor: String by extra
-val modDescription: String by extra
-val modGroup: String by extra
-val modId: String by extra
-val modJavaVersion: String by extra
-val modName: String by extra
-val specVersion: String by extra
+dependencies {
+    minecraft("com.mojang:minecraft:$minecraftVersion")
+}
 
-subprojects {
-    val buildNumber = project.findProperty("BUILD_NUMBER")?.toString() ?: "9999"
+loom {
+    runConfigs.all {
+        ideConfigGenerated(true)
+        runDir = "run"
+    }
+}
 
-    group = modGroup
-    version = "$specVersion-$buildNumber"
+tasks.withType<JavaCompile> {
+    options.release = minecraftVersion.javaVersion
+}
 
-    tasks.withType<Javadoc> {
-        val standardJavadocDocletOptions = options as StandardJavadocDocletOptions
-        standardJavadocDocletOptions.addStringOption("Xdoclint:none", "-quiet")
+java {
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.toVersion(minecraftVersion.javaVersion)
+    targetCompatibility = JavaVersion.toVersion(minecraftVersion.javaVersion)
+}
+
+val buildAndCollect = tasks.register<Copy>("buildAndCollect") {
+    group = "build"
+    from(tasks.remapJar.get().archiveFile)
+    into(rootProject.layout.buildDirectory.file("libs/${mod.version}"))
+    dependsOn("build")
+}
+
+if (stonecutter.current.isActive) {
+    rootProject.tasks.register("buildActive") {
+        group = "project"
+        dependsOn(buildAndCollect)
+    }
+}
+
+if (loader.isFabric) {
+    dependencies {
+        modImplementation("net.fabricmc:fabric-loader:${property("fabric.loader")}")
+        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric.api")}")
+
+        mappings("net.fabricmc:yarn:$minecraftVersion+build.${property("fabric.yarn")}:v2")
     }
 
-    tasks.withType<JavaCompile> {
-        options.encoding = "UTF-8"
-//        options.release.set(JavaLanguageVersion.of(modJavaVersion).asInt())
-    }
+    tasks.processResources {
+        val map = mapOf(
+            "id" to mod.id,
+            "name" to mod.name,
+            "version" to mod.version,
+            "group" to mod.group,
+            "minecraft_dependency" to mod.minecraftDependency,
+        )
 
-    tasks.withType<Jar> {
-        manifest {
-            attributes(
-                "Specification-Title" to modName,
-                "Specification-Version" to specVersion,
-                "Specification-Vendor" to modAuthor,
-                "Implementation-Title" to name,
-                "Implementation-Version" to archiveVersion,
-                "Implementation-Vendor" to modAuthor
-            )
+        inputs.properties(map)
+        filesMatching("fabric.mod.json") {
+            expand(map)
         }
-    }
-
-    tasks.withType<ProcessResources> {
-        // this will ensure that this task is redone when the versions change.
-        inputs.property("version", version)
-
-        filesMatching(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml", "pack.mcmeta", "fabric.mod.json")) {
-            expand(mapOf(
-//                "modrinthHomepageUrl" to modrinthHomepageUrl,
-                "fabricApiVersion" to fabricApiVersion,
-                "fabricLoaderVersion" to fabricLoaderVersion,
-                "githubUrl" to githubUrl,
-//                "minecraftVersion" to minecraftVersion,
-//                "minecraftVersionRange" to minecraftVersionRange,
-                "modAuthor" to modAuthor,
-                "modDescription" to modDescription,
-                "modId" to modId,
-//                "modJavaVersion" to modJavaVersion,
-                "modName" to modName,
-                "version" to version,
-            ))
-        }
-    }
-
-    // Activate reproducible builds
-    // https://docs.gradle.org/current/userguide/working_with_files.html#sec:reproducible_archives
-    tasks.withType<AbstractArchiveTask>().configureEach {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
     }
 }
