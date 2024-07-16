@@ -11,6 +11,12 @@
     "entrypoints": {
         "main": [
             "${group}.platform.Initializer"
+        ],
+        "client": [
+            "${group}.platform.Initializer"
+        ],
+        "server": [
+            "${group}.platform.Initializer"
         ]
     },
     "depends": {
