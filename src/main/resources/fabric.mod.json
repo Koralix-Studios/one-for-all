@@ -10,15 +10,19 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "${group}.platform.Initializer"
+            "${group}.Initializer"
         ],
         "client": [
-            "${group}.platform.Initializer"
+            "${group}.ClientInitializer"
         ],
         "server": [
-            "${group}.platform.Initializer"
+            "${group}.ServerInitializer"
         ]
     },
+    "mixins": [
+        "${id}.mixins.json",
+        "${id}.client.mixins.json"
+    ],
     "depends": {
         "fabricloader": ">=0.15.0",
         "minecraft": "${minecraft_dependency}"

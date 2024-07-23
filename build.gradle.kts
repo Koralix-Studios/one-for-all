@@ -54,12 +54,25 @@ repositories {
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+
+    testImplementation("it.unimi.dsi:fastutil:8.5.9")
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }
 
 loom {
-    runConfigs.all {
-        ideConfigGenerated(true)
-        runDir = "run"
+    splitEnvironmentSourceSets()
+
+    mods {
+        create(mod.id) {
+            sourceSet(sourceSets["main"])
+            sourceSet(sourceSets["client"])
+        }
     }
 }
 

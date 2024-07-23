@@ -1,0 +1,13 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.koralix.oneforall.mixin.client",
+    "compatibilityLevel": "JAVA_21",
+    "client": [
+        "input.KeyboardInterceptor",
+        "input.MouseInterceptor"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
