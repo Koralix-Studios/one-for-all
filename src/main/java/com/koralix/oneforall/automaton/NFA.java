@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class NFA<T, V> implements Automaton<T, V> {
-    private final Int2ObjectMap<Function<V, Boolean>> subscribers = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Set<Function<V, Boolean>>> subscribers = new Int2ObjectOpenHashMap<>();
     private final Int2ObjectMap<V> attachments = new Int2ObjectOpenHashMap<>();
     private final List<Map<T, IntSet>> transitions = new ArrayList<>();
     private final IntSet accepting = new IntOpenHashSet();
@@ -16,12 +16,22 @@ public class NFA<T, V> implements Automaton<T, V> {
 
     @Override
     public void subscribe(int state, Function<V, Boolean> subscriber) {
-        this.subscribers.put(state, subscriber);
+        this.subscribers.computeIfAbsent(state, k -> new HashSet<>()).add(subscriber);
     }
 
     @Override
     public void attach(int state, V v) {
         this.attachments.put(state, v);
+    }
+
+    @Override
+    public Int2ObjectMap<Set<Function<V, Boolean>>> subscribers() {
+        return this.subscribers;
+    }
+
+    @Override
+    public Int2ObjectMap<V> attachments() {
+        return this.attachments;
     }
 
     @Override
@@ -94,8 +104,10 @@ public class NFA<T, V> implements Automaton<T, V> {
 
         for (int state : this.current) {
             if (this.isAccepting(state)) {
-                if (this.subscribers.getOrDefault(state, v -> false).apply(this.attachments.get(state))) {
-                    return true;
+                for (Function<V, Boolean> subscriber : this.subscribers.getOrDefault(state, Set.of())) {
+                    if (subscriber.apply(this.attachments.get(state))) {
+                        return true;
+                    }
                 }
             }
         }
@@ -139,8 +151,7 @@ public class NFA<T, V> implements Automaton<T, V> {
             int q = mapping.get(states);
 
             for (int state : states) {
-                Function<V, Boolean> subscriber = this.subscribers.get(state);
-                if (subscriber != null) dfa.subscribe(q, subscriber);
+                this.subscribers.getOrDefault(state, Set.of()).forEach(subscriber -> dfa.subscribe(q, subscriber));
                 V attachment = this.attachments.get(state);
                 if (attachment != null) dfa.attach(q, attachment);
             }

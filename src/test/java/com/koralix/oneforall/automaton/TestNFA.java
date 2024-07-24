@@ -28,24 +28,29 @@ public class TestNFA {
 
     @Test
     public void minimize() {
-        NFA<Character, ?> nfa = new NFA<>();
+        Automaton<Character, ?> nfa = new NFA<>();
         int q0 = nfa.state();
         int q1 = nfa.state();
+        nfa.transition('c', q0, q1);
+        nfa.transition('v', q1, q0);
+        nfa.start(q0);
+        nfa.accept(q1);
+
         int q2 = nfa.state();
         int q3 = nfa.state();
         int q4 = nfa.state();
         int q5 = nfa.state();
-        nfa.transition('c', q0, q1);
-        nfa.transition('a', q1, q2);
-        nfa.transition('c', q3, q4);
-        nfa.transition('b', q4, q5);
-        nfa.start(q0);
-        nfa.start(q3);
-        nfa.accept(q2);
-        nfa.accept(q5);
+        nfa.transition('c', q2, q3);
+        nfa.transition('v', q3, q2);
+        nfa.transition('a', q3, q4);
+        nfa.transition('b', q4, q3);
+        nfa.transition('v', q4, q5);
+        nfa.transition('c', q5, q4);
+        nfa.transition('b', q5, q2);
+        nfa.start(q2);
+        nfa.accept(q4);
 
-        nfa = nfa.toDFA().toNFA();
-
+        nfa = nfa.minimize();
         System.out.println(nfa);
     }
 }

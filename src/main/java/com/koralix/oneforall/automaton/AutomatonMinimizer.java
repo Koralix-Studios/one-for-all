@@ -3,6 +3,7 @@ package com.koralix.oneforall.automaton;
 import it.unimi.dsi.fastutil.ints.*;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class AutomatonMinimizer {
     private AutomatonMinimizer() {}
@@ -12,12 +13,12 @@ public class AutomatonMinimizer {
         if (classes.size() == automaton.states()) return;
 
         Int2IntMap mapping = new Int2IntOpenHashMap();
-        int i = 0;
-        for (IntSet equivalenceClass : classes) {
+        Iterator<IntSet> iterator = classes.iterator();
+        for (int i = 0; iterator.hasNext(); ++i) {
+            IntSet equivalenceClass = iterator.next();
             for (int state : equivalenceClass) {
                 mapping.put(state, i);
             }
-            ++i;
         }
 
         List<Map<T, Integer>> transitions = new ArrayList<>();
@@ -53,6 +54,22 @@ public class AutomatonMinimizer {
             if (start.contains(q)) {
                 automaton.start(q);
             }
+        }
+
+        Int2ObjectMap<Set<Function<V, Boolean>>> subscribers = automaton.subscribers();
+        for (Map.Entry<Integer, Set<Function<V, Boolean>>> entry : subscribers.int2ObjectEntrySet()) {
+            int state = entry.getKey();
+            state = mapping.get(state);
+            for (Function<V, Boolean> subscriber : entry.getValue()) {
+                automaton.subscribe(state, subscriber);
+            }
+        }
+
+        Int2ObjectMap<V> attachments = automaton.attachments();
+        for (Map.Entry<Integer, V> entry : attachments.int2ObjectEntrySet()) {
+            int state = entry.getKey();
+            state = mapping.get(state);
+            automaton.attach(state, entry.getValue());
         }
     }
 
@@ -105,9 +122,11 @@ public class AutomatonMinimizer {
     }
 
     private static <T, V> boolean isEquivalent(Automaton<T, V> automaton, Int2ObjectMap<IntSet> nonEquivalent, int a, int b) {
+        if (a == 0 && b == 5 || a == 1 && b == 3) {
+            System.out.println(a + " " + b);
+        }
+
         if (a == b) return true;
-        if (automaton.isAccepting(a) != automaton.isAccepting(b)) return false;
-        if (automaton.isActor(a) || automaton.isActor(b)) return false;
         if (nonEquivalent.getOrDefault(a, IntSets.EMPTY_SET).contains(b)) return false;
 
         Set<T> keys = new HashSet<>(automaton.symbolsFrom(a));
@@ -122,12 +141,10 @@ public class AutomatonMinimizer {
             for (int stateA : nextA) {
                 for (int stateB : nextB) {
                     if (stateA == a && stateB == b) continue;
-                    if (!isEquivalent(automaton, nonEquivalent, stateA, stateB)) return false;
+                    if (nonEquivalent.getOrDefault(a, IntSets.EMPTY_SET).contains(b)) return false;
                 }
             }
         }
-
-        if (a == 0) System.out.println(b);
 
         return true;
     }

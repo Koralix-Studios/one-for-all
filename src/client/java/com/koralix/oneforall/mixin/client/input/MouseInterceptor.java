@@ -1,6 +1,6 @@
 package com.koralix.oneforall.mixin.client.input;
 
-import com.koralix.oneforall.ClientOneForAll;
+import com.koralix.oneforall.input.InputEvents;
 import net.minecraft.client.Mouse;
 import org.lwjgl.glfw.GLFWCursorPosCallbackI;
 import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
@@ -21,7 +21,7 @@ public class MouseInterceptor {
     )
     private GLFWCursorPosCallbackI onMouseMove(GLFWCursorPosCallbackI cursorPosCallback) {
         return (window, xpos, ypos) -> {
-            if (ClientOneForAll.getInstance().getInputManager().onMouseMove(window, xpos, ypos))
+            if (InputEvents.MOUSE_MOVE.invoker().onMove(window, xpos, ypos))
                 return;
 
             cursorPosCallback.invoke(window, xpos, ypos);
@@ -38,7 +38,7 @@ public class MouseInterceptor {
     )
     private GLFWMouseButtonCallbackI onMouseButton(GLFWMouseButtonCallbackI mouseButtonCallback) {
         return (window, button, action, mods) -> {
-            if (ClientOneForAll.getInstance().getInputManager().onMouseButton(window, button, action, mods))
+            if (InputEvents.MOUSE_BUTTON.invoker().onButton(window, button, action, mods))
                 return;
 
             mouseButtonCallback.invoke(window, button, action, mods);
@@ -55,7 +55,7 @@ public class MouseInterceptor {
     )
     private GLFWScrollCallbackI onMouseScroll(GLFWScrollCallbackI scrollCallback) {
         return (window, xoffset, yoffset) -> {
-            if (ClientOneForAll.getInstance().getInputManager().onMouseScroll(window, xoffset, yoffset))
+            if (InputEvents.MOUSE_SCROLL.invoker().onScroll(window, xoffset, yoffset))
                 return;
 
             scrollCallback.invoke(window, xoffset, yoffset);

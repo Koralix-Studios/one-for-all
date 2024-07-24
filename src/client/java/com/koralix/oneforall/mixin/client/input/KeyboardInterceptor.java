@@ -1,6 +1,6 @@
 package com.koralix.oneforall.mixin.client.input;
 
-import com.koralix.oneforall.ClientOneForAll;
+import com.koralix.oneforall.input.InputEvents;
 import net.minecraft.client.Keyboard;
 import org.lwjgl.glfw.GLFWCharModsCallbackI;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
@@ -20,7 +20,7 @@ public class KeyboardInterceptor {
     )
     private GLFWKeyCallbackI onKey(GLFWKeyCallbackI keyCallback) {
         return (window, key, scancode, action, mods) -> {
-            if (ClientOneForAll.getInstance().getInputManager().onKey(window, key, scancode, action, mods))
+            if (InputEvents.KEYBOARD_KEY.invoker().onKey(window, key, scancode, action, mods))
                 return;
 
             keyCallback.invoke(window, key, scancode, action, mods);
@@ -37,7 +37,7 @@ public class KeyboardInterceptor {
     )
     private GLFWCharModsCallbackI onChar(GLFWCharModsCallbackI charModsCallback) {
         return (window, codepoint, mods) -> {
-            if (!ClientOneForAll.getInstance().getInputManager().onChar(window, codepoint, mods))
+            if (InputEvents.KEYBOARD_CHAR.invoker().onChar(window, codepoint, mods))
                 return;
 
             charModsCallback.invoke(window, codepoint, mods);

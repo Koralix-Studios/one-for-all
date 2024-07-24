@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class DFA<T, V> implements Automaton<T, V> {
-    private final Int2ObjectMap<Function<V, Boolean>> subscribers = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Set<Function<V, Boolean>>> subscribers = new Int2ObjectOpenHashMap<>();
     private final Int2ObjectMap<V> attachments = new Int2ObjectOpenHashMap<>();
     private final List<Map<T, Integer>> transitions = new ArrayList<>();
     private final IntSet accepting = new IntOpenHashSet();
@@ -16,12 +16,22 @@ public class DFA<T, V> implements Automaton<T, V> {
 
     @Override
     public void subscribe(int state, Function<V, Boolean> subscriber) {
-        this.subscribers.put(state, subscriber);
+        this.subscribers.computeIfAbsent(state, k -> new HashSet<>()).add(subscriber);
     }
 
     @Override
     public void attach(int state, V v) {
         this.attachments.put(state, v);
+    }
+
+    @Override
+    public Int2ObjectMap<Set<Function<V, Boolean>>> subscribers() {
+        return this.subscribers;
+    }
+
+    @Override
+    public Int2ObjectMap<V> attachments() {
+        return this.attachments;
     }
 
     @Override
@@ -87,7 +97,11 @@ public class DFA<T, V> implements Automaton<T, V> {
         this.current = this.transitions.get(this.current).getOrDefault(t, -1);
 
         if (this.isAccepting(this.current)) {
-            return this.subscribers.getOrDefault(this.current, v -> false).apply(this.attachments.get(this.current));
+            for (Function<V, Boolean> subscriber : this.subscribers.getOrDefault(this.current, Collections.emptySet())) {
+                if (subscriber.apply(this.attachments.get(this.current))) {
+                    return true;
+                }
+            }
         }
 
         return false;
@@ -115,8 +129,9 @@ public class DFA<T, V> implements Automaton<T, V> {
 
         for (int i = 0; i < this.states; ++i) {
             nfa.state();
-            Function<V, Boolean> subscriber = this.subscribers.get(i);
-            if (subscriber != null) nfa.subscribe(i, subscriber);
+            for (Function<V, Boolean> subscriber : this.subscribers.getOrDefault(i, Set.of())) {
+                nfa.subscribe(i, subscriber);
+            }
             V attachment = this.attachments.get(i);
             if (attachment != null) nfa.attach(i, attachment);
 
