@@ -13,6 +13,7 @@ public class DFA<T, V> implements Automaton<T, V> {
     private int states = 0;
     private int start = -1;
     private int current = -1;
+    private T wildcard;
 
     @Override
     public void subscribe(int state, Function<V, Boolean> subscriber) {
@@ -71,6 +72,16 @@ public class DFA<T, V> implements Automaton<T, V> {
     }
 
     @Override
+    public T wildcard() {
+        return this.wildcard;
+    }
+
+    @Override
+    public void wildcard(T t) {
+        this.wildcard = t;
+    }
+
+    @Override
     public void start(int state) {
         this.start = state;
     }
@@ -94,7 +105,14 @@ public class DFA<T, V> implements Automaton<T, V> {
     public boolean next(T t) {
         if (this.current == -1) this.reset();
 
-        this.current = this.transitions.get(this.current).getOrDefault(t, -1);
+        IntIterator it = next(t, this.current).iterator();
+        if (it.hasNext()) {
+            this.current = it.nextInt();
+        } else if (this.wildcard != null) {
+            this.current = next(this.wildcard, this.current).intStream().findAny().orElse(-1);
+        } else {
+            this.current = -1;
+        }
 
         if (this.isAccepting(this.current)) {
             for (Function<V, Boolean> subscriber : this.subscribers.getOrDefault(this.current, Collections.emptySet())) {

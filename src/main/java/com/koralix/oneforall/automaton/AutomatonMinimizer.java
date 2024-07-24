@@ -122,10 +122,6 @@ public class AutomatonMinimizer {
     }
 
     private static <T, V> boolean isEquivalent(Automaton<T, V> automaton, Int2ObjectMap<IntSet> nonEquivalent, int a, int b) {
-        if (a == 0 && b == 5 || a == 1 && b == 3) {
-            System.out.println(a + " " + b);
-        }
-
         if (a == b) return true;
         if (nonEquivalent.getOrDefault(a, IntSets.EMPTY_SET).contains(b)) return false;
 

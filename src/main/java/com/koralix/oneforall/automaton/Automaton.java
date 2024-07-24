@@ -18,6 +18,8 @@ public interface Automaton<T, V> {
     void transition(T t, int a, int b);
     void clear();
     Automaton<T, V> minimize();
+    T wildcard();
+    void wildcard(T t);
 
     void start(int state);
     IntSet start();

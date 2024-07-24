@@ -13,6 +13,7 @@ public class NFA<T, V> implements Automaton<T, V> {
     private int states = 0;
     private IntSet start = new IntOpenHashSet();
     private IntSet current = new IntOpenHashSet();
+    private T wildcard;
 
     @Override
     public void subscribe(int state, Function<V, Boolean> subscriber) {
@@ -72,6 +73,16 @@ public class NFA<T, V> implements Automaton<T, V> {
     }
 
     @Override
+    public T wildcard() {
+        return this.wildcard;
+    }
+
+    @Override
+    public void wildcard(T t) {
+        this.wildcard = t;
+    }
+
+    @Override
     public void start(int state) {
         this.start.add(state);
     }
@@ -98,6 +109,11 @@ public class NFA<T, V> implements Automaton<T, V> {
         IntSet next = new IntOpenHashSet();
         for (int state : this.current) {
             next.addAll(next(t, state));
+        }
+        if (next.isEmpty() && this.wildcard != null) {
+            for (int state : this.current) {
+                next.addAll(next(this.wildcard, state));
+            }
         }
 
         this.current = next;

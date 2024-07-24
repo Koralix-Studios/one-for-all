@@ -31,6 +31,8 @@ public class TestNFA {
         Automaton<Character, ?> nfa = new NFA<>();
         int q0 = nfa.state();
         int q1 = nfa.state();
+        nfa.wildcard('_');
+        nfa.transition(nfa.wildcard(), q0, q0);
         nfa.transition('c', q0, q1);
         nfa.transition('v', q1, q0);
         nfa.start(q0);
@@ -40,13 +42,17 @@ public class TestNFA {
         int q3 = nfa.state();
         int q4 = nfa.state();
         int q5 = nfa.state();
+        nfa.transition(nfa.wildcard(), q2, q2);
         nfa.transition('c', q2, q3);
+        nfa.transition(nfa.wildcard(), q3, q3);
         nfa.transition('v', q3, q2);
         nfa.transition('a', q3, q4);
         nfa.transition('b', q4, q3);
         nfa.transition('v', q4, q5);
         nfa.transition('c', q5, q4);
         nfa.transition('b', q5, q2);
+        nfa.transition('a', q2, q5);
+        nfa.transition(nfa.wildcard(), q5, q5);
         nfa.start(q2);
         nfa.accept(q4);
 
