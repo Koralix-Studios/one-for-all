@@ -1,6 +1,8 @@
 package com.koralix.oneforall;
 
 import com.koralix.oneforall.platform.Platform;
+import com.koralix.oneforall.settings.ServerSettings;
+import com.koralix.oneforall.settings.SettingsManager;
 
 public class ServerOneForAll extends OneForAll {
 
@@ -15,6 +17,8 @@ public class ServerOneForAll extends OneForAll {
     @Override
     public void onInitialize() {
         getLogger().info("Initializing OneForAll...");
+
+        SettingsManager.register(ServerSettings.class);
     }
 
     public void onInitializeServer() {

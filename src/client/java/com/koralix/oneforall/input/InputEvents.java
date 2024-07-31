@@ -1,5 +1,6 @@
 package com.koralix.oneforall.input;
 
+//TODO: This class contains fabric specific code, so it should be moved to the fabric platform layer
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 

@@ -1,10 +1,13 @@
 package com.koralix.oneforall;
 
 import com.koralix.oneforall.platform.Platform;
+import com.koralix.oneforall.settings.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class OneForAll {
+    public static final String MOD_ID = "oneforall";
+
     private final Logger logger = LoggerFactory.getLogger("OneForAll");
     private final Platform platform;
 
@@ -18,11 +21,11 @@ public abstract class OneForAll {
 
     abstract void onInitialize();
 
-    public Platform getPlatform() {
-        return platform;
-    }
-
     public Logger getLogger() {
         return logger;
+    }
+
+    public Platform getPlatform() {
+        return platform;
     }
 }
