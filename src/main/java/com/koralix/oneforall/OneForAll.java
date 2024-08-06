@@ -1,5 +1,6 @@
 package com.koralix.oneforall;
 
+import com.koralix.oneforall.platform.ModMetadata;
 import com.koralix.oneforall.platform.Platform;
 import com.koralix.oneforall.settings.SettingsManager;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ public abstract class OneForAll {
 
     private final Logger logger = LoggerFactory.getLogger("OneForAll");
     private final Platform platform;
+    private final ModMetadata metadata;
 
     public static OneForAll getInstance() {
         return Initializer.instance;
@@ -17,6 +19,7 @@ public abstract class OneForAll {
 
     public OneForAll(Platform platform) {
         this.platform = platform;
+        this.metadata = platform.getMetadata(MOD_ID);
     }
 
     abstract void onInitialize();
@@ -27,5 +30,9 @@ public abstract class OneForAll {
 
     public Platform getPlatform() {
         return platform;
+    }
+
+    public ModMetadata getMetadata() {
+        return metadata;
     }
 }
