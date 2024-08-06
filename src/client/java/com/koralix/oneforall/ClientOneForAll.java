@@ -3,7 +3,9 @@ package com.koralix.oneforall;
 import com.koralix.oneforall.input.ButtonEvent;
 import com.koralix.oneforall.input.hotkey.HotKey;
 import com.koralix.oneforall.input.InputManager;
+import com.koralix.oneforall.network.ClientLoginManager;
 import com.koralix.oneforall.platform.Platform;
+import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientOneForAll extends OneForAll {
@@ -37,6 +39,9 @@ public class ClientOneForAll extends OneForAll {
                 .add(new ButtonEvent(GLFW.GLFW_KEY_A, GLFW.GLFW_PRESS, ButtonEvent.ButtonType.KEYBOARD)));
 
         inputManager.register();
+
+
+        ClientLoginManager.init();
     }
 
     public InputManager getInputManager() {
