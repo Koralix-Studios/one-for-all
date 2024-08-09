@@ -2,6 +2,8 @@ package com.koralix.oneforall.network;
 
 import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.serde.Serde;
+import com.koralix.oneforall.settings.ClientSettings;
+import com.koralix.oneforall.settings.ProtocolUsageConditions;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
@@ -22,10 +24,27 @@ public class ClientLoginManager {
         });
     }
 
+    private static boolean doesClientEnableProtocol(boolean enforceProtocol) {
+        ProtocolUsageConditions usageConditions = ClientSettings.PROTOCOL_USAGE_CONDITIONS.value();
+
+        return switch (usageConditions) {
+            case Always -> true;
+            case OnlyEnforced -> enforceProtocol;
+            case Never -> false;
+        };
+    }
+
     private static CompletableFuture<PacketByteBuf> onHello(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<GenericFutureListener<? extends Future<? super Void>>> listenerAdder) {
+        String version = Serde.deserialize(buf, String.class);
+        boolean enforceProtocol = Serde.deserialize(buf, Boolean.class);
+
+        boolean enablesProtocol = doesClientEnableProtocol(enforceProtocol);
+        if (!enablesProtocol) {
+            return CompletableFuture.completedFuture(null);
+        }
+
         PacketByteBuf response = PacketByteBufs.create();
         Serde.serialize(response, OneForAll.getInstance().getMetadata().version());
-
         return CompletableFuture.completedFuture(response);
     }
 
