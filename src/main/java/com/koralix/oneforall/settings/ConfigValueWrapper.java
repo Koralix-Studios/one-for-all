@@ -1,5 +1,6 @@
 package com.koralix.oneforall.settings;
 
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +17,7 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
     private final Class<T> clazz;
     private final T nominalValue;
     private final Predicate<T> validator;
+    private final Predicate<ServerCommandSource> permission;
 
     Identifier registry;
     Identifier id;
@@ -28,13 +30,15 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
             @NotNull Identifier id,
             @NotNull Class<T> clazz,
             T nominalValue,
-            @NotNull Predicate<T> validator
+            @NotNull Predicate<T> validator,
+            @NotNull Predicate<ServerCommandSource> permission
     ) {
         if (!validator.test(nominalValue)) throw new IllegalArgumentException("Invalid nominal value");
 
         this.clazz = clazz;
         this.nominalValue = nominalValue;
         this.validator = validator;
+        this.permission = permission;
 
         this.registry = registry;
         this.id = id;
@@ -51,6 +55,11 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
     @Override
     public Identifier id() {
         return this.id;
+    }
+
+    @Override
+    public boolean permission(ServerCommandSource source) {
+        return this.permission.test(source);
     }
 
     @Override
