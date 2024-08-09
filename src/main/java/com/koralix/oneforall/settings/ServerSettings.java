@@ -10,9 +10,11 @@ public final class ServerSettings {
 
     public static final ConfigValue<Boolean> PROTOCOL_ENABLED = ConfigValue.of(true)
             .test(Objects::nonNull)
+            .permission(source -> source.hasPermissionLevel(4))
             .build();
 
     public static final ConfigValue<Boolean> ENFORCE_PROTOCOL = ConfigValue.of(true)
             .test(Objects::nonNull)
+            .permission(source -> source.hasPermissionLevel(4))
             .build();
 }

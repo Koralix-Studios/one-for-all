@@ -1,5 +1,6 @@
 package com.koralix.oneforall.settings;
 
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,6 +10,7 @@ public class ConfigValueBuilder<T> {
     private final Class<T> clazz;
     private final T value;
     private Predicate<T> validator = null;
+    private Predicate<ServerCommandSource> permission = null;
     private Identifier registry = null;
     private Identifier id = null;
 
@@ -35,6 +37,11 @@ public class ConfigValueBuilder<T> {
         return this;
     }
 
+    public ConfigValueBuilder<T> permission(Predicate<ServerCommandSource> permission) {
+        this.permission = permission;
+        return this;
+    }
+
     public ConfigValueBuilder<T> registry(@NotNull Identifier registry) {
         this.registry = registry;
         return this;
@@ -51,7 +58,8 @@ public class ConfigValueBuilder<T> {
                 id,
                 clazz,
                 value,
-                validator == null ? t -> true : validator
+                validator == null ? t -> true : validator,
+                permission == null ? t -> true : permission
         );
     }
 }
