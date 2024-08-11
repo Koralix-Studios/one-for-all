@@ -1,7 +1,6 @@
 package com.koralix.oneforall.settings;
 
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;

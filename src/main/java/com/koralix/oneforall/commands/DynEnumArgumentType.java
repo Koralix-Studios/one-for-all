@@ -1,6 +1,5 @@
 package com.koralix.oneforall.commands;
 
-import com.mojang.brigadier.arguments.ArgumentType;
 import net.minecraft.command.argument.EnumArgumentType;
 import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.Contract;

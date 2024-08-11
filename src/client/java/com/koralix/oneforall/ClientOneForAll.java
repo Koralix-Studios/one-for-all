@@ -1,13 +1,12 @@
 package com.koralix.oneforall;
 
 import com.koralix.oneforall.input.ButtonEvent;
-import com.koralix.oneforall.input.hotkey.HotKey;
 import com.koralix.oneforall.input.InputManager;
+import com.koralix.oneforall.input.hotkey.HotKey;
 import com.koralix.oneforall.network.ClientLoginManager;
 import com.koralix.oneforall.platform.Platform;
 import com.koralix.oneforall.settings.ClientSettings;
 import com.koralix.oneforall.settings.SettingsManager;
-import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientOneForAll extends OneForAll {

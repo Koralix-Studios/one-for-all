@@ -1,7 +1,6 @@
 package com.koralix.oneforall.settings;
 
 import com.koralix.oneforall.OneForAll;
-import net.minecraft.util.Identifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
