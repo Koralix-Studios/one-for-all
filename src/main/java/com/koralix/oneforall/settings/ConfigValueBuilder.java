@@ -11,8 +11,6 @@ public class ConfigValueBuilder<T> {
     private final T value;
     private Predicate<T> validator = null;
     private Predicate<ServerCommandSource> permission = null;
-    private Identifier registry = null;
-    private Identifier id = null;
 
     @SuppressWarnings("unchecked")
     ConfigValueBuilder(@NotNull T value) {
@@ -42,20 +40,8 @@ public class ConfigValueBuilder<T> {
         return this;
     }
 
-    public ConfigValueBuilder<T> registry(@NotNull Identifier registry) {
-        this.registry = registry;
-        return this;
-    }
-
-    public ConfigValueBuilder<T> id(@NotNull Identifier id) {
-        this.id = id;
-        return this;
-    }
-
     public ConfigValue<T> build() {
         return new ConfigValueWrapper<>(
-                registry,
-                id,
                 clazz,
                 value,
                 validator == null ? t -> true : validator,

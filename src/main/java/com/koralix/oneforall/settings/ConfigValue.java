@@ -5,11 +5,8 @@ import com.koralix.oneforall.serde.Serde;
 import com.koralix.oneforall.serde.Serialize;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Predicate;
 
 public interface ConfigValue<T> extends Serialize, Deserialize {
     @Contract(value = "_ -> new", pure = true)
@@ -27,14 +24,14 @@ public interface ConfigValue<T> extends Serialize, Deserialize {
      *
      * @return the registry of the config value
      */
-    Identifier registry();
+    SettingsRegistry registry();
 
     /**
      * Get the identifier of the config value
      *
      * @return the identifier of the config value
      */
-    Identifier id();
+    SettingEntry<T> entry();
 
     /**
      * Test if the user satisfies the permission predicate

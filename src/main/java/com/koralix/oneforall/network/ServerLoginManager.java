@@ -44,6 +44,8 @@ public class ServerLoginManager {
             PacketSender sender,
             ServerLoginNetworking.LoginSynchronizer synchronizer
     ) {
+        if (!ServerSettings.PROTOCOL_ENABLED.value()) return;
+
         // RECEIVE
         CompletableFuture<Void> future = new CompletableFuture<>();
 

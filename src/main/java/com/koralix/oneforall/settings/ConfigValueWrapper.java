@@ -1,7 +1,6 @@
 package com.koralix.oneforall.settings;
 
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -19,15 +18,12 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
     private final Predicate<T> validator;
     private final Predicate<ServerCommandSource> permission;
 
-    Identifier registry;
-    Identifier id;
+    SettingEntry<T> entry = null;
 
     private T defaultValue;
     private T value;
 
     ConfigValueWrapper(
-            @NotNull Identifier registry,
-            @NotNull Identifier id,
             @NotNull Class<T> clazz,
             T nominalValue,
             @NotNull Predicate<T> validator,
@@ -40,21 +36,18 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
         this.validator = validator;
         this.permission = permission;
 
-        this.registry = registry;
-        this.id = id;
-
         this.defaultValue = nominalValue;
         this.value = nominalValue;
     }
 
     @Override
-    public Identifier registry() {
-        return this.registry;
+    public SettingsRegistry registry() {
+        return this.entry.registry();
     }
 
     @Override
-    public Identifier id() {
-        return this.id;
+    public SettingEntry<T> entry() {
+        return this.entry;
     }
 
     @Override
