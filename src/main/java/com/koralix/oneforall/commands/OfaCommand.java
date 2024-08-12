@@ -43,27 +43,34 @@ public final class OfaCommand {
             SettingsRegistry.Env @NotNull ... envs
     ) {
         LiteralArgumentBuilder<S> settings = ofaLiteral.apply("settings").executes(OfaCommand::listSettings);
+        LiteralArgumentBuilder<S> def = ofaLiteral.apply("default");
+        LiteralArgumentBuilder<S> restore = ofaLiteral.apply("restore");
         for (SettingsRegistry.Env env : envs) {
-            SettingsManager.forEach(env, (entry, configValue) -> settings.then(setting(ofaLiteral, ofaArgument, entry)));
+            SettingsManager.forEach(env, (entry, configValue) -> {
+                settings.then(setting(ofaLiteral, ofaArgument, entry, def, restore));
+            });
         }
+        settings.then(def);
+        settings.then(restore);
         return settings;
     }
 
     private static <S extends CommandSource, T> LiteralArgumentBuilder<S> setting(
             @NotNull Function<String, LiteralArgumentBuilder<S>> ofaLiteral,
             @NotNull BiFunction<String, ArgumentType<?>, RequiredArgumentBuilder<S, ?>> ofaArgument,
-            @NotNull SettingEntry<T> entry
+            @NotNull SettingEntry<T> entry,
+            @NotNull LiteralArgumentBuilder<S> def,
+            @NotNull LiteralArgumentBuilder<S> restore
     ) {
+        def.then(ofaLiteral.apply(entry.id().toString())
+                .executes(context -> setSetting(context, entry))
+                .then(settingArgument(ofaArgument, entry.setting())
+                        .executes(context -> setDefaultSetting(context, entry))));
+        restore.executes(context -> setDefaultSetting(context, entry));
         return ofaLiteral.apply(entry.id().toString())
                 .executes(context -> getSetting(context, entry))
                 .then(settingArgument(ofaArgument, entry.setting())
-                        .executes(context -> setSetting(context, entry)))
-                .then(ofaLiteral.apply("default").then(settingArgument(ofaArgument, entry.setting())
-                        .executes(context -> setDefaultSetting(context, entry))))
-                .then(ofaLiteral.apply("reset")
-                        .executes(context -> setSetting(context, entry)))
-                .then(ofaLiteral.apply("restore")
-                        .executes(context -> setDefaultSetting(context, entry)));
+                        .executes(context -> setSetting(context, entry)));
     }
 
     private static <S extends CommandSource> int listSettings(@NotNull CommandContext<S> context) {
@@ -78,7 +85,7 @@ public final class OfaCommand {
             @NotNull CommandContext<S> context,
             @NotNull SettingEntry<?> entry
     ) {
-        Method method;
+        Method method = null;
         final Text text = Text.translatable(entry.translation())
                 .append(":\n")
                 .append("Value: ")
@@ -93,16 +100,14 @@ public final class OfaCommand {
         try {
             method = context.getSource().getClass().getDeclaredMethod("sendFeedback", Supplier.class, boolean.class);
             arg1 = (Supplier<?>) () -> text;
-        } catch (NoSuchMethodException e) {
+            method.invoke(context.getSource(), arg1, false);
+        } catch (NoSuchMethodException e1) {
             try {
-                method = context.getSource().getClass().getDeclaredMethod("sendFeedback", Text.class, boolean.class);
-            } catch (NoSuchMethodException ex) {
+                method = context.getSource().getClass().getDeclaredMethod("sendFeedback", Text.class);
+                method.invoke(context.getSource(), arg1);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e2) {
                 throw new UnsupportedOperationException("Unsupported command source: " + context.getSource().getClass().getName());
             }
-        }
-
-        try {
-            method.invoke(context.getSource(), arg1, false);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new UnsupportedOperationException("Failed to invoke method: " + method.getName());
         }
