@@ -10,13 +10,17 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class OfaCommand {
     private OfaCommand() {
@@ -24,37 +28,45 @@ public final class OfaCommand {
     }
 
     public static void register(
-            CommandDispatcher<ServerCommandSource> dispatcher,
+            @NotNull CommandDispatcher<ServerCommandSource> dispatcher,
             CommandRegistryAccess registryAccess,
             CommandManager.RegistrationEnvironment environment
     ) {
-        LiteralArgumentBuilder<ServerCommandSource> ofa = literal("ofa");
-        ofa.then(settings());
+        LiteralArgumentBuilder<ServerCommandSource> ofa = CommandManager.literal("ofa");
+        ofa.then(settings(CommandManager::literal, CommandManager::argument, SettingsRegistry.Env.SERVER));
         dispatcher.register(ofa);
     }
 
-    private static LiteralArgumentBuilder<ServerCommandSource> settings() {
-        LiteralArgumentBuilder<ServerCommandSource> settings = literal("settings").executes(OfaCommand::listSettings);
-        SettingsManager.forEach(SettingsRegistry.Env.SERVER, (entry, configValue) ->
-                settings.then(setting(entry))
-        );
+    public static <S extends CommandSource> LiteralArgumentBuilder<S> settings(
+            @NotNull Function<String, LiteralArgumentBuilder<S>> ofaLiteral,
+            @NotNull BiFunction<String, ArgumentType<?>, RequiredArgumentBuilder<S, ?>> ofaArgument,
+            SettingsRegistry.Env @NotNull ... envs
+    ) {
+        LiteralArgumentBuilder<S> settings = ofaLiteral.apply("settings").executes(OfaCommand::listSettings);
+        for (SettingsRegistry.Env env : envs) {
+            SettingsManager.forEach(env, (entry, configValue) -> settings.then(setting(ofaLiteral, ofaArgument, entry)));
+        }
         return settings;
     }
 
-    private static <T> LiteralArgumentBuilder<ServerCommandSource> setting(@NotNull SettingEntry<T> entry) {
-        return literal(entry.id().toString())
+    private static <S extends CommandSource, T> LiteralArgumentBuilder<S> setting(
+            @NotNull Function<String, LiteralArgumentBuilder<S>> ofaLiteral,
+            @NotNull BiFunction<String, ArgumentType<?>, RequiredArgumentBuilder<S, ?>> ofaArgument,
+            @NotNull SettingEntry<T> entry
+    ) {
+        return ofaLiteral.apply(entry.id().toString())
                 .executes(context -> getSetting(context, entry))
-                .then(settingArgument(entry.setting())
+                .then(settingArgument(ofaArgument, entry.setting())
                         .executes(context -> setSetting(context, entry)))
-                .then(literal("default").then(settingArgument(entry.setting())
+                .then(ofaLiteral.apply("default").then(settingArgument(ofaArgument, entry.setting())
                         .executes(context -> setDefaultSetting(context, entry))))
-                .then(literal("reset")
+                .then(ofaLiteral.apply("reset")
                         .executes(context -> setSetting(context, entry)))
-                .then(literal("restore")
+                .then(ofaLiteral.apply("restore")
                         .executes(context -> setDefaultSetting(context, entry)));
     }
 
-    private static int listSettings(@NotNull CommandContext<ServerCommandSource> context) {
+    private static <S extends CommandSource> int listSettings(@NotNull CommandContext<S> context) {
         int[] result = {0}; // int* result;
         SettingsManager.forEach(SettingsRegistry.Env.SERVER, (entry, configValue) ->
                 result[0] += getSetting(context, entry)
@@ -62,28 +74,44 @@ public final class OfaCommand {
         return result[0];
     }
 
-    private static int getSetting(
-            @NotNull CommandContext<ServerCommandSource> context,
+    private static <S extends CommandSource> int getSetting(
+            @NotNull CommandContext<S> context,
             @NotNull SettingEntry<?> entry
     ) {
-        context.getSource().sendFeedback(
-                () -> Text.translatable(entry.translation())
-                        .append(":\n")
-                        .append("Value: ")
-                        .append(entry.setting().value().toString())
-                        .append("\n")
-                        .append("Default: ")
-                        .append(entry.setting().defaultValue().toString())
-                        .append("\n")
-                        .append("Nominal: ")
-                        .append(entry.setting().nominalValue().toString()),
-                false
-        );
+        Method method;
+        final Text text = Text.translatable(entry.translation())
+                .append(":\n")
+                .append("Value: ")
+                .append(entry.setting().value().toString())
+                .append("\n")
+                .append("Default: ")
+                .append(entry.setting().defaultValue().toString())
+                .append("\n")
+                .append("Nominal: ")
+                .append(entry.setting().nominalValue().toString());
+        Object arg1 = text;
+        try {
+            method = context.getSource().getClass().getDeclaredMethod("sendFeedback", Supplier.class, boolean.class);
+            arg1 = (Supplier<?>) () -> text;
+        } catch (NoSuchMethodException e) {
+            try {
+                method = context.getSource().getClass().getDeclaredMethod("sendFeedback", Text.class, boolean.class);
+            } catch (NoSuchMethodException ex) {
+                throw new UnsupportedOperationException("Unsupported command source: " + context.getSource().getClass().getName());
+            }
+        }
+
+        try {
+            method.invoke(context.getSource(), arg1, false);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new UnsupportedOperationException("Failed to invoke method: " + method.getName());
+        }
+
         return 1;
     }
 
-    private static <T> int setSetting(
-            @NotNull CommandContext<ServerCommandSource> context,
+    private static <S extends CommandSource, T> int setSetting(
+            @NotNull CommandContext<S> context,
             @NotNull SettingEntry<T> entry
     ) {
         try {
@@ -96,8 +124,8 @@ public final class OfaCommand {
         return 1;
     }
 
-    private static <T> int setDefaultSetting(
-            @NotNull CommandContext<ServerCommandSource> context,
+    private static <S extends CommandSource, T> int setDefaultSetting(
+            @NotNull CommandContext<S> context,
             @NotNull SettingEntry<T> entry
     ) {
         try {
@@ -110,10 +138,12 @@ public final class OfaCommand {
         return 1;
     }
 
-    private static <T> @NotNull RequiredArgumentBuilder<ServerCommandSource, T> settingArgument(
+    @SuppressWarnings("unchecked")
+    private static <S extends CommandSource, T> @NotNull RequiredArgumentBuilder<S, T> settingArgument(
+            @NotNull BiFunction<String, ArgumentType<?>, RequiredArgumentBuilder<S, ?>> ofaArgument,
             @NotNull ConfigValue<T> setting
     ) {
-        return argument("value", settingArgumentType(setting.clazz()));
+        return (RequiredArgumentBuilder<S, T>) ofaArgument.apply("value", settingArgumentType(setting.clazz()));
     }
 
     @SuppressWarnings("unchecked")

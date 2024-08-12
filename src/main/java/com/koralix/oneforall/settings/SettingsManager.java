@@ -59,7 +59,7 @@ public final class SettingsManager {
         }
     }
 
-    private static <T> void register(SettingEntry<T> entry) {
+    private static <T> void register(@NotNull SettingEntry<T> entry) {
         if (SETTINGS.computeIfAbsent(entry.registryId(), k -> new HashMap<>()).putIfAbsent(entry, entry.setting()) == null) return;
         throw new IllegalArgumentException("Setting with id " + entry + " is already registered");
     }
