@@ -1,0 +1,7 @@
+{
+  "text.oneforall.disconnected": "Desconectado por OneForAll\n\nRazón: ",
+  "text.oneforall.disconnected.notUsingProtocol": "O Protocolo do Mod One-All é necesario para conectarse ao servidor.",
+  "settings.oneforall.server_settings.protocol_enabled": "Protocolo activado",
+  "settings.oneforall.server_settings.enforce_protocol": "Protocolo requirido",
+  "settings.oneforall.server_settings.default_language": "Linguaxe por defecto"
+}

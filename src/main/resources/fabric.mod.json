@@ -24,6 +24,10 @@
         {
             "config": "${id}.client.mixins.json",
             "environment": "client"
+        },
+        {
+            "config": "${id}.server.mixins.json",
+            "environment": "server"
         }
     ],
     "depends": {
