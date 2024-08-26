@@ -63,10 +63,13 @@ public final class OfaCommand {
             @NotNull LiteralArgumentBuilder<S> restore
     ) {
         def.then(ofaLiteral.apply(entry.id().toString())
+                .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
                 .executes(context -> setSetting(context, entry))
                 .then(settingArgument(ofaArgument, entry.setting())
                         .executes(context -> setDefaultSetting(context, entry))));
-        restore.executes(context -> setDefaultSetting(context, entry));
+        restore
+                .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
+                .executes(context -> setDefaultSetting(context, entry));
         return ofaLiteral.apply(entry.id().toString())
                 .executes(context -> getSetting(context, entry))
                 .then(settingArgument(ofaArgument, entry.setting())
@@ -85,6 +88,8 @@ public final class OfaCommand {
             @NotNull CommandContext<S> context,
             @NotNull SettingEntry<?> entry
     ) {
+        if (context.getSource() instanceof ServerCommandSource scs && !entry.setting().permission(scs)) return 0;
+
         Method method = null;
         final Text text = Text.translatable(entry.translation())
                 .append(":\n")
@@ -121,7 +126,11 @@ public final class OfaCommand {
     ) {
         try {
             T value = context.getArgument("value", entry.setting().clazz());
-            entry.setting().value(value);
+            Text text = entry.setting().value(value);
+            if (text != null && context.getSource() instanceof ServerCommandSource scs) {
+                scs.sendError(text);
+                return 0;
+            }
         } catch (IllegalArgumentException e) {
             entry.setting().reset();
         }
@@ -135,7 +144,11 @@ public final class OfaCommand {
     ) {
         try {
             T value = context.getArgument("value", entry.setting().clazz());
-            entry.setting().defaultValue(value);
+            Text text = entry.setting().defaultValue(value);
+            if (text != null && context.getSource() instanceof ServerCommandSource scs) {
+                scs.sendError(text);
+                return 0;
+            }
         } catch (IllegalArgumentException e) {
             entry.setting().restore();
         }

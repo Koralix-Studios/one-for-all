@@ -5,6 +5,7 @@ import com.koralix.oneforall.serde.Serde;
 import com.koralix.oneforall.serde.Serialize;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,8 +46,8 @@ public interface ConfigValue<T> extends Serialize, Deserialize {
      *
      * @return if the config value was reset successfully
      */
-    default boolean reset() {
-        return value(defaultValue());
+    default void reset() {
+        value(defaultValue());
     }
 
     /**
@@ -54,8 +55,9 @@ public interface ConfigValue<T> extends Serialize, Deserialize {
      *
      * @return if the config value was restored successfully
      */
-    default boolean restore() {
-        return defaultValue(nominalValue()) && reset();
+    default void restore() {
+        defaultValue(nominalValue());
+        reset();
     }
 
     /**
@@ -78,7 +80,7 @@ public interface ConfigValue<T> extends Serialize, Deserialize {
      * @param value the new default value
      * @return if the default value was set successfully
      */
-    boolean defaultValue(T value);
+    Text defaultValue(T value);
 
     /**
      * Get the current value of the config value
@@ -94,7 +96,7 @@ public interface ConfigValue<T> extends Serialize, Deserialize {
      * @param value the new value
      * @return if the value was set successfully
      */
-    boolean value(T value);
+    Text value(T value);
 
     /**
      * Get the class of the config value
