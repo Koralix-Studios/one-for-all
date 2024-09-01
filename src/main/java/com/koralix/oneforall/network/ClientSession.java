@@ -1,14 +1,16 @@
 package com.koralix.oneforall.network;
 
+import com.koralix.oneforall.lang.Language;
+
 public class ClientSession {
-    private String language;
+    private Language language;
     private String modVersion;
 
-    public String language() {
+    public Language language() {
         return language;
     }
 
-    public void language(String language) {
+    public void language(Language language) {
         this.language = language;
     }
 

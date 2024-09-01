@@ -6,9 +6,9 @@
     "server": [
         "fapi.FixServerLoginNetworkAddonRegisterReceiver",
         "protocol.ClientConnectionMixin",
-        "protocol.ServerPlayNetworkHandlerMixin",
         "protocol.PacketByteBufMixin",
-        "protocol.ServerLoginNetworkHandlerMixin"
+        "protocol.ServerLoginNetworkHandlerMixin",
+        "protocol.ServerPlayNetworkHandlerMixin"
     ],
     "injectors": {
         "defaultRequire": 1

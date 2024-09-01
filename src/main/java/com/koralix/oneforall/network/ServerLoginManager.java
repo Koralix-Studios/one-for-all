@@ -1,9 +1,13 @@
 package com.koralix.oneforall.network;
 
 import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.lang.Language;
 import com.koralix.oneforall.serde.Serde;
 import com.koralix.oneforall.settings.ServerSettings;
-import net.fabricmc.fabric.api.networking.v1.*;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.server.MinecraftServer;
@@ -81,7 +85,7 @@ public class ServerLoginManager {
         ((ClientSessionWrapper) handler).session(session);
         ActOnPlayPacketHandler.register(ClientSettingsC2SPacket.class, session, (connection, player, packet) -> {
             ClientSession sessionWrapper = ((ClientSessionWrapper) connection).session();
-            sessionWrapper.language(packet.language());
+            sessionWrapper.language(Language.fromCode(packet.language()));
 
             ((ClientSessionWrapper) connection).session(sessionWrapper);
             ServerLoginManager.SESSIONS.put(player.getUuid(), sessionWrapper);
@@ -94,7 +98,7 @@ public class ServerLoginManager {
 
         // If understood
         Optional<String> version = readSafe(buf, PacketByteBuf::readString);
-        Optional<String> language = readSafe(buf, PacketByteBuf::readString);
+        Optional<Language> language = readSafe(buf, PacketByteBuf::readString).map(Language::fromCode);
         OneForAll.getInstance().getLogger().debug("Client connected with version: {}", version);
 
         session.modVersion(version.orElse(null));

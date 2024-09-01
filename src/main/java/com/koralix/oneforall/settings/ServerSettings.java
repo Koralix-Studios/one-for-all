@@ -1,6 +1,6 @@
 package com.koralix.oneforall.settings;
 
-import com.koralix.oneforall.lang.TranslationUnit;
+import com.koralix.oneforall.lang.Language;
 
 import java.util.Objects;
 
@@ -15,13 +15,12 @@ public final class ServerSettings {
             .permission(source -> source.hasPermissionLevel(4))
             .build();
 
-    public static final ConfigValue<Boolean> ENFORCE_PROTOCOL = ConfigValue.of(true)
+    public static final ConfigValue<Boolean> ENFORCE_PROTOCOL = ConfigValue.of(false)
             .test(Objects::nonNull)
             .permission(source -> source.hasPermissionLevel(4))
             .build();
 
-    public static final ConfigValue<String> DEFAULT_LANGUAGE = ConfigValue.of("gl_es")
-            .test(TranslationUnit::hasLanguage)
+    public static final ConfigValue<Language> DEFAULT_LANGUAGE = ConfigValue.of(Language.SPANISH)
             .permission(source -> source.hasPermissionLevel(4))
             .build();
 }

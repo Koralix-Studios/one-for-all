@@ -1,7 +1,7 @@
 package com.koralix.oneforall.mixin.server.protocol;
 
-import com.koralix.oneforall.network.ClientSessionWrapper;
 import com.koralix.oneforall.network.ClientSession;
+import com.koralix.oneforall.network.ClientSessionWrapper;
 import net.minecraft.network.ClientConnection;
 import org.spongepowered.asm.mixin.Mixin;
 

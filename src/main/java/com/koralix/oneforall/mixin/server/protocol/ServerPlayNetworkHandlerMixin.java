@@ -1,12 +1,14 @@
 package com.koralix.oneforall.mixin.server.protocol;
 
 import com.koralix.oneforall.lang.TranslationUnit;
-import com.koralix.oneforall.network.*;
+import com.koralix.oneforall.network.ActOnPlayPacketAction;
+import com.koralix.oneforall.network.ActOnPlayPacketHandler;
+import com.koralix.oneforall.network.ClientSession;
+import com.koralix.oneforall.network.ClientSessionWrapper;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketCallbacks;
-import net.minecraft.network.encryption.PublicPlayerSession;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.*;
+import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -22,9 +24,6 @@ public class ServerPlayNetworkHandlerMixin implements ClientSessionWrapper {
     ServerPlayerEntity player;
     @Shadow
     ClientConnection connection;
-
-
-    @Shadow private @Nullable PublicPlayerSession session;
 
     @Inject(
             method = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V",
