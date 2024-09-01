@@ -30,6 +30,7 @@
             "environment": "server"
         }
     ],
+    "accessWidener": "${id}.accesswidener",
     "depends": {
         "fabricloader": ">=0.15.0",
         "minecraft": "${minecraft_dependency}"
