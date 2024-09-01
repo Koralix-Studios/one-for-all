@@ -1,6 +1,5 @@
 package com.koralix.oneforall.commands;
 
-import com.koralix.oneforall.settings.ConfigValue;
 import com.koralix.oneforall.settings.SettingEntry;
 import com.koralix.oneforall.settings.SettingsManager;
 import com.koralix.oneforall.settings.SettingsRegistry;
@@ -65,14 +64,14 @@ public final class OfaCommand {
         def.then(ofaLiteral.apply(entry.id().toString())
                 .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
                 .executes(context -> setSetting(context, entry))
-                .then(settingArgument(ofaArgument, entry.setting())
+                .then(ArgumentTypeHelper.createSettingArg(ofaArgument, entry.setting())
                         .executes(context -> setDefaultSetting(context, entry))));
         restore
                 .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
                 .executes(context -> setDefaultSetting(context, entry));
         return ofaLiteral.apply(entry.id().toString())
                 .executes(context -> getSetting(context, entry))
-                .then(settingArgument(ofaArgument, entry.setting())
+                .then(ArgumentTypeHelper.createSettingArg(ofaArgument, entry.setting())
                         .executes(context -> setSetting(context, entry)));
     }
 
@@ -125,7 +124,7 @@ public final class OfaCommand {
             @NotNull SettingEntry<T> entry
     ) {
         try {
-            T value = context.getArgument("value", entry.setting().clazz());
+            T value = ArgumentTypeHelper.getSettingValue(context, "value", entry.setting());
             Text text = entry.setting().value(value);
             if (text != null && context.getSource() instanceof ServerCommandSource scs) {
                 scs.sendError(text);
@@ -143,7 +142,7 @@ public final class OfaCommand {
             @NotNull SettingEntry<T> entry
     ) {
         try {
-            T value = context.getArgument("value", entry.setting().clazz());
+            T value = ArgumentTypeHelper.getSettingValue(context, "value", entry.setting());
             Text text = entry.setting().defaultValue(value);
             if (text != null && context.getSource() instanceof ServerCommandSource scs) {
                 scs.sendError(text);
@@ -154,36 +153,5 @@ public final class OfaCommand {
         }
 
         return 1;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <S extends CommandSource, T> @NotNull RequiredArgumentBuilder<S, T> settingArgument(
-            @NotNull BiFunction<String, ArgumentType<?>, RequiredArgumentBuilder<S, ?>> ofaArgument,
-            @NotNull ConfigValue<T> setting
-    ) {
-        return (RequiredArgumentBuilder<S, T>) ofaArgument.apply("value", settingArgumentType(setting.clazz()));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> @NotNull ArgumentType<T> settingArgumentType(@NotNull Class<T> clazz) {
-        if (clazz.isEnum())
-            return (ArgumentType<T>) DynEnumArgumentType.create(clazz);
-        if (clazz == Boolean.class)
-            return (ArgumentType<T>) BoolArgumentType.bool();
-        if (clazz == String.class)
-            return (ArgumentType<T>) StringArgumentType.string();
-        if (clazz == Byte.class)
-            return (ArgumentType<T>) IntegerArgumentType.integer(Byte.MIN_VALUE, Byte.MAX_VALUE);
-        if (clazz == Short.class)
-            return (ArgumentType<T>) IntegerArgumentType.integer(Short.MIN_VALUE, Short.MAX_VALUE);
-        if (clazz == Integer.class)
-            return (ArgumentType<T>) IntegerArgumentType.integer();
-        if (clazz == Long.class)
-            return (ArgumentType<T>) LongArgumentType.longArg();
-        if (clazz == Float.class)
-            return (ArgumentType<T>) FloatArgumentType.floatArg();
-        if (clazz == Double.class)
-            return (ArgumentType<T>) DoubleArgumentType.doubleArg();
-        throw new UnsupportedOperationException("Unsupported setting type: " + clazz);
     }
 }
