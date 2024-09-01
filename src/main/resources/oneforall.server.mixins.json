@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.koralix.oneforall.mixin.server",
+    "compatibilityLevel": "JAVA_21",
+    "server": [
+        "fapi.FixServerLoginNetworkAddonRegisterReceiver",
+        "protocol.ClientConnectionMixin",
+        "protocol.PacketByteBufMixin",
+        "protocol.ServerLoginNetworkHandlerMixin",
+        "protocol.ServerPlayNetworkHandlerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

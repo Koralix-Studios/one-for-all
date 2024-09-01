@@ -1,4 +1,4 @@
-package com.koralix.oneforall.mixin.fapi;
+package com.koralix.oneforall.mixin.server.fapi;
 
 import net.fabricmc.fabric.impl.networking.GlobalReceiverRegistry;
 import net.fabricmc.fabric.impl.networking.server.ServerLoginNetworkAddon;
