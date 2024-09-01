@@ -66,6 +66,8 @@ tasks.named<Test>("test") {
 }
 
 loom {
+    accessWidenerPath = file("../../src/main/resources/${mod.id}.accesswidener")
+
     splitEnvironmentSourceSets()
 
     mods {
