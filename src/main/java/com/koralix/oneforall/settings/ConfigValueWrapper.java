@@ -1,7 +1,9 @@
 package com.koralix.oneforall.settings;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
@@ -15,42 +17,45 @@ import java.util.function.Predicate;
 public class ConfigValueWrapper<T> implements ConfigValue<T> {
     private final Class<T> clazz;
     private final T nominalValue;
-    private final Predicate<T> validator;
+    private final ConfigValidator<T> validator;
+    private final Predicate<ServerCommandSource> permission;
 
-    Identifier registry;
-    Identifier id;
+    SettingEntry<T> entry = null;
 
     private T defaultValue;
     private T value;
 
     ConfigValueWrapper(
-            @NotNull Identifier registry,
-            @NotNull Identifier id,
             @NotNull Class<T> clazz,
             T nominalValue,
-            @NotNull Predicate<T> validator
+            @NotNull ConfigValidator<T> validator,
+            @NotNull Predicate<ServerCommandSource> permission
     ) {
-        if (!validator.test(nominalValue)) throw new IllegalArgumentException("Invalid nominal value");
+        Text err = validator.test(nominalValue);
+        if (err != null) throw new IllegalArgumentException(err.getString());
 
         this.clazz = clazz;
         this.nominalValue = nominalValue;
         this.validator = validator;
-
-        this.registry = registry;
-        this.id = id;
+        this.permission = permission;
 
         this.defaultValue = nominalValue;
         this.value = nominalValue;
     }
 
     @Override
-    public Identifier registry() {
-        return this.registry;
+    public SettingsRegistry registry() {
+        return this.entry.registry();
     }
 
     @Override
-    public Identifier id() {
-        return this.id;
+    public SettingEntry<T> entry() {
+        return this.entry;
+    }
+
+    @Override
+    public boolean permission(ServerCommandSource source) {
+        return this.permission.test(source);
     }
 
     @Override
@@ -64,10 +69,8 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
     }
 
     @Override
-    public boolean defaultValue(T value) {
-        if (!this.test(value)) return false;
-        this.defaultValue = value;
-        return true;
+    public Text defaultValue(T value) {
+        return this.tested(value, () -> this.defaultValue = value);
     }
 
     @Override
@@ -76,10 +79,8 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
     }
 
     @Override
-    public boolean value(T value) {
-        if (!this.test(value)) return false;
-        this.value = value;
-        return true;
+    public Text value(T value) {
+        return this.tested(value, () -> this.value = value);
     }
 
     @Override
@@ -87,7 +88,10 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
         return this.clazz;
     }
 
-    private boolean test(T value) {
-        return this.validator.test(value);
+    private @Nullable Text tested(T value, Runnable action) {
+        Text err = this.validator.test(value);
+        if (err != null) return err;
+        action.run();
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.koralix.oneforall.settings;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -8,9 +9,8 @@ import java.util.function.Predicate;
 public class ConfigValueBuilder<T> {
     private final Class<T> clazz;
     private final T value;
-    private Predicate<T> validator = null;
-    private Identifier registry = null;
-    private Identifier id = null;
+    private ConfigValidator<T> validator = null;
+    private Predicate<ServerCommandSource> permission = null;
 
     @SuppressWarnings("unchecked")
     ConfigValueBuilder(@NotNull T value) {
@@ -23,7 +23,7 @@ public class ConfigValueBuilder<T> {
         this.value = null;
     }
 
-    public ConfigValueBuilder<T> test(Predicate<T> validator) {
+    public ConfigValueBuilder<T> test(ConfigValidator<T> validator) {
         if (validator == null) return this;
 
         if (this.validator == null) {
@@ -35,23 +35,26 @@ public class ConfigValueBuilder<T> {
         return this;
     }
 
-    public ConfigValueBuilder<T> registry(@NotNull Identifier registry) {
-        this.registry = registry;
-        return this;
+    public ConfigValueBuilder<T> test(Predicate<T> validator, Text message) {
+        ConfigValidator<T> test = value -> validator.test(value) ? null : message;
+        return test(test);
     }
 
-    public ConfigValueBuilder<T> id(@NotNull Identifier id) {
-        this.id = id;
+    public ConfigValueBuilder<T> test(Predicate<T> validator) {
+        return test(validator, Text.of("Invalid value"));
+    }
+
+    public ConfigValueBuilder<T> permission(Predicate<ServerCommandSource> permission) {
+        this.permission = permission;
         return this;
     }
 
     public ConfigValue<T> build() {
         return new ConfigValueWrapper<>(
-                registry,
-                id,
                 clazz,
                 value,
-                validator == null ? t -> true : validator
+                validator == null ? t -> null : validator,
+                permission == null ? t -> true : permission
         );
     }
 }

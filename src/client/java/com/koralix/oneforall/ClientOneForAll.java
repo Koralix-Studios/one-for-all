@@ -1,9 +1,14 @@
 package com.koralix.oneforall;
 
+import com.koralix.oneforall.commands.ClientCommands;
 import com.koralix.oneforall.input.ButtonEvent;
-import com.koralix.oneforall.input.hotkey.HotKey;
 import com.koralix.oneforall.input.InputManager;
+import com.koralix.oneforall.input.hotkey.HotKey;
+import com.koralix.oneforall.network.ClientLoginManager;
 import com.koralix.oneforall.platform.Platform;
+import com.koralix.oneforall.settings.ClientSettings;
+import com.koralix.oneforall.settings.SettingsManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientOneForAll extends OneForAll {
@@ -20,6 +25,10 @@ public class ClientOneForAll extends OneForAll {
     @Override
     public void onInitialize() {
         getLogger().info("Initializing OneForAll...");
+
+        SettingsManager.register(ClientSettings.class);
+
+        ClientCommandRegistrationCallback.EVENT.register(ClientCommands::register);
     }
 
     public void onInitializeClient() {
@@ -37,6 +46,8 @@ public class ClientOneForAll extends OneForAll {
                 .add(new ButtonEvent(GLFW.GLFW_KEY_A, GLFW.GLFW_PRESS, ButtonEvent.ButtonType.KEYBOARD)));
 
         inputManager.register();
+
+        ClientLoginManager.init();
     }
 
     public InputManager getInputManager() {

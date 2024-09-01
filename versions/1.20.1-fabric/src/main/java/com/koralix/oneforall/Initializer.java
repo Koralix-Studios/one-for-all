@@ -25,6 +25,6 @@ public class Initializer implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        instance.onInitialize();
+        instance.initialize();
     }
 }
