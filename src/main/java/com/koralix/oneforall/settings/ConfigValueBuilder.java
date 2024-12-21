@@ -57,4 +57,13 @@ public class ConfigValueBuilder<T> {
                 permission == null ? t -> true : permission
         );
     }
+
+    public PlayerConfigValueWrapper<T> player() {
+        return new PlayerConfigValueWrapper<>(
+                clazz,
+                value,
+                validator == null ? t -> null : validator,
+                permission == null ? t -> true : permission
+        );
+    }
 }

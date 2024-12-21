@@ -51,6 +51,9 @@ public final class SettingsManager {
                 if (value instanceof ConfigValueWrapper<T> wrapper) {
                     if (wrapper.entry == null) wrapper.entry = entry;
                     entry = wrapper.entry;
+                } else if (value instanceof PlayerConfigValueWrapper<T> wrapper) {
+                    if (wrapper.entry == null) wrapper.entry = entry;
+                    entry = wrapper.entry;
                 }
                 register(entry);
             } catch (IllegalAccessException e) {

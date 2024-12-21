@@ -2,6 +2,7 @@ package com.koralix.oneforall;
 
 import com.koralix.oneforall.network.ServerLoginManager;
 import com.koralix.oneforall.platform.Platform;
+import com.koralix.oneforall.settings.PlayerSettings;
 import com.koralix.oneforall.settings.ServerSettings;
 import com.koralix.oneforall.settings.SettingsManager;
 
@@ -20,6 +21,7 @@ public class ServerOneForAll extends OneForAll {
         getLogger().info("Initializing OneForAll...");
 
         SettingsManager.register(ServerSettings.class);
+        SettingsManager.register(PlayerSettings.class);
     }
 
     public void onInitializeServer() {

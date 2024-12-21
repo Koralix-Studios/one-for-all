@@ -1,6 +1,6 @@
 package com.koralix.oneforall.commands;
 
-import com.koralix.oneforall.settings.SettingsRegistry;
+import com.koralix.oneforall.settings.*;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -21,7 +21,15 @@ public final class ClientOfaCommand {
             CommandRegistryAccess registryAccess
     ) {
         LiteralArgumentBuilder<FabricClientCommandSource> cofa = ClientCommandManager.literal("cofa");
-        cofa.then(settings(ClientCommandManager::literal, ClientCommandManager::argument, SettingsRegistry.Env.CLIENT));
+        cofa.then(settings(ClientCommandManager::literal, ClientCommandManager::argument, ClientOfaCommand::client, SettingsRegistry.Env.CLIENT));
         dispatcher.register(cofa);
+    }
+
+    static <T> ConfigValueAccessor<FabricClientCommandSource, T> client(ConfigValue<T> config) {
+        if (config instanceof ConfigValueWrapper<T> serverConfig) {
+            return new ClientSettingAccessor<>(serverConfig);
+        } else {
+            throw new IllegalArgumentException("Config value is not a server or player config value");
+        }
     }
 }

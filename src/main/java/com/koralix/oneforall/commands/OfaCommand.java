@@ -1,10 +1,8 @@
 package com.koralix.oneforall.commands;
 
-import com.koralix.oneforall.settings.SettingEntry;
-import com.koralix.oneforall.settings.SettingsManager;
-import com.koralix.oneforall.settings.SettingsRegistry;
+import com.koralix.oneforall.settings.*;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.*;
+import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -32,22 +30,23 @@ public final class OfaCommand {
             CommandManager.RegistrationEnvironment environment
     ) {
         LiteralArgumentBuilder<ServerCommandSource> ofa = CommandManager.literal("ofa");
-        ofa.then(settings(CommandManager::literal, CommandManager::argument, SettingsRegistry.Env.SERVER));
+        ofa.then(settings(CommandManager::literal, CommandManager::argument, ConfigValueAccessor::server, SettingsRegistry.Env.SERVER));
         dispatcher.register(ofa);
     }
 
     public static <S extends CommandSource> LiteralArgumentBuilder<S> settings(
             @NotNull Function<String, LiteralArgumentBuilder<S>> ofaLiteral,
             @NotNull BiFunction<String, ArgumentType<?>, RequiredArgumentBuilder<S, ?>> ofaArgument,
+            @NotNull ConfigValueAccessorFactory<S> factory,
             SettingsRegistry.Env @NotNull ... envs
     ) {
-        LiteralArgumentBuilder<S> settings = ofaLiteral.apply("settings").executes(OfaCommand::listSettings);
+        LiteralArgumentBuilder<S> settings = ofaLiteral.apply("settings").executes(context -> listSettings(context, factory));
         LiteralArgumentBuilder<S> def = ofaLiteral.apply("default");
         LiteralArgumentBuilder<S> restore = ofaLiteral.apply("restore");
         for (SettingsRegistry.Env env : envs) {
-            SettingsManager.forEach(env, (entry, configValue) -> {
-                settings.then(setting(ofaLiteral, ofaArgument, entry, def, restore));
-            });
+            SettingsManager.forEach(env, (entry, configValue) ->
+                    settings.then(setting(ofaLiteral, ofaArgument, entry, def, restore, factory))
+            );
         }
         settings.then(def);
         settings.then(restore);
@@ -59,33 +58,41 @@ public final class OfaCommand {
             @NotNull BiFunction<String, ArgumentType<?>, RequiredArgumentBuilder<S, ?>> ofaArgument,
             @NotNull SettingEntry<T> entry,
             @NotNull LiteralArgumentBuilder<S> def,
-            @NotNull LiteralArgumentBuilder<S> restore
+            @NotNull LiteralArgumentBuilder<S> restore,
+            @NotNull ConfigValueAccessorFactory<S> factory
     ) {
+        ConfigValueAccessor<S, T> accessor = factory.create(entry);
+
         def.then(ofaLiteral.apply(entry.id().toString())
                 .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
-                .executes(context -> setSetting(context, entry))
+                .executes(context -> setSetting(context, entry, accessor))
                 .then(ArgumentTypeHelper.createSettingArg(ofaArgument, entry.setting())
-                        .executes(context -> setDefaultSetting(context, entry))));
+                        .executes(context -> setDefaultSetting(context, entry, accessor))));
         restore
                 .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
-                .executes(context -> setDefaultSetting(context, entry));
+                .executes(context -> setDefaultSetting(context, entry, accessor));
         return ofaLiteral.apply(entry.id().toString())
-                .executes(context -> getSetting(context, entry))
+                .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
+                .executes(context -> getSetting(context, entry, accessor))
                 .then(ArgumentTypeHelper.createSettingArg(ofaArgument, entry.setting())
-                        .executes(context -> setSetting(context, entry)));
+                        .executes(context -> setSetting(context, entry, accessor)));
     }
 
-    private static <S extends CommandSource> int listSettings(@NotNull CommandContext<S> context) {
+    private static <S extends CommandSource> int listSettings(
+            @NotNull CommandContext<S> context,
+            @NotNull ConfigValueAccessorFactory<S> factory
+    ) {
         int[] result = {0}; // int* result;
-        SettingsManager.forEach(SettingsRegistry.Env.SERVER, (entry, configValue) ->
-                result[0] += getSetting(context, entry)
-        );
+        SettingsManager.forEach(SettingsRegistry.Env.SERVER, (entry, configValue) -> {
+            result[0] += getSetting(context, entry, factory.create(entry));
+        });
         return result[0];
     }
 
     private static <S extends CommandSource> int getSetting(
             @NotNull CommandContext<S> context,
-            @NotNull SettingEntry<?> entry
+            @NotNull SettingEntry<?> entry,
+            @NotNull ConfigValueAccessor<S, ?> accessor
     ) {
         if (context.getSource() instanceof ServerCommandSource scs && !entry.setting().permission(scs)) return 0;
 
@@ -93,10 +100,10 @@ public final class OfaCommand {
         final Text text = Text.translatable(entry.translation())
                 .append(":\n")
                 .append("Value: ")
-                .append(entry.setting().value().toString())
+                .append(accessor.get(context.getSource()).toString())
                 .append("\n")
                 .append("Default: ")
-                .append(entry.setting().defaultValue().toString())
+                .append(accessor.getDefault(context.getSource()).toString())
                 .append("\n")
                 .append("Nominal: ")
                 .append(entry.setting().nominalValue().toString());
@@ -121,11 +128,12 @@ public final class OfaCommand {
 
     private static <S extends CommandSource, T> int setSetting(
             @NotNull CommandContext<S> context,
-            @NotNull SettingEntry<T> entry
+            @NotNull SettingEntry<T> entry,
+            @NotNull ConfigValueAccessor<S, T> accessor
     ) {
         try {
             T value = ArgumentTypeHelper.getSettingValue(context, "value", entry.setting());
-            Text text = entry.setting().value(value);
+            Text text = accessor.set(context.getSource(), value);
             if (text != null && context.getSource() instanceof ServerCommandSource scs) {
                 scs.sendError(text);
                 return 0;
@@ -139,11 +147,12 @@ public final class OfaCommand {
 
     private static <S extends CommandSource, T> int setDefaultSetting(
             @NotNull CommandContext<S> context,
-            @NotNull SettingEntry<T> entry
+            @NotNull SettingEntry<T> entry,
+            @NotNull ConfigValueAccessor<S, T> accessor
     ) {
         try {
             T value = ArgumentTypeHelper.getSettingValue(context, "value", entry.setting());
-            Text text = entry.setting().defaultValue(value);
+            Text text = accessor.setDefault(context.getSource(), value);
             if (text != null && context.getSource() instanceof ServerCommandSource scs) {
                 scs.sendError(text);
                 return 0;
