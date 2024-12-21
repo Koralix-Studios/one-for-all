@@ -23,4 +23,9 @@ public final class ServerSettings {
     public static final ConfigValue<Language> DEFAULT_LANGUAGE = ConfigValue.of(Language.SPANISH)
             .permission(source -> source.hasPermissionLevel(4))
             .build();
+
+    public static final ConfigValue<Boolean> CAREFUL_BREAK = ConfigValue.of(false)
+            .test(Objects::nonNull)
+            .permission(source -> source.hasPermissionLevel(4))
+            .build();
 }

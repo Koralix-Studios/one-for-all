@@ -7,8 +7,11 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+
 public abstract class OneForAll {
     public static final String MOD_ID = "oneforall";
+    private static final Random random = new Random();
 
     private final Logger logger = LoggerFactory.getLogger("OneForAll");
     private final Platform platform;
@@ -16,6 +19,10 @@ public abstract class OneForAll {
 
     public static OneForAll getInstance() {
         return Initializer.instance;
+    }
+
+    public static Random rng() {
+        return random;
     }
 
     public OneForAll(Platform platform) {

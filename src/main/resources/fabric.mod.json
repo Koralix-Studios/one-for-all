@@ -21,6 +21,7 @@
     },
     "mixins": [
         "${id}.mixins.json",
+        "${id}.features.mixins.json",
         {
             "config": "${id}.client.mixins.json",
             "environment": "client"
