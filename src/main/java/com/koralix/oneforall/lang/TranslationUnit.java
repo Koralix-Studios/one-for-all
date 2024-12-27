@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class TranslationUnit {
-    private final static Language DEFAULT_LANGUAGE = Language.SPANISH;
+    private final static Language DEFAULT_LANGUAGE = Language.ENGLISH;
     private static Optional<UUID> TARGET_PLAYER = Optional.empty();
 
     public static String translate(Language lang, String code) {

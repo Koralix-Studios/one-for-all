@@ -1,0 +1,10 @@
+{
+  "text.oneforall.disconnected": "Disconnected by OneForAll\n\nReason: ",
+  "text.oneforall.disconnected.notUsingProtocol": "The One-For-All Mod Protocol is required to connect to the server",
+  "settings.oneforall.server_settings.protocol_enabled": "Protocol enabled",
+  "settings.oneforall.server_settings.enforce_protocol": "Protocol required",
+  "settings.oneforall.server_settings.default_language": "Language by default",
+  "settings.oneforall.server_settings.careful_break": "Careful break",
+  "settings.oneforall.player_settings.careful_break": "Careful break",
+  "settings.oneforall.client_settings.protocol_usage_conditions": "Protocol usage conditions"
+}

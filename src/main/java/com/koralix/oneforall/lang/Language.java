@@ -14,6 +14,7 @@ import java.util.Optional;
 import static net.minecraft.datafixer.fix.BlockEntitySignTextStrictJsonFix.GSON;
 
 public enum Language {
+    ENGLISH("en_us"),
     SPANISH("es_es"),
     GALICIAN("gl_es");
 
