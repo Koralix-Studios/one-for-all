@@ -6,10 +6,8 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -77,13 +75,7 @@ public final class OfaCommand {
                 .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
                 .executes(context -> getSetting(context, entry, accessor))
                 .then(ArgumentTypeHelper.createSettingArg(ofaArgument, entry.setting())
-                        .executes(context -> setSetting(context, entry, accessor)))
-                .then(ofaLiteral.apply("test").executes(context -> {
-                    PacketByteBuf buf = PacketByteBufs.create();
-                    entry.setting().serialize(buf);
-                    entry.setting().deserialize(buf);
-                    return 1;
-                }));
+                        .executes(context -> setSetting(context, entry, accessor)));
     }
 
     private static <S extends CommandSource> int listSettings(

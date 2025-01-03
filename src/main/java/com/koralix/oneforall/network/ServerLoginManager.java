@@ -2,7 +2,6 @@ package com.koralix.oneforall.network;
 
 import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.lang.Language;
-import com.koralix.oneforall.serde.Serde;
 import com.koralix.oneforall.settings.ServerSettings;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -34,8 +33,8 @@ public class ServerLoginManager {
         boolean enforceProtocol = ServerSettings.ENFORCE_PROTOCOL.value();
 
         PacketByteBuf buf = PacketByteBufs.create();
-        Serde.serialize(buf, modVersion);
-        Serde.serialize(buf, enforceProtocol);
+        buf.writeString(modVersion);
+        buf.writeBoolean(enforceProtocol);
 
         return buf;
     }

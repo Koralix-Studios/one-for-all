@@ -1,7 +1,6 @@
 package com.koralix.oneforall.network;
 
 import com.koralix.oneforall.OneForAll;
-import com.koralix.oneforall.serde.Serde;
 import com.koralix.oneforall.settings.ClientSettings;
 import com.koralix.oneforall.settings.ProtocolUsageConditions;
 import io.netty.util.concurrent.Future;
@@ -34,8 +33,8 @@ public class ClientLoginManager {
     }
 
     private static CompletableFuture<PacketByteBuf> onHello(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<GenericFutureListener<? extends Future<? super Void>>> listenerAdder) {
-        String version = Serde.deserialize(buf, String.class);
-        boolean enforceProtocol = Serde.deserialize(buf, Boolean.class);
+        String version = buf.readString();
+        boolean enforceProtocol = buf.readBoolean();
 
         boolean enablesProtocol = doesClientEnableProtocol(enforceProtocol);
         if (!enablesProtocol) {
@@ -43,7 +42,7 @@ public class ClientLoginManager {
         }
 
         PacketByteBuf response = PacketByteBufs.create();
-        Serde.serialize(response, OneForAll.getInstance().getMetadata().version());
+        response.writeString(OneForAll.getInstance().getMetadata().version());
         return CompletableFuture.completedFuture(response);
     }
 
