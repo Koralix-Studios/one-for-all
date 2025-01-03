@@ -6,6 +6,9 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 /**
@@ -15,7 +18,7 @@ import java.util.function.Predicate;
  * The value is the current value of the config value.
  * @param <T> the type of the config value
  */
-public class ConfigValueWrapper<T> implements ConfigValue<T> {
+public class PlayerConfigValueWrapper<T> implements ConfigValue<T> {
     private final Class<T> clazz;
     private final T nominalValue;
     private final ConfigValidator<T> validator;
@@ -24,10 +27,10 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
 
     SettingEntry<T> entry = null;
 
-    private T defaultValue;
-    private T value;
+    private final Map<UUID, T> defaultValue = new HashMap<>();
+    private final Map<UUID, T> value = new HashMap<>();
 
-    ConfigValueWrapper(
+    PlayerConfigValueWrapper(
             @NotNull Class<T> clazz,
             T nominalValue,
             @NotNull ConfigValidator<T> validator,
@@ -42,9 +45,6 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
         this.validator = validator;
         this.permission = permission;
         this.codec = codec;
-
-        this.defaultValue = nominalValue;
-        this.value = nominalValue;
     }
 
     @Override
@@ -63,28 +63,63 @@ public class ConfigValueWrapper<T> implements ConfigValue<T> {
     }
 
     @Override
+    public void reset() {
+        this.value.clear();
+    }
+
+    @Override
+    public void restore() {
+        this.value.clear();
+        this.defaultValue.clear();
+    }
+
+    @Override
     public T nominalValue() {
         return this.nominalValue;
     }
 
     @Override
     public T defaultValue() {
-        return this.defaultValue;
+        throw new UnsupportedOperationException("Cannot get default value for player config value");
+    }
+
+    public T defaultValue(UUID source) {
+        return this.defaultValue.getOrDefault(source, this.nominalValue);
     }
 
     @Override
     public Text defaultValue(T value) {
-        return this.tested(value, () -> this.defaultValue = value);
+        throw new UnsupportedOperationException("Cannot set default value for player config value");
+    }
+
+    public Text defaultValue(UUID source, T value) {
+        if (value == this.nominalValue) {
+            this.defaultValue.remove(source);
+            return null;
+        }
+        return this.tested(value, () -> this.defaultValue.put(source, value));
     }
 
     @Override
     public T value() {
-        return this.value;
+        throw new UnsupportedOperationException("Cannot get value for player config value");
+    }
+
+    public T value(UUID source) {
+        return this.value.getOrDefault(source, this.defaultValue(source));
     }
 
     @Override
     public Text value(T value) {
-        return this.tested(value, () -> this.value = value);
+        throw new UnsupportedOperationException("Cannot set value for player config value");
+    }
+
+    public Text value(UUID source, T value) {
+        if (value == this.defaultValue(source)) {
+            this.value.remove(source);
+            return null;
+        }
+        return this.tested(value, () -> this.value.put(source, value));
     }
 
     @Override

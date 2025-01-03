@@ -21,11 +21,17 @@
     },
     "mixins": [
         "${id}.mixins.json",
+        "${id}.features.mixins.json",
         {
             "config": "${id}.client.mixins.json",
             "environment": "client"
+        },
+        {
+            "config": "${id}.server.mixins.json",
+            "environment": "server"
         }
     ],
+    "accessWidener": "${id}.accesswidener",
     "depends": {
         "fabricloader": ">=0.15.0",
         "minecraft": "${minecraft_dependency}"
