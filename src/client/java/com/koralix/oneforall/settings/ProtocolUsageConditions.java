@@ -1,17 +1,20 @@
 package com.koralix.oneforall.settings;
 
-import net.minecraft.util.StringIdentifiable;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 
-public enum ProtocolUsageConditions implements StringIdentifiable {
-    Always,
-    OnlyEnforced,
-    Never;
+public enum ProtocolUsageConditions {
+    ALWAYS,
+    ONLY_ENFORCED,
+    NEVER;
 
-    @Contract(pure = true)
-    @Override
-    public @NotNull String asString() {
-        return name();
-    }
+    public static final Codec<ProtocolUsageConditions> CODEC = Codec.BYTE.comapFlatMap(
+            i -> {
+                ProtocolUsageConditions[] values = ProtocolUsageConditions.values();
+                return i >= 0 && i < values.length
+                        ? DataResult.success(values[i])
+                        : DataResult.error(() -> "Invalid protocol usage condition: " + i);
+            },
+            protocolUsageConditions -> (byte) protocolUsageConditions.ordinal()
+    );
 }

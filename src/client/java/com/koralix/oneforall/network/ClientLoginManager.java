@@ -27,9 +27,9 @@ public class ClientLoginManager {
         ProtocolUsageConditions usageConditions = ClientSettings.PROTOCOL_USAGE_CONDITIONS.value();
 
         return switch (usageConditions) {
-            case Always -> true;
-            case OnlyEnforced -> enforceProtocol;
-            case Never -> false;
+            case ALWAYS -> true;
+            case ONLY_ENFORCED -> enforceProtocol;
+            case NEVER -> false;
         };
     }
 

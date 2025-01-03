@@ -1,8 +1,13 @@
 package com.koralix.oneforall.settings;
 
 import com.koralix.oneforall.serde.Deserialize;
-import com.koralix.oneforall.serde.Serde;
 import com.koralix.oneforall.serde.Serialize;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -10,14 +15,14 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public interface ConfigValue<T> extends Serialize, Deserialize {
-    @Contract(value = "_ -> new", pure = true)
-    static <T> @NotNull ConfigValueBuilder<T> of(@NotNull T value) {
-        return new ConfigValueBuilder<>(value);
+    @Contract(value = "_, _ -> new", pure = true)
+    static <T> @NotNull ConfigValueBuilder<T> of(@NotNull T value, @NotNull Codec<T> codec) {
+        return new ConfigValueBuilder<>(value, codec);
     }
 
-    @Contract(value = "_ -> new", pure = true)
-    static <T> @NotNull ConfigValueBuilder<T> ofNull(@NotNull Class<T> clazz) {
-        return new ConfigValueBuilder<>(clazz);
+    @Contract(value = "_, _ -> new", pure = true)
+    static <T> @NotNull ConfigValueBuilder<T> ofNull(@NotNull Class<T> clazz, @NotNull Codec<T> codec) {
+        return new ConfigValueBuilder<>(clazz, codec);
     }
 
     /**
@@ -107,13 +112,46 @@ public interface ConfigValue<T> extends Serialize, Deserialize {
 
     @Override
     default void serialize(PacketByteBuf buf) {
-        Serde.serialize(buf, defaultValue());
-        Serde.serialize(buf, value());
+        Codec<T> defaultCodec = codec().fieldOf("default").codec();
+        Codec<T> valueCodec = codec().fieldOf("value").codec();
+        Codec<Pair<T, T>> codec = Codec.pair(defaultCodec, valueCodec);
+
+        DataResult<NbtElement> result = codec.encodeStart(NbtOps.INSTANCE, Pair.of(defaultValue(), value()));
+        result.result().ifPresentOrElse(
+                nbt -> {
+                    if (nbt instanceof NbtCompound compound) {
+                        buf.writeNbt(compound);
+                    } else {
+                        throw new IllegalStateException("Failed to serialize config value");
+                    }
+                },
+                () -> {
+                    throw new IllegalStateException("Failed to serialize config value");
+                }
+        );
     }
 
     @Override
     default void deserialize(PacketByteBuf buf) {
-        defaultValue(Serde.deserialize(buf, clazz()));
-        value(Serde.deserialize(buf, clazz()));
+        Codec<T> defaultCodec = codec().fieldOf("default").codec();
+        Codec<T> valueCodec = codec().fieldOf("value").codec();
+        Codec<Pair<T, T>> codec = Codec.pair(defaultCodec, valueCodec);
+
+        NbtCompound nbt = buf.readNbt();
+        if (nbt == null) {
+            throw new IllegalStateException("Failed to deserialize config value");
+        }
+        DataResult<Pair<T, T>> result = codec.parse(NbtOps.INSTANCE, nbt);
+        result.result().ifPresentOrElse(
+                pair -> {
+                    defaultValue(pair.getFirst());
+                    value(pair.getSecond());
+                },
+                () -> {
+                    throw new IllegalStateException("Failed to deserialize config value");
+                }
+        );
     }
+
+    Codec<T> codec();
 }

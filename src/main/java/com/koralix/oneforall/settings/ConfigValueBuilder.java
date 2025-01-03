@@ -1,26 +1,33 @@
 package com.koralix.oneforall.settings;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
 public class ConfigValueBuilder<T> {
     private final Class<T> clazz;
     private final T value;
+    private final Codec<T> codec;
     private ConfigValidator<T> validator = null;
     private Predicate<ServerCommandSource> permission = null;
 
     @SuppressWarnings("unchecked")
-    ConfigValueBuilder(@NotNull T value) {
-        this.clazz = (Class<T>) value.getClass();
-        this.value = value;
+    ConfigValueBuilder(@NotNull T value, @NotNull Codec<T> codec) {
+        this((Class<T>) value.getClass(), value, codec);
     }
 
-    ConfigValueBuilder(@NotNull Class<T> clazz) {
+    ConfigValueBuilder(@NotNull Class<T> clazz, @NotNull Codec<T> codec) {
+        this(clazz, null, codec);
+    }
+
+    private ConfigValueBuilder(@NotNull Class<T> clazz, @Nullable T value, @NotNull Codec<T> codec) {
         this.clazz = clazz;
-        this.value = null;
+        this.value = value;
+        this.codec = codec;
     }
 
     public ConfigValueBuilder<T> test(ConfigValidator<T> validator) {
@@ -54,7 +61,8 @@ public class ConfigValueBuilder<T> {
                 clazz,
                 value,
                 validator == null ? t -> null : validator,
-                permission == null ? t -> true : permission
+                permission == null ? t -> true : permission,
+                codec
         );
     }
 
@@ -63,7 +71,8 @@ public class ConfigValueBuilder<T> {
                 clazz,
                 value,
                 validator == null ? t -> null : validator,
-                permission == null ? t -> true : permission
+                permission == null ? t -> true : permission,
+                codec
         );
     }
 }

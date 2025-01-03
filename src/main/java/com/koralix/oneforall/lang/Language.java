@@ -3,6 +3,8 @@ package com.koralix.oneforall.lang;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koralix.oneforall.OneForAll;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +21,10 @@ public enum Language {
     GALICIAN("gl_es");
 
     private static final Map<String, Language> LANGUAGES;
+    public static final Codec<Language> CODEC = Codec.STRING.comapFlatMap(s -> {
+        Language language = Language.fromCode(s);
+        return language == null ? DataResult.error(() -> "Unknown language: " + s) : DataResult.success(language);
+    }, Language::toString);
 
     static {
         Map<String, Language> languages = new HashMap<>();

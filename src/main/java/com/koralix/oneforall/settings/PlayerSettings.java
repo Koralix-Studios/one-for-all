@@ -1,5 +1,7 @@
 package com.koralix.oneforall.settings;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Objects;
@@ -16,6 +18,16 @@ public final class PlayerSettings {
         NOT_SNEAK,
         ALWAYS;
 
+        public static final Codec<CAREFUL_BREAK_MODE> CODEC = Codec.BYTE.comapFlatMap(
+                i -> {
+                    CAREFUL_BREAK_MODE[] values = CAREFUL_BREAK_MODE.values();
+                    return i >= 0 && i < values.length
+                            ? DataResult.success(values[i])
+                            : DataResult.error(() -> "Invalid careful break mode: " + i);
+                },
+                carefulBreakMode -> (byte) carefulBreakMode.ordinal()
+        );
+
         public boolean isActive(PlayerEntity player) {
             return ServerSettings.CAREFUL_BREAK.value() && switch (this) {
                 case NEVER -> false;
@@ -26,7 +38,7 @@ public final class PlayerSettings {
         }
     }
 
-    public static final PlayerConfigValueWrapper<CAREFUL_BREAK_MODE> CAREFUL_BREAK = ConfigValue.of(CAREFUL_BREAK_MODE.NEVER)
+    public static final PlayerConfigValueWrapper<CAREFUL_BREAK_MODE> CAREFUL_BREAK = ConfigValue.of(CAREFUL_BREAK_MODE.NEVER, CAREFUL_BREAK_MODE.CODEC)
             .test(Objects::nonNull)
             .player();
 }

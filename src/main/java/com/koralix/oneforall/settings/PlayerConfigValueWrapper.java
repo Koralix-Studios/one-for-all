@@ -1,5 +1,6 @@
 package com.koralix.oneforall.settings;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ public class PlayerConfigValueWrapper<T> implements ConfigValue<T> {
     private final T nominalValue;
     private final ConfigValidator<T> validator;
     private final Predicate<ServerCommandSource> permission;
+    private final Codec<T> codec;
 
     SettingEntry<T> entry = null;
 
@@ -32,7 +34,8 @@ public class PlayerConfigValueWrapper<T> implements ConfigValue<T> {
             @NotNull Class<T> clazz,
             T nominalValue,
             @NotNull ConfigValidator<T> validator,
-            @NotNull Predicate<ServerCommandSource> permission
+            @NotNull Predicate<ServerCommandSource> permission,
+            Codec<T> codec
     ) {
         Text err = validator.test(nominalValue);
         if (err != null) throw new IllegalArgumentException(err.getString());
@@ -41,6 +44,7 @@ public class PlayerConfigValueWrapper<T> implements ConfigValue<T> {
         this.nominalValue = nominalValue;
         this.validator = validator;
         this.permission = permission;
+        this.codec = codec;
     }
 
     @Override
@@ -121,6 +125,11 @@ public class PlayerConfigValueWrapper<T> implements ConfigValue<T> {
     @Override
     public Class<T> clazz() {
         return this.clazz;
+    }
+
+    @Override
+    public Codec<T> codec() {
+        return this.codec;
     }
 
     private @Nullable Text tested(T value, Runnable action) {

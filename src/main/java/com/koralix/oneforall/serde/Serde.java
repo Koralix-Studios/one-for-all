@@ -46,6 +46,13 @@ public final class Serde {
     }
 
     public static <T> void serialize(PacketByteBuf buf, T value) {
+        if (value == null) throw new IllegalArgumentException("Cannot serialize null value");
+
+        if (Serialize.class.isAssignableFrom(value.getClass())) {
+            ((Serialize) value).serialize(buf);
+            return;
+        }
+
         @SuppressWarnings("unchecked")
         BiConsumer<PacketByteBuf, T> serializer = (BiConsumer<PacketByteBuf, T>) SERIALIZERS.get(value.getClass());
         if (serializer == null) throw new IllegalArgumentException("No serializer for class " + value.getClass().getName());
@@ -53,6 +60,7 @@ public final class Serde {
     }
 
     public static <T> T deserialize(PacketByteBuf buf, Class<T> clazz) {
+
         @SuppressWarnings("unchecked")
         Function<PacketByteBuf, T> deserializer = (Function<PacketByteBuf, T>) DESERIALIZERS.get(clazz);
         if (deserializer == null) throw new IllegalArgumentException("No deserializer for class " + clazz.getName());
