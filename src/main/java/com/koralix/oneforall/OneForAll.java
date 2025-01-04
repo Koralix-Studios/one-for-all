@@ -1,52 +1,31 @@
 package com.koralix.oneforall;
 
 import com.koralix.oneforall.commands.Commands;
-import com.koralix.oneforall.platform.ModMetadata;
-import com.koralix.oneforall.platform.Platform;
+import com.koralix.oneforall.settings.PlayerSettings;
+import com.koralix.oneforall.settings.ServerSettings;
+import com.koralix.oneforall.settings.SettingsManager;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
-public abstract class OneForAll {
-    public static final String MOD_ID = "oneforall";
-    private static final Random random = new Random();
+public class OneForAll implements ModInitializer {
+    public static final String MOD_ID = /*$ mod_id*/ "oneforall";
+    public static final String MOD_VERSION = /*$ mod_version*/ "0.1.0";
+    public static final String MOD_NAME = /*$ mod_name*/ "One For All";
 
-    private final Logger logger = LoggerFactory.getLogger("OneForAll");
-    private final Platform platform;
-    private final ModMetadata metadata;
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
+    public static final Random RANDOM = new Random();
 
-    public static OneForAll getInstance() {
-        return Initializer.instance;
-    }
+    @Override
+    public void onInitialize() {
+        LOGGER.info("Initializing OneForAll...");
 
-    public static Random rng() {
-        return random;
-    }
-
-    public OneForAll(Platform platform) {
-        this.platform = platform;
-        this.metadata = platform.getMetadata(MOD_ID);
-    }
-
-    public final void initialize() {
         CommandRegistrationCallback.EVENT.register(Commands::register);
 
-        onInitialize();
-    }
-
-    abstract void onInitialize();
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public Platform getPlatform() {
-        return platform;
-    }
-
-    public ModMetadata getMetadata() {
-        return metadata;
+        SettingsManager.register(ServerSettings.class);
+        SettingsManager.register(PlayerSettings.class);
     }
 }

@@ -35,7 +35,7 @@ public class BlockMixin {
                     Item item = itemStack.getItem();
                     int itemAmount = itemStack.getCount();
                     if (((PlayerEntity) entity).getInventory().insertStack(itemStack)) {
-                        world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2f, (OneForAll.rng().nextFloat() - OneForAll.rng().nextFloat()) * 1.4F + 2.0F);
+                        world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2f, (OneForAll.RANDOM.nextFloat() - OneForAll.RANDOM.nextFloat()) * 1.4F + 2.0F);
                         ((PlayerEntity) entity).increaseStat(Stats.PICKED_UP.getOrCreateStat(item), itemAmount);
                     } else {
                         Block.dropStack(world, pos, itemStack);

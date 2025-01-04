@@ -42,7 +42,7 @@ public class ClientLoginManager {
         }
 
         PacketByteBuf response = PacketByteBufs.create();
-        response.writeString(OneForAll.getInstance().getMetadata().version());
+        response.writeString(OneForAll.MOD_VERSION);
         return CompletableFuture.completedFuture(response);
     }
 

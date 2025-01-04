@@ -40,7 +40,7 @@ public enum Language {
     Language(String code) throws IllegalArgumentException {
         this.code = code;
 
-        OneForAll.getInstance().getLogger().info("Loading translations from {}", code);
+        OneForAll.LOGGER.info("Loading translations from {}", code);
 
         Map<String, String> translationMap = new HashMap<>();
         String languageFile = "/assets/oneforall/lang/" + code + ".json";

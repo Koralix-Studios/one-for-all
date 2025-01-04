@@ -29,11 +29,10 @@ public class ServerLoginManager {
     }
 
     private static PacketByteBuf createHelloPacket() {
-        String modVersion = OneForAll.getInstance().getMetadata().version();
         boolean enforceProtocol = ServerSettings.ENFORCE_PROTOCOL.value();
 
         PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeString(modVersion);
+        buf.writeString(OneForAll.MOD_VERSION);
         buf.writeBoolean(enforceProtocol);
 
         return buf;
@@ -98,7 +97,7 @@ public class ServerLoginManager {
         // If understood
         Optional<String> version = readSafe(buf, PacketByteBuf::readString);
         Optional<Language> language = readSafe(buf, PacketByteBuf::readString).map(Language::fromCode);
-        OneForAll.getInstance().getLogger().debug("Client connected with version: {}", version);
+        OneForAll.LOGGER.debug("Client connected with version: {}", version);
 
         session.modVersion(version.orElse(null));
         session.language(language.orElse(null));
