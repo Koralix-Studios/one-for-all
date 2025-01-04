@@ -1,6 +1,6 @@
 package com.koralix.oneforall.network;
 
-import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.Initializer;
 import com.koralix.oneforall.lang.Language;
 import com.koralix.oneforall.settings.ServerSettings;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -29,18 +29,17 @@ public class ServerLoginManager {
     }
 
     private static PacketByteBuf createHelloPacket() {
-        String modVersion = OneForAll.getInstance().getMetadata().version();
         boolean enforceProtocol = ServerSettings.ENFORCE_PROTOCOL.value();
 
         PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeString(modVersion);
+        buf.writeString(Initializer.MOD_VERSION);
         buf.writeBoolean(enforceProtocol);
 
         return buf;
     }
 
     public static Identifier getChannel(String name) {
-        return Identifier.of(OneForAll.MOD_ID, name);
+        return Identifier.of(Initializer.MOD_ID, name);
     }
 
     private static void onQueryStart(
@@ -98,7 +97,7 @@ public class ServerLoginManager {
         // If understood
         Optional<String> version = readSafe(buf, PacketByteBuf::readString);
         Optional<Language> language = readSafe(buf, PacketByteBuf::readString).map(Language::fromCode);
-        OneForAll.getInstance().getLogger().debug("Client connected with version: {}", version);
+        Initializer.LOGGER.debug("Client connected with version: {}", version);
 
         session.modVersion(version.orElse(null));
         session.language(language.orElse(null));

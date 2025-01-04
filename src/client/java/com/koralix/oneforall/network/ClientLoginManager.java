@@ -1,6 +1,6 @@
 package com.koralix.oneforall.network;
 
-import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.Initializer;
 import com.koralix.oneforall.settings.ClientSettings;
 import com.koralix.oneforall.settings.ProtocolUsageConditions;
 import io.netty.util.concurrent.Future;
@@ -42,7 +42,7 @@ public class ClientLoginManager {
         }
 
         PacketByteBuf response = PacketByteBufs.create();
-        response.writeString(OneForAll.getInstance().getMetadata().version());
+        response.writeString(Initializer.MOD_VERSION);
         return CompletableFuture.completedFuture(response);
     }
 

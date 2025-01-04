@@ -1,6 +1,6 @@
 package com.koralix.oneforall.settings;
 
-import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.Initializer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface SettingsRegistry {
     String id();
-    String namespace() default OneForAll.MOD_ID;
+    String namespace() default Initializer.MOD_ID;
     Env env() default Env.SERVER;
 
     enum Env {

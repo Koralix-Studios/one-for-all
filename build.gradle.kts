@@ -1,5 +1,8 @@
 plugins {
-    id("dev.architectury.loom") version("1.7-SNAPSHOT")
+    `maven-publish`
+    id("fabric-loom")
+    //id("dev.kikugie.j52j")
+    //id("me.modmuss50.mod-publish-plugin")
 }
 
 class ModData {
@@ -7,30 +10,23 @@ class ModData {
     val name = property("mod.name").toString()
     val version = property("mod.version").toString()
     val group = property("mod.group").toString()
-    val minecraftDependency = property("minecraft.dependency").toString()
-    val minMinecraft = property("minecraft.min").toString()
-    val maxMinecraft = property("minecraft.max").toString()
-}
-
-class LoaderData {
-    private val name = loom.platform.get().name.lowercase()
-    val isFabric = name == "fabric"
-
-    override fun toString(): String {
-        return name
-    }
 }
 
 class MinecraftVersionData {
-    private val name = stonecutter.current.version.substringBeforeLast("-")
+    private val name = stonecutter.current.version
     val javaVersion = if (greaterThan("1.20.4")) 21 else 17
+    val dependency = property("minecraft.dependency").toString()
+    val min = property("minecraft.min").toString()
+    val max = property("minecraft.max").toString()
+    val title = property("minecraft.title").toString()
+    val targets = property("minecraft.targets").toString()
 
     fun greaterThan(version: String): Boolean {
-        return stonecutter.compare(name, version.lowercase()) > 0
+        return stonecutter.eval(name, ">${version.lowercase()}")
     }
 
     fun lessThan(version: String): Boolean {
-        return stonecutter.compare(name, version.lowercase()) < 0
+        return stonecutter.eval(name, "<${version.lowercase()}")
     }
 
     override fun toString(): String {
@@ -38,32 +34,24 @@ class MinecraftVersionData {
     }
 }
 
+class FabricData {
+    val loader = property("fabric.loader").toString()
+    val api = property("fabric.api").toString()
+    val yarn = property("fabric.yarn").toString()
+}
+
+class ModDependencies {
+    operator fun get(name: String) = property("deps.$name").toString()
+}
+
 val mod = ModData()
-val loader = LoaderData()
 val minecraftVersion = MinecraftVersionData()
+val fabric = FabricData()
+val deps = ModDependencies()
 
-version = "${mod.version}-$loader+$minecraftVersion"
+version = "${mod.version}+$minecraftVersion"
 group = mod.group
-base {
-    archivesName.set(mod.name)
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    minecraft("com.mojang:minecraft:$minecraftVersion")
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
-
-    testImplementation("it.unimi.dsi:fastutil:8.5.9")
-}
-
-tasks.named<Test>("test") {
-    useJUnitPlatform()
-}
+base { archivesName.set(mod.id) }
 
 loom {
     accessWidenerPath = file("../../src/main/resources/${mod.id}.accesswidener")
@@ -78,51 +66,74 @@ loom {
     }
 }
 
-tasks.withType<JavaCompile> {
-    options.release = minecraftVersion.javaVersion
+repositories {
+    fun strictMaven(url: String, alias: String, vararg groups: String) = exclusiveContent {
+        forRepository { maven(url) { name = alias } }
+        filter { groups.forEach(::includeGroup) }
+    }
+    strictMaven("https://www.cursemaven.com", "CurseForge", "curse.maven")
+    strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
+}
+
+dependencies {
+    fun fapi(vararg modules: String) = modules.forEach {
+        modImplementation(fabricApi.module(it, fabric.api))
+    }
+
+    minecraft("com.mojang:minecraft:$minecraftVersion")
+    mappings("net.fabricmc:yarn:$minecraftVersion+build.${fabric.yarn}:v2")
+    modImplementation("net.fabricmc:fabric-loader:${fabric.loader}")
+
+//    fapi(
+//        // Add modules from https://github.com/FabricMC/fabric
+//        "fabric-api-base",
+//        "fabric-lifecycle-events-v1",
+//        "fabric-command-api-v1",
+//        "fabric-networking-api-v1",
+//    )
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric.api}")
+}
+
+loom {
+    decompilers {
+        get("vineflower").apply { // Adds names to lambdas - useful for mixins
+            options.put("mark-corresponding-synthetics", "1")
+        }
+    }
+
+    runConfigs.all {
+        ideConfigGenerated(true)
+        vmArgs("-Dmixin.debug.export=true")
+        runDir = "run"
+    }
 }
 
 java {
     withSourcesJar()
-
-    sourceCompatibility = JavaVersion.toVersion(minecraftVersion.javaVersion)
-    targetCompatibility = JavaVersion.toVersion(minecraftVersion.javaVersion)
+    val java = JavaVersion.toVersion(minecraftVersion.javaVersion)
+    targetCompatibility = java
+    sourceCompatibility = java
 }
 
-val buildAndCollect = tasks.register<Copy>("buildAndCollect") {
+tasks.processResources {
+    inputs.property("id", mod.id)
+    inputs.property("name", mod.name)
+    inputs.property("version", mod.version)
+    inputs.property("minecraft_dependency", minecraftVersion.dependency)
+
+    val map = mapOf(
+        "id" to mod.id,
+        "name" to mod.name,
+        "version" to mod.version,
+        "minecraft_dependency" to minecraftVersion.dependency,
+    )
+
+    filesMatching("fabric.mod.json") { expand(map) }
+}
+
+tasks.register<Copy>("buildAndCollect") {
     group = "build"
     from(tasks.remapJar.get().archiveFile)
     into(rootProject.layout.buildDirectory.file("libs/${mod.version}"))
     dependsOn("build")
-}
-
-if (stonecutter.current.isActive) {
-    rootProject.tasks.register("buildActive") {
-        group = "project"
-        dependsOn(buildAndCollect)
-    }
-}
-
-if (loader.isFabric) {
-    dependencies {
-        modImplementation("net.fabricmc:fabric-loader:${property("fabric.loader")}")
-        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric.api")}")
-
-        mappings("net.fabricmc:yarn:$minecraftVersion+build.${property("fabric.yarn")}:v2")
-    }
-
-    tasks.processResources {
-        val map = mapOf(
-            "id" to mod.id,
-            "name" to mod.name,
-            "version" to mod.version,
-            "group" to mod.group,
-            "minecraft_dependency" to mod.minecraftDependency,
-        )
-
-        inputs.properties(map)
-        filesMatching("fabric.mod.json") {
-            expand(map)
-        }
-    }
 }

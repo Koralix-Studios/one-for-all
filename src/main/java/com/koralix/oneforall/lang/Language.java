@@ -2,7 +2,7 @@ package com.koralix.oneforall.lang;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.Initializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
@@ -40,7 +40,7 @@ public enum Language {
     Language(String code) throws IllegalArgumentException {
         this.code = code;
 
-        OneForAll.getInstance().getLogger().info("Loading translations from {}", code);
+        Initializer.LOGGER.info("Loading translations from {}", code);
 
         Map<String, String> translationMap = new HashMap<>();
         String languageFile = "/assets/oneforall/lang/" + code + ".json";

@@ -5,18 +5,18 @@
     "name": "${name}",
     "description": "One Mod to rule them all, One Mod to find them, One Mod to bring them all and in the darkness bind them.",
     "authors": [
-        "JohanVonElectrum"
+        "JohanVonElectrum", "ArtikGz"
     ],
     "environment": "*",
     "entrypoints": {
         "main": [
-            "${group}.Initializer"
+            "com.koralix.oneforall.Initializer"
         ],
         "client": [
-            "${group}.ClientInitializer"
+            "com.koralix.oneforall.ClientInitializer"
         ],
         "server": [
-            "${group}.ServerInitializer"
+            "com.koralix.oneforall.ServerInitializer"
         ]
     },
     "mixins": [
