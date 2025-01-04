@@ -10,7 +10,7 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.koralix.oneforall.Initializer"
+            "com.koralix.oneforall.OneForAll"
         ],
         "client": [
             "com.koralix.oneforall.ClientInitializer"

@@ -9,18 +9,15 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.random.RandomGenerator;
+import java.util.Random;
 
-public class Initializer implements ModInitializer {
+public class OneForAll implements ModInitializer {
     public static final String MOD_ID = /*$ mod_id*/ "oneforall";
     public static final String MOD_VERSION = /*$ mod_version*/ "0.1.0";
     public static final String MOD_NAME = /*$ mod_name*/ "One For All";
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
-
-    public static RandomGenerator rng() {
-        return RandomGenerator.getDefault();
-    }
+    public static final Random RANDOM = new Random();
 
     @Override
     public void onInitialize() {
