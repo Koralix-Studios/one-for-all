@@ -1,5 +1,6 @@
 package com.koralix.oneforall.settings;
 
+import com.koralix.oneforall.settings.registry.ConfigValueEntry;
 import com.mojang.serialization.Codec;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -57,6 +58,11 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
             if (!defaultValue().equals(value)) return validate(value, v -> values.put(uuid, v));
             values.remove(uuid);
             return Optional.empty();
+        }
+
+        @Override
+        public ConfigValueEntry<T> entry() {
+            return PlayerConfigValue.this.entry();
         }
 
         @Override

@@ -1,7 +1,6 @@
 package com.koralix.oneforall.settings;
 
 import com.koralix.oneforall.OneForAll;
-import com.koralix.oneforall.settings.registry.ConfigValueEntry;
 import com.koralix.oneforall.settings.registry.ConfigValueRegistry;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -50,7 +49,7 @@ public final class SettingsManager {
         SETTINGS_REGISTRY.freeze();
     }
 
-    public static void forEach(Consumer<ConfigValueEntry<?>> action) {
+    public static void forEach(Consumer<ConfigValue<?>> action) {
         SETTINGS_REGISTRY.forEach(registry -> registry.forEach(action));
     }
 }

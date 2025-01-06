@@ -1,5 +1,6 @@
 package com.koralix.oneforall.settings.registry;
 
+import com.koralix.oneforall.settings.AbstractConfigValue;
 import com.koralix.oneforall.settings.ConfigValue;
 import net.minecraft.util.Identifier;
 
@@ -26,13 +27,14 @@ public class ConfigValueRegistry {
         return new Identifier(modid + "." + path, id);
     }
 
-    public void register(String id, ConfigValue<?> value) {
+    public <T> void register(String id, ConfigValue<T> value) {
         if (frozen) {
             throw new IllegalStateException("Registry is frozen");
         }
         if (registry.containsKey(id)) {
             throw new IllegalArgumentException("Duplicate key: " + id);
         }
+        ((AbstractConfigValue<T>) value).entry(new ConfigValueEntry<>(this, id, value));
         registry.put(id, value);
     }
 
@@ -40,7 +42,7 @@ public class ConfigValueRegistry {
         frozen = true;
     }
 
-    public void forEach(Consumer<ConfigValueEntry<?>> action) {
-        registry.forEach((id, value) -> action.accept(new ConfigValueEntry<>(this, id, value)));
+    public void forEach(Consumer<ConfigValue<?>> action) {
+        registry.values().forEach(action);
     }
 }

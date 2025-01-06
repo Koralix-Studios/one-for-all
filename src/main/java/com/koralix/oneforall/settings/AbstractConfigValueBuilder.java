@@ -3,7 +3,6 @@ package com.koralix.oneforall.settings;
 import com.mojang.serialization.Codec;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.function.Predicate;
 
@@ -36,10 +35,6 @@ public abstract class AbstractConfigValueBuilder<T, C extends ConfigValue<T>> {
     public AbstractConfigValueBuilder<T, C> permission(Predicate<CommandSource> predicate) {
         this.permission = this.permission.and(predicate);
         return this;
-    }
-
-    public AbstractConfigValueBuilder<T, C> permission(String permission) {
-        throw new NotImplementedException("Not implemented yet");
     }
 
     public abstract C build();

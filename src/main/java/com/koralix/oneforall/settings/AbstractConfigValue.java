@@ -1,12 +1,16 @@
 package com.koralix.oneforall.settings;
 
+import com.koralix.oneforall.settings.registry.ConfigValueEntry;
+import com.koralix.oneforall.utils.OnceCell;
 import com.mojang.serialization.Codec;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
+    private final OnceCell<ConfigValueEntry<T>> entry = new OnceCell<>();
     private final T nominalValue;
     private final Codec<T> codec;
     private final ConfigValidator<T> validator;
@@ -15,6 +19,16 @@ public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
         this.nominalValue = nominalValue;
         this.codec = codec;
         this.validator = validator;
+    }
+
+    @Override
+    public ConfigValueEntry<T> entry() {
+        return entry.get();
+    }
+
+    @ApiStatus.Internal
+    public void entry(ConfigValueEntry<T> entry) {
+        this.entry.set(entry);
     }
 
     @Override

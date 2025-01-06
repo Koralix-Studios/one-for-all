@@ -1,5 +1,6 @@
 package com.koralix.oneforall.settings;
 
+import com.koralix.oneforall.settings.registry.ConfigValueEntry;
 import com.mojang.serialization.Codec;
 import net.minecraft.text.Text;
 
@@ -7,6 +8,14 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public interface ConfigValue<T> {
+    /**
+     * Retrieves the entry associated with this config value.
+     * This entry represents the config value inside a particular ConfigValueRegistry.
+     *
+     * @return the config value entry
+     */
+    ConfigValueEntry<T> entry();
+
     /**
      * The nominal id of this config id.
      * This id is used when the config id is not present in the config file.
