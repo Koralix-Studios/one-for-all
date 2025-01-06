@@ -59,26 +59,6 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
             values.remove(uuid);
             return Optional.empty();
         }
-
-        @Override
-        public ConfigValueEntry<T> entry() {
-            return PlayerConfigValue.this.entry();
-        }
-
-        @Override
-        public T nominalValue() {
-            return PlayerConfigValue.this.nominalValue();
-        }
-
-        @Override
-        public Codec<T> codec() {
-            return PlayerConfigValue.this.codec();
-        }
-
-        @Override
-        public Optional<Text> validate(T value, Consumer<T> action) {
-            return PlayerConfigValue.this.validate(value, action);
-        }
     }
 
     public static final class Builder<T> extends AbstractConfigValueBuilder<T, PlayerConfigValue<T>> {
