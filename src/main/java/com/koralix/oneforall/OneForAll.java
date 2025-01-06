@@ -6,6 +6,7 @@ import com.koralix.oneforall.settings.ServerSettings;
 import com.koralix.oneforall.settings.SettingsManager;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +20,17 @@ public class OneForAll implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
     public static final Random RANDOM = new Random();
 
+    public static Identifier id(String settings) {
+        return new Identifier(MOD_ID, settings);
+    }
+
     @Override
     public void onInitialize() {
         LOGGER.info("Initializing OneForAll...");
 
         CommandRegistrationCallback.EVENT.register(Commands::register);
 
-        SettingsManager.register(ServerSettings.class);
-        SettingsManager.register(PlayerSettings.class);
+        SettingsManager.register(id("server"), ServerSettings.class);
+        SettingsManager.register(id("player"), PlayerSettings.class);
     }
 }

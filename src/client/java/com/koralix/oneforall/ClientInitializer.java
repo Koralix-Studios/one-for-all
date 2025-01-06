@@ -14,7 +14,7 @@ public class ClientInitializer implements ClientModInitializer {
 
         ClientCommandRegistrationCallback.EVENT.register(ClientCommands::register);
 
-        SettingsManager.register(ClientSettings.class);
+        SettingsManager.register(OneForAll.id("client"), ClientSettings.class);
 
         ClientLoginManager.init();
     }

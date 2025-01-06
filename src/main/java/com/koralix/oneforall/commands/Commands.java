@@ -40,6 +40,6 @@ public final class Commands {
             CommandRegistryAccess registryAccess,
             CommandManager.RegistrationEnvironment environment
     ) {
-        OfaCommand.register(dispatcher, registryAccess, environment);
+        // OfaCommand.register(dispatcher, registryAccess, environment);
     }
 }

@@ -92,6 +92,8 @@ dependencies {
 //        "fabric-networking-api-v1",
 //    )
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric.api}")
+
+    modImplementation("me.lucko:fabric-permissions-api:0.3.3")
 }
 
 loom {

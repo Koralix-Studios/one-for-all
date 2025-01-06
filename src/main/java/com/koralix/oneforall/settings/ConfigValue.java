@@ -1,140 +1,44 @@
 package com.koralix.oneforall.settings;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public interface ConfigValue<T> {
-    @Contract(value = "_, _ -> new", pure = true)
-    static <T> @NotNull ConfigValueBuilder<T> of(@NotNull T value, @NotNull Codec<T> codec) {
-        return new ConfigValueBuilder<>(value, codec);
-    }
-
-    @Contract(value = "_, _ -> new", pure = true)
-    static <T> @NotNull ConfigValueBuilder<T> ofNull(@NotNull Class<T> clazz, @NotNull Codec<T> codec) {
-        return new ConfigValueBuilder<>(clazz, codec);
-    }
-
     /**
-     * Get the registry of the config value
+     * The nominal id of this config id.
+     * This id is used when the config id is not present in the config file.
      *
-     * @return the registry of the config value
-     */
-    SettingsRegistry registry();
-
-    /**
-     * Get the identifier of the config value
-     *
-     * @return the identifier of the config value
-     */
-    SettingEntry<T> entry();
-
-    /**
-     * Test if the user satisfies the permission predicate
-     *
-     * @return whether the user satisfies the permission predicate
-     */
-    boolean permission(ServerCommandSource source);
-
-    /**
-     * Reset the config value to the default value
-     *
-     * @return if the config value was reset successfully
-     */
-    default void reset() {
-        value(defaultValue());
-    }
-
-    /**
-     * Restore the config value to standard settings
-     *
-     * @return if the config value was restored successfully
-     */
-    default void restore() {
-        defaultValue(nominalValue());
-        reset();
-    }
-
-    /**
-     * Get the nominal value of the config value
-     *
-     * @return the nominal value
+     * @return the nominal id of this config id
      */
     T nominalValue();
 
     /**
-     * Get the default value of the config value
+     * The codec of this config id.
+     * This codec is used to serialize and deserialize the config id.
      *
-     * @return the default value
+     * @return the codec of this config id
      */
-    T defaultValue();
-
-    /**
-     * Set the default value of the config value
-     *
-     * @param value the new default value
-     * @return if the default value was set successfully
-     */
-    Text defaultValue(T value);
-
-    /**
-     * Get the current value of the config value
-     *
-     * @return the current value
-     */
-    T value();
-
-
-    /**
-     * Set the current value of the config value
-     *
-     * @param value the new value
-     * @return if the value was set successfully
-     */
-    Text value(T value);
-
-    /**
-     * Get the class of the config value
-     *
-     * @return the class of the config value
-     */
-    Class<T> clazz();
-
-    default <V> void serialize(DynamicOps<V> ops, Consumer<V> consumer) {
-        Codec<T> defaultCodec = codec().fieldOf("default").codec();
-        Codec<T> valueCodec = codec().fieldOf("value").codec();
-        Codec<Pair<T, T>> codec = Codec.pair(defaultCodec, valueCodec);
-
-        codec.encodeStart(ops, Pair.of(defaultValue(), value())).result().ifPresentOrElse(
-                consumer,
-                () -> {
-                    throw new IllegalStateException("Failed to serialize config value");
-                }
-        );
-    }
-
-    default <V> void deserialize(DynamicOps<V> ops, V input) {
-        Codec<T> defaultCodec = codec().fieldOf("default").codec();
-        Codec<T> valueCodec = codec().fieldOf("value").codec();
-        Codec<Pair<T, T>> codec = Codec.pair(defaultCodec, valueCodec);
-        DataResult<Pair<T, T>> result = codec.parse(ops, input);
-        result.result().ifPresentOrElse(
-                pair -> {
-                    defaultValue(pair.getFirst());
-                    value(pair.getSecond());
-                },
-                () -> {
-                    throw new IllegalStateException("Failed to deserialize config value");
-                }
-        );
-    }
-
     Codec<T> codec();
+
+    /**
+     * Validate the given id.
+     * If the id is valid, the id is accepted and the action is performed.
+     * If the id is invalid, the id is rejected and the error message is returned.
+     *
+     * @param value the id to validate
+     * @param action the action to perform if the id is valid
+     * @return the error message if the id is invalid, otherwise empty
+     */
+    Optional<Text> validate(T value, Consumer<T> action);
+
+    static <T> SingletonConfigValue.Builder<T> singleton(T nominalValue, Codec<T> codec) {
+        return new SingletonConfigValue.Builder<>(nominalValue, codec);
+    }
+
+    static <T> PlayerConfigValue.Builder<T> player(T nominalValue, Codec<T> codec) {
+        return new PlayerConfigValue.Builder<>(nominalValue, codec);
+    }
 }

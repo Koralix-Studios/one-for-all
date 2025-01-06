@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Objects;
 
-@SettingsRegistry(id = "player_settings", env = SettingsRegistry.Env.SERVER)
 public final class PlayerSettings {
     private PlayerSettings() {
         throw new UnsupportedOperationException("Cannot instantiate settings class");
@@ -38,7 +37,7 @@ public final class PlayerSettings {
         }
     }
 
-    public static final PlayerConfigValueWrapper<CAREFUL_BREAK_MODE> CAREFUL_BREAK = ConfigValue.of(CAREFUL_BREAK_MODE.NEVER, CAREFUL_BREAK_MODE.CODEC)
+    public static final PlayerConfigValue<CAREFUL_BREAK_MODE> CAREFUL_BREAK = ConfigValue.player(CAREFUL_BREAK_MODE.NEVER, CAREFUL_BREAK_MODE.CODEC)
             .test(Objects::nonNull)
-            .player();
+            .build();
 }

@@ -2,10 +2,11 @@ package com.koralix.oneforall.settings;
 
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @FunctionalInterface
 public interface ConfigValidator<T> {
-    Text test(T value);
+    @Nullable Text test(T value);
 
     default ConfigValidator<T> and(@NotNull ConfigValidator<T> other) {
         return value -> {
@@ -19,7 +20,7 @@ public interface ConfigValidator<T> {
             Text a = test(value);
             if (a == null) return null;
             Text b = other.test(value);
-            return b == null ? null : Text.literal("- ").append(a).append("\n- ").append(b);
+            return b == null ? null : Text.literal("[").append(a).append(" || ").append(b).append("]");
         };
     }
 }
