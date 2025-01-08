@@ -1,6 +1,7 @@
 package com.koralix.oneforall.settings;
 
 import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.settings.registry.ConfigValueEnvironment;
 import com.koralix.oneforall.settings.registry.ConfigValueRegistry;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -12,6 +13,7 @@ import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Field;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public final class SettingsManager {
     public static final RegistryKey<Registry<ConfigValueRegistry>> SETTINGS_REGISTRY_KEY = RegistryKey.ofRegistry(OneForAll.id("settings"));
@@ -29,8 +31,8 @@ public final class SettingsManager {
         SETTINGS_REGISTRY.add(key, registry, Lifecycle.stable());
     }
 
-    public static void register(Identifier registryId, Class<?> clazz) {
-        ConfigValueRegistry registry = new ConfigValueRegistry(registryId);
+    public static void register(Identifier registryId, Class<?> clazz, ConfigValueEnvironment environment) {
+        ConfigValueRegistry registry = new ConfigValueRegistry(registryId, environment);
         for (Field field : clazz.getDeclaredFields()) {
             if (ConfigValue.class.isAssignableFrom(field.getType())) {
                 try {
@@ -51,5 +53,13 @@ public final class SettingsManager {
 
     public static void forEach(Consumer<ConfigValue<?>> action) {
         SETTINGS_REGISTRY.forEach(registry -> registry.forEach(action));
+    }
+
+    public static void forEach(Predicate<ConfigValueRegistry> predicate, Consumer<ConfigValue<?>> action) {
+        SETTINGS_REGISTRY.forEach(registry -> {
+            if (predicate.test(registry)) {
+                registry.forEach(action);
+            }
+        });
     }
 }

@@ -10,15 +10,21 @@ import java.util.function.Consumer;
 
 public class ConfigValueRegistry {
     private final Identifier id;
+    private final ConfigValueEnvironment environment;
     private final Map<String, ConfigValue<?>> registry = new HashMap<>();
     private boolean frozen = false;
 
-    public ConfigValueRegistry(Identifier id) {
+    public ConfigValueRegistry(Identifier id, ConfigValueEnvironment environment) {
         this.id = id;
+        this.environment = environment;
     }
 
     public Identifier id() {
         return id;
+    }
+
+    public ConfigValueEnvironment environment() {
+        return environment;
     }
 
     public Identifier id(String id) {

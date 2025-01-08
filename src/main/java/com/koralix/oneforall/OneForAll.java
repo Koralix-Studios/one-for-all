@@ -4,6 +4,7 @@ import com.koralix.oneforall.commands.Commands;
 import com.koralix.oneforall.settings.PlayerSettings;
 import com.koralix.oneforall.settings.ServerSettings;
 import com.koralix.oneforall.settings.SettingsManager;
+import com.koralix.oneforall.settings.registry.ConfigValueEnvironment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.util.Identifier;
@@ -30,7 +31,7 @@ public class OneForAll implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register(Commands::register);
 
-        SettingsManager.register(id("server"), ServerSettings.class);
-        SettingsManager.register(id("player"), PlayerSettings.class);
+        SettingsManager.register(id("server"), ServerSettings.class, ConfigValueEnvironment.SERVER);
+        SettingsManager.register(id("player"), PlayerSettings.class, ConfigValueEnvironment.SERVER);
     }
 }
