@@ -1,6 +1,5 @@
 package com.koralix.oneforall.settings;
 
-import com.koralix.oneforall.settings.registry.ConfigValueEntry;
 import com.mojang.serialization.Codec;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -9,9 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 
-public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity, T, PlayerConfigValue<T>> {
+public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity, T> {
     private final Map<UUID, T> defaults = new HashMap<>();
     private final Map<UUID, T> values = new HashMap<>();
 
@@ -20,20 +18,15 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
     }
 
     @Override
-    public ConfigValueView<T, PlayerConfigValue<T>> view(PlayerEntity player) {
+    public ConfigValueView<T> view(PlayerEntity player) {
         return new PlayerConfigValueView(player.getUuid());
     }
 
-    public final class PlayerConfigValueView implements ConfigValueView<T, PlayerConfigValue<T>> {
+    public final class PlayerConfigValueView implements ConfigValueView<T> {
         private final UUID uuid;
 
         public PlayerConfigValueView(UUID uuid) {
             this.uuid = uuid;
-        }
-
-        @Override
-        public PlayerConfigValue<T> configValue() {
-            return PlayerConfigValue.this;
         }
 
         @Override

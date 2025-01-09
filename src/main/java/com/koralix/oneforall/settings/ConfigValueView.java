@@ -4,15 +4,7 @@ import net.minecraft.text.Text;
 
 import java.util.Optional;
 
-public interface ConfigValueView<T, C extends ConfigValue<T>> {
-    /**
-     * The config id of this config id view.
-     * This id is used to determine the config id of the config id view.
-     *
-     * @return the config id of this config id view
-     */
-    C configValue();
-
+public interface ConfigValueView<T> {
     /**
      * The default id of this config id.
      * This id is used to determine the default id of the config id.

@@ -5,7 +5,7 @@ import net.minecraft.text.Text;
 
 import java.util.Optional;
 
-public abstract class AbstractMultiConfigValue<K, T, C extends AbstractMultiConfigValue<K, T, C>> extends AbstractConfigValue<T> implements MultiConfigValue<K, T, C> {
+public abstract class AbstractMultiConfigValue<K, T> extends AbstractConfigValue<T> implements MultiConfigValue<K, T> {
     public AbstractMultiConfigValue(T nominalValue, Codec<T> codec, ConfigValidator<T> validator) {
         super(nominalValue, codec, validator);
     }

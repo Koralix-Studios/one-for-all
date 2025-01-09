@@ -1,11 +1,11 @@
 package com.koralix.oneforall.settings;
 
-public interface MultiConfigValue<K, T, C extends MultiConfigValue<K, T, C>> extends ConfigValue<T> {
+public interface MultiConfigValue<K, T> extends ConfigValue<T> {
     /**
-     * Get the config id view for the given id.
+     * Get the config value view for the given key.
      *
-     * @param key the id of the config id view
-     * @return the config id view for the given id
+     * @param key the key of the config value view
+     * @return the config value view for the given key
      */
-    ConfigValueView<T, C> view(K key);
+    ConfigValueView<T> view(K key);
 }

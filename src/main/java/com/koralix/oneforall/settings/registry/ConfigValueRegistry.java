@@ -33,15 +33,15 @@ public class ConfigValueRegistry {
         return new Identifier(modid + "." + path, id);
     }
 
-    public <T> void register(String id, ConfigValue<T> value) {
+    public <T> void register(String id, ConfigValue<T> configValue) {
         if (frozen) {
             throw new IllegalStateException("Registry is frozen");
         }
         if (registry.containsKey(id)) {
             throw new IllegalArgumentException("Duplicate key: " + id);
         }
-        ((AbstractConfigValue<T>) value).entry(new ConfigValueEntry<>(this, id, value));
-        registry.put(id, value);
+        ((AbstractConfigValue<T>) configValue).entry(new ConfigValueEntry<>(this, id, configValue));
+        registry.put(id, configValue);
     }
 
     public void freeze() {

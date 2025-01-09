@@ -21,6 +21,7 @@ public final class SettingsManager {
             .createSimple(SETTINGS_REGISTRY_KEY)
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
+    public static final Registry<ConfigValueRegistry> REGISTRIES = SETTINGS_REGISTRY;
 
     private SettingsManager() {
         throw new UnsupportedOperationException("Cannot instantiate utility class");

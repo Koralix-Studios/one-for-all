@@ -3,7 +3,7 @@ package com.koralix.oneforall.settings.registry;
 import com.koralix.oneforall.settings.ConfigValue;
 import net.minecraft.util.Identifier;
 
-public record ConfigValueEntry<T>(ConfigValueRegistry registry, String id, ConfigValue<T> value) {
+public record ConfigValueEntry<T>(ConfigValueRegistry registry, String id, ConfigValue<T> configValue) {
     public ConfigValueEntry {
         if (registry == null) {
             throw new IllegalArgumentException("Registry cannot be null");
@@ -11,7 +11,7 @@ public record ConfigValueEntry<T>(ConfigValueRegistry registry, String id, Confi
         if (id == null) {
             throw new IllegalArgumentException("Key cannot be null");
         }
-        if (value == null) {
+        if (configValue == null) {
             throw new IllegalArgumentException("Value cannot be null");
         }
         if (id.contains(".")) {

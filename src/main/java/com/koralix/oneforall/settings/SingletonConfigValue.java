@@ -5,17 +5,12 @@ import net.minecraft.text.Text;
 
 import java.util.Optional;
 
-public class SingletonConfigValue<T> extends AbstractConfigValue<T> implements MonoConfigValue<T, SingletonConfigValue<T>> {
+public class SingletonConfigValue<T> extends AbstractConfigValue<T> implements MonoConfigValue<T> {
     private T defaultValue;
     private T value;
 
     public SingletonConfigValue(T nominalValue, Codec<T> codec, ConfigValidator<T> validator) {
         super(nominalValue, codec, validator);
-    }
-
-    @Override
-    public SingletonConfigValue<T> configValue() {
-        return this;
     }
 
     @Override
