@@ -4,6 +4,7 @@
     "package": "com.koralix.oneforall.mixin.client",
     "compatibilityLevel": "JAVA_21",
     "client": [
+        "commands.FabricClientCommandSourceMixin",
         "input.KeyboardInterceptor",
         "input.MouseInterceptor"
     ],

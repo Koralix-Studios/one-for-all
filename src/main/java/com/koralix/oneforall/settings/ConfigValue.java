@@ -1,7 +1,9 @@
 package com.koralix.oneforall.settings;
 
 import com.koralix.oneforall.settings.registry.ConfigValueEntry;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
+import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 import java.util.Optional;
@@ -42,6 +44,15 @@ public interface ConfigValue<T> {
      * @return the error message if the value is invalid, otherwise empty
      */
     Optional<Text> validate(T value, Consumer<T> action);
+
+    /**
+     * Create a config value view with the given context.
+     *
+     * @param context the context to create the config value view with
+     * @param <S> the type of the command sourcea
+     * @return the config value view
+     */
+    ConfigValueView<T> view(CommandContext<? extends CommandSource> context);
 
     static <T> SingletonConfigValue.Builder<T> singleton(T nominalValue, Codec<T> codec) {
         return new SingletonConfigValue.Builder<>(nominalValue, codec);

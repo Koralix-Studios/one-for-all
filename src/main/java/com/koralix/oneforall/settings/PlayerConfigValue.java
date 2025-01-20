@@ -1,6 +1,9 @@
 package com.koralix.oneforall.settings;
 
+import com.koralix.oneforall.commands.CommonCommandSource;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 
@@ -20,6 +23,17 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
     @Override
     public ConfigValueView<T> view(PlayerEntity player) {
         return new PlayerConfigValueView(player.getUuid());
+    }
+
+    @Override
+    public ConfigValueView<T> view(CommandContext<? extends CommandSource> context) {
+        if (!(context.getSource() instanceof CommonCommandSource source))
+            throw new IllegalStateException("CommandSource is not a CommonCommandSource");
+
+        return source
+                .player()
+                .map(this::view)
+                .orElseThrow(() -> new IllegalStateException("CommandSource does not have a player"));
     }
 
     public final class PlayerConfigValueView implements ConfigValueView<T> {

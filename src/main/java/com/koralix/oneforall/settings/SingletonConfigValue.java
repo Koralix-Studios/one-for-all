@@ -1,6 +1,8 @@
 package com.koralix.oneforall.settings;
 
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
+import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 import java.util.Optional;
@@ -31,6 +33,11 @@ public class SingletonConfigValue<T> extends AbstractConfigValue<T> implements M
     @Override
     public Optional<Text> value(T value) {
         return validate(value, v -> this.value = v);
+    }
+
+    @Override
+    public ConfigValueView<T> view(CommandContext<? extends CommandSource> context) {
+        return this;
     }
 
     public static final class Builder<T> extends AbstractConfigValueBuilder<T, SingletonConfigValue<T>> {

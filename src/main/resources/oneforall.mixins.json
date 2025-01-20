@@ -4,6 +4,7 @@
     "package": "com.koralix.oneforall.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
+        "commands.ServerCommandSourceMixin"
     ],
     "injectors": {
         "defaultRequire": 1
