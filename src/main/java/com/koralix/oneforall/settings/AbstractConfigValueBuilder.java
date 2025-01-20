@@ -29,7 +29,7 @@ public abstract class AbstractConfigValueBuilder<T, C extends ConfigValue<T>> {
     }
 
     public AbstractConfigValueBuilder<T, C> test(Predicate<T> predicate) {
-        return test(predicate, Text.of("Invalid id"));
+        return test(predicate, Text.of("Invalid value"));
     }
 
     public AbstractConfigValueBuilder<T, C> permission(Predicate<CommandSource> predicate) {

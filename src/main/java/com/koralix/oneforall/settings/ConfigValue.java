@@ -17,29 +17,29 @@ public interface ConfigValue<T> {
     ConfigValueEntry<T> entry();
 
     /**
-     * The nominal id of this config id.
-     * This id is used when the config id is not present in the config file.
+     * The nominal value of this config value.
+     * This value is used to determine the default value of the config value.
      *
-     * @return the nominal id of this config id
+     * @return the nominal value of this config value
      */
     T nominalValue();
 
     /**
-     * The codec of this config id.
-     * This codec is used to serialize and deserialize the config id.
+     * The codec of this config value.
+     * This codec is used to serialize and deserialize the config value.
      *
-     * @return the codec of this config id
+     * @return the codec of this config value
      */
     Codec<T> codec();
 
     /**
-     * Validate the given id.
-     * If the id is valid, the id is accepted and the action is performed.
-     * If the id is invalid, the id is rejected and the error message is returned.
+     * Validate the given value.
+     * If the value is valid, the value is accepted and the action is performed.
+     * If the value is invalid, the value is rejected and the error message is returned.
      *
-     * @param value the id to validate
-     * @param action the action to perform if the id is valid
-     * @return the error message if the id is invalid, otherwise empty
+     * @param value the value to validate
+     * @param action the action to perform if the value is valid
+     * @return the error message if the value is invalid, otherwise empty
      */
     Optional<Text> validate(T value, Consumer<T> action);
 

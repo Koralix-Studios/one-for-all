@@ -11,42 +11,42 @@ public abstract class AbstractMultiConfigValue<K, T> extends AbstractConfigValue
     }
 
     /**
-     * Get the default id for the given id.
+     * Get the default value for the given key.
      *
-     * @param key the id of the config id view
-     * @return the default id for the given id
+     * @param key the key of the config value view
+     * @return the default value for the given key
      */
     public T defaultValue(K key) {
         return view(key).defaultValue();
     }
 
     /**
-     * Set the default id for the given id.
+     * Set the default value for the given key.
      *
-     * @param key the id of the config id view
-     * @param value the default id to set
-     * @return an Optional containing the error message if the id is invalid, otherwise empty
+     * @param key the key of the config value view
+     * @param value the default value to set
+     * @return an Optional containing the error message if the default value is invalid, otherwise empty
      */
     public Optional<Text> defaultValue(K key, T value) {
         return view(key).defaultValue(value);
     }
 
     /**
-     * Get the id for the given id.
+     * Get the value for the given key.
      *
-     * @param key the id of the config id view
-     * @return the id for the given id
+     * @param key the key of the config value view
+     * @return the value for the given key
      */
     public T value(K key) {
         return view(key).value();
     }
 
     /**
-     * Set the id for the given id.
+     * Set the value for the given key.
      *
-     * @param key the id of the config id view
-     * @param value the id to set
-     * @return an Optional containing the error message if the id is invalid, otherwise empty
+     * @param key the key of the config value view
+     * @param value the value to set
+     * @return an Optional containing the error message if the value is invalid, otherwise empty
      */
     public Optional<Text> value(K key, T value) {
         return view(key).value(value);
