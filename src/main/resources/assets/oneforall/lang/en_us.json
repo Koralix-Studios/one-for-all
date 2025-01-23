@@ -1,10 +1,20 @@
 {
   "text.oneforall.disconnected": "Disconnected by OneForAll\n\nReason: ",
   "text.oneforall.disconnected.notUsingProtocol": "The One-For-All Mod Protocol is required to connect to the server",
-  "settings.oneforall.server_settings.protocol_enabled": "Protocol enabled",
-  "settings.oneforall.server_settings.enforce_protocol": "Protocol required",
-  "settings.oneforall.server_settings.default_language": "Language by default",
-  "settings.oneforall.server_settings.careful_break": "Careful break",
-  "settings.oneforall.player_settings.careful_break": "Careful break",
-  "settings.oneforall.client_settings.protocol_usage_conditions": "Protocol usage conditions"
+  "settings.oneforall.server.protocol_enabled": "Protocol enabled",
+  "settings.oneforall.server.enforce_protocol": "Protocol required",
+  "settings.oneforall.server.default_language": "Language by default",
+  "settings.oneforall.server.careful_break": "Careful break",
+  "settings.oneforall.player.careful_break": "Careful break",
+  "settings.oneforall.client.protocol_usage_conditions": "Protocol usage conditions",
+  "commands.oneforall.settings.status": "%1$s:\n- Nominal value: %2$s\n- Default value: %3$s\n- Current value: %4$s",
+  "commands.oneforall.settings.set": "Config value of %1$s set to %2$s",
+  "commands.oneforall.settings.set_default": "Config default value of %1$s set to %2$s",
+  "enum.oneforall.protocol_usage_conditions.always": "Always",
+  "enum.oneforall.protocol_usage_conditions.only_enforced": "Only when enforced",
+  "enum.oneforall.protocol_usage_conditions.never": "Never",
+  "enum.oneforall.careful_break_mode.never": "Never",
+  "enum.oneforall.careful_break_mode.sneak": "Sneak",
+  "enum.oneforall.careful_break_mode.not_sneak": "Not sneak",
+  "enum.oneforall.careful_break_mode.always": "Always"
 }

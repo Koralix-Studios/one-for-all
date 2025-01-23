@@ -14,11 +14,18 @@ public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
     private final T nominalValue;
     private final Codec<T> codec;
     private final ConfigValidator<T> validator;
+    private final ConfigValueAdapter.Command<T, ?> command;
 
-    public AbstractConfigValue(T nominalValue, Codec<T> codec, ConfigValidator<T> validator) {
+    public AbstractConfigValue(
+            T nominalValue,
+            Codec<T> codec,
+            ConfigValidator<T> validator,
+            ConfigValueAdapter.Command<T, ?> command
+    ) {
         this.nominalValue = nominalValue;
         this.codec = codec;
         this.validator = validator;
+        this.command = command;
     }
 
     @Override
@@ -47,5 +54,15 @@ public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
         if (result != null) return Optional.of(result);
         action.accept(value);
         return Optional.empty();
+    }
+
+    @Override
+    public ConfigValueAdapter.Command<T, ?> command() {
+        return command;
+    }
+
+    @Override
+    public String toString() {
+        return entry().key().toString();
     }
 }

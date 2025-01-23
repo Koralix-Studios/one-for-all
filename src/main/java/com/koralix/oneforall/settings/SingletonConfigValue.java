@@ -11,8 +11,15 @@ public class SingletonConfigValue<T> extends AbstractConfigValue<T> implements M
     private T defaultValue;
     private T value;
 
-    public SingletonConfigValue(T nominalValue, Codec<T> codec, ConfigValidator<T> validator) {
-        super(nominalValue, codec, validator);
+    public SingletonConfigValue(
+            T nominalValue,
+            Codec<T> codec,
+            ConfigValidator<T> validator,
+            ConfigValueAdapter.Command<T, ?> command
+    ) {
+        super(nominalValue, codec, validator, command);
+        this.defaultValue = nominalValue;
+        this.value = nominalValue;
     }
 
     @Override
@@ -41,13 +48,13 @@ public class SingletonConfigValue<T> extends AbstractConfigValue<T> implements M
     }
 
     public static final class Builder<T> extends AbstractConfigValueBuilder<T, SingletonConfigValue<T>> {
-        public Builder(T nominalValue, Codec<T> codec) {
-            super(nominalValue, codec);
+        public Builder(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
+            super(nominalValue, codec, command);
         }
 
         @Override
         public SingletonConfigValue<T> build() {
-            return new SingletonConfigValue<>(nominalValue, codec, validator);
+            return new SingletonConfigValue<>(nominalValue, codec, validator, command);
         }
     }
 }

@@ -1,15 +1,17 @@
 package com.koralix.oneforall.settings;
 
 import com.koralix.oneforall.settings.registry.ConfigValueEntry;
+import com.koralix.oneforall.utils.IntoText;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public interface ConfigValue<T> {
+public interface ConfigValue<T> extends IntoText {
     /**
      * Retrieves the entry associated with this config value.
      * This entry represents the config value inside a particular ConfigValueRegistry.
@@ -54,11 +56,25 @@ public interface ConfigValue<T> {
      */
     ConfigValueView<T> view(CommandContext<? extends CommandSource> context);
 
-    static <T> SingletonConfigValue.Builder<T> singleton(T nominalValue, Codec<T> codec) {
-        return new SingletonConfigValue.Builder<>(nominalValue, codec);
+    /**
+     * The command adapter of this config value.
+     * This adapter is used to create the command for this config value.
+     *
+     * @return the command adapter of this config value
+     */
+    ConfigValueAdapter.Command<T, ?> command();
+
+    @Override
+    default Text toText() {
+        Identifier id = entry().key().asIdentifier();
+        return Text.translatable("settings." + id.getNamespace() + "." + id.getPath());
     }
 
-    static <T> PlayerConfigValue.Builder<T> player(T nominalValue, Codec<T> codec) {
-        return new PlayerConfigValue.Builder<>(nominalValue, codec);
+    static <T> SingletonConfigValue.Builder<T> singleton(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
+        return new SingletonConfigValue.Builder<>(nominalValue, codec, command);
+    }
+
+    static <T> PlayerConfigValue.Builder<T> player(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
+        return new PlayerConfigValue.Builder<>(nominalValue, codec, command);
     }
 }

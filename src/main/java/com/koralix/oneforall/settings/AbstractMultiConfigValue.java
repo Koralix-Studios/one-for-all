@@ -6,8 +6,13 @@ import net.minecraft.text.Text;
 import java.util.Optional;
 
 public abstract class AbstractMultiConfigValue<K, T> extends AbstractConfigValue<T> implements MultiConfigValue<K, T> {
-    public AbstractMultiConfigValue(T nominalValue, Codec<T> codec, ConfigValidator<T> validator) {
-        super(nominalValue, codec, validator);
+    public AbstractMultiConfigValue(
+            T nominalValue,
+            Codec<T> codec,
+            ConfigValidator<T> validator,
+            ConfigValueAdapter.Command<T, ?> command
+    ) {
+        super(nominalValue, codec, validator, command);
     }
 
     /**
@@ -23,7 +28,7 @@ public abstract class AbstractMultiConfigValue<K, T> extends AbstractConfigValue
     /**
      * Set the default value for the given key.
      *
-     * @param key the key of the config value view
+     * @param key   the key of the config value view
      * @param value the default value to set
      * @return an Optional containing the error message if the default value is invalid, otherwise empty
      */
@@ -44,7 +49,7 @@ public abstract class AbstractMultiConfigValue<K, T> extends AbstractConfigValue
     /**
      * Set the value for the given key.
      *
-     * @param key the key of the config value view
+     * @param key   the key of the config value view
      * @param value the value to set
      * @return an Optional containing the error message if the value is invalid, otherwise empty
      */

@@ -1,9 +1,11 @@
 package com.koralix.oneforall.settings;
 
+import com.koralix.oneforall.utils.IntoText;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.minecraft.text.Text;
 
-public enum ProtocolUsageConditions {
+public enum ProtocolUsageConditions implements IntoText {
     ALWAYS,
     ONLY_ENFORCED,
     NEVER;
@@ -17,4 +19,10 @@ public enum ProtocolUsageConditions {
             },
             protocolUsageConditions -> (byte) protocolUsageConditions.ordinal()
     );
+    public static final ConfigValueAdapter.Command<ProtocolUsageConditions, String> COMMAND = ConfigValueAdapter.Command.enumOf(ProtocolUsageConditions.class);
+
+    @Override
+    public Text toText() {
+        return Text.translatable("enum.oneforall.protocol_usage_conditions." + name().toLowerCase());
+    }
 }

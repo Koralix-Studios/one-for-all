@@ -16,8 +16,13 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
     private final Map<UUID, T> defaults = new HashMap<>();
     private final Map<UUID, T> values = new HashMap<>();
 
-    public PlayerConfigValue(T nominalValue, Codec<T> codec, ConfigValidator<T> validator) {
-        super(nominalValue, codec, validator);
+    public PlayerConfigValue(
+            T nominalValue,
+            Codec<T> codec,
+            ConfigValidator<T> validator,
+            ConfigValueAdapter.Command<T, ?> command
+    ) {
+        super(nominalValue, codec, validator, command);
     }
 
     @Override
@@ -69,13 +74,13 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
     }
 
     public static final class Builder<T> extends AbstractConfigValueBuilder<T, PlayerConfigValue<T>> {
-        public Builder(T nominalValue, Codec<T> codec) {
-            super(nominalValue, codec);
+        public Builder(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
+            super(nominalValue, codec, command);
         }
 
         @Override
         public PlayerConfigValue<T> build() {
-            return new PlayerConfigValue<>(nominalValue, codec, validator);
+            return new PlayerConfigValue<>(nominalValue, codec, validator, command);
         }
     }
 }
