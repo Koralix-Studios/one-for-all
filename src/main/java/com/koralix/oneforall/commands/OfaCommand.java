@@ -89,7 +89,7 @@ public final class OfaCommand {
             Consumer<RequiredArgumentBuilder<S, A>> consumer
     ) {
         LiteralArgumentBuilder<S> setting = literal.apply(configValue.toString());
-        RequiredArgumentBuilder<S, A> arg = command.argument(argument);
+        RequiredArgumentBuilder<S, A> arg = command.argument(argument).requires(configValue::hasPermission);
         consumer.accept(arg);
         setting.then(arg);
         if (status) setting.executes(context -> status(context, configValue, sendFeedback, sendError));

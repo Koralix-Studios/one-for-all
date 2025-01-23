@@ -3,29 +3,34 @@ package com.koralix.oneforall.settings;
 import com.koralix.oneforall.settings.registry.ConfigValueEntry;
 import com.koralix.oneforall.utils.OnceCell;
 import com.mojang.serialization.Codec;
+import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
     private final OnceCell<ConfigValueEntry<T>> entry = new OnceCell<>();
     private final T nominalValue;
     private final Codec<T> codec;
-    private final ConfigValidator<T> validator;
     private final ConfigValueAdapter.Command<T, ?> command;
+    private final ConfigValidator<T> validator;
+    private final Predicate<CommandSource> permission;
 
     public AbstractConfigValue(
             T nominalValue,
             Codec<T> codec,
+            ConfigValueAdapter.Command<T, ?> command,
             ConfigValidator<T> validator,
-            ConfigValueAdapter.Command<T, ?> command
+            Predicate<CommandSource> permission
     ) {
         this.nominalValue = nominalValue;
         this.codec = codec;
-        this.validator = validator;
         this.command = command;
+        this.validator = validator;
+        this.permission = permission;
     }
 
     @Override
@@ -59,6 +64,11 @@ public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
     @Override
     public ConfigValueAdapter.Command<T, ?> command() {
         return command;
+    }
+
+    @Override
+    public boolean hasPermission(CommandSource source) {
+        return permission.test(source);
     }
 
     @Override

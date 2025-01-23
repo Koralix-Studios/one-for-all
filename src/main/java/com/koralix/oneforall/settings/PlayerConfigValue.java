@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity, T> {
     private final Map<UUID, T> defaults = new HashMap<>();
@@ -19,10 +20,11 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
     public PlayerConfigValue(
             T nominalValue,
             Codec<T> codec,
+            ConfigValueAdapter.Command<T, ?> command,
             ConfigValidator<T> validator,
-            ConfigValueAdapter.Command<T, ?> command
+            Predicate<CommandSource> permission
     ) {
-        super(nominalValue, codec, validator, command);
+        super(nominalValue, codec, command, validator, permission);
     }
 
     @Override
@@ -80,7 +82,7 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
 
         @Override
         public PlayerConfigValue<T> build() {
-            return new PlayerConfigValue<>(nominalValue, codec, validator, command);
+            return new PlayerConfigValue<>(nominalValue, codec, command, validator, permission);
         }
     }
 }

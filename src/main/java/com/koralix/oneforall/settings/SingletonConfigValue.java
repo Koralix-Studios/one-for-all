@@ -6,6 +6,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class SingletonConfigValue<T> extends AbstractConfigValue<T> implements MonoConfigValue<T> {
     private T defaultValue;
@@ -14,10 +15,11 @@ public class SingletonConfigValue<T> extends AbstractConfigValue<T> implements M
     public SingletonConfigValue(
             T nominalValue,
             Codec<T> codec,
+            ConfigValueAdapter.Command<T, ?> command,
             ConfigValidator<T> validator,
-            ConfigValueAdapter.Command<T, ?> command
+            Predicate<CommandSource> permission
     ) {
-        super(nominalValue, codec, validator, command);
+        super(nominalValue, codec, command, validator, permission);
         this.defaultValue = nominalValue;
         this.value = nominalValue;
     }
@@ -54,7 +56,7 @@ public class SingletonConfigValue<T> extends AbstractConfigValue<T> implements M
 
         @Override
         public SingletonConfigValue<T> build() {
-            return new SingletonConfigValue<>(nominalValue, codec, validator, command);
+            return new SingletonConfigValue<>(nominalValue, codec, command, validator, permission);
         }
     }
 }

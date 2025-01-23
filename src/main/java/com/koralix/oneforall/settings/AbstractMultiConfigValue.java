@@ -1,18 +1,21 @@
 package com.koralix.oneforall.settings;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public abstract class AbstractMultiConfigValue<K, T> extends AbstractConfigValue<T> implements MultiConfigValue<K, T> {
     public AbstractMultiConfigValue(
             T nominalValue,
             Codec<T> codec,
+            ConfigValueAdapter.Command<T, ?> command,
             ConfigValidator<T> validator,
-            ConfigValueAdapter.Command<T, ?> command
+            Predicate<CommandSource> permission
     ) {
-        super(nominalValue, codec, validator, command);
+        super(nominalValue, codec, command, validator, permission);
     }
 
     /**

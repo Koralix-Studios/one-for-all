@@ -64,6 +64,14 @@ public interface ConfigValue<T> extends IntoText {
      */
     ConfigValueAdapter.Command<T, ?> command();
 
+    /**
+     * Check if the given command source has permission to access this config value.
+     *
+     * @param source the command source to check
+     * @return true if the command source has permission, otherwise false
+     */
+    boolean hasPermission(CommandSource source);
+
     @Override
     default Text toText() {
         Identifier id = entry().key().asIdentifier();
