@@ -93,7 +93,10 @@ dependencies {
 //    )
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric.api}")
 
-    modImplementation("me.lucko:fabric-permissions-api:0.3.3")
+    modImplementation("me.lucko:fabric-permissions-api:0.3.3") {
+        exclude(group = "net.fabricmc.fabric-api", module = "fabric-api-bom")
+        exclude(group = "net.fabricmc.fabric-api", module = "fabric-api-base")
+    }
 }
 
 loom {
