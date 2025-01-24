@@ -41,7 +41,11 @@ public class SingletonConfigValue<T> extends AbstractConfigValue<T> implements M
 
     @Override
     public Optional<Text> value(T value) {
-        return validate(value, v -> this.value = v);
+        return validate(value, v -> {
+            T oldValue = this.value;
+            this.value = v;
+            this.onChange().invoker().onChange(new ConfigValueChange.MonoChange<>(this, oldValue, v));
+        });
     }
 
     @Override

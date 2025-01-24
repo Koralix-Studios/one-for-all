@@ -29,7 +29,7 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
 
     @Override
     public ConfigValueView<T> view(PlayerEntity player) {
-        return new PlayerConfigValueView(player.getUuid());
+        return new PlayerConfigValueView(player);
     }
 
     @Override
@@ -44,10 +44,12 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
     }
 
     public final class PlayerConfigValueView implements ConfigValueView<T> {
+        private final PlayerEntity player;
         private final UUID uuid;
 
-        public PlayerConfigValueView(UUID uuid) {
-            this.uuid = uuid;
+        public PlayerConfigValueView(PlayerEntity player) {
+            this.player = player;
+            this.uuid = player.getUuid();
         }
 
         @Override
@@ -57,7 +59,11 @@ public class PlayerConfigValue<T> extends AbstractMultiConfigValue<PlayerEntity,
 
         @Override
         public Optional<Text> defaultValue(T value) {
-            if (!nominalValue().equals(value)) return validate(value, v -> defaults.put(uuid, v));
+            if (!nominalValue().equals(value)) return validate(value, v -> {
+                T oldValue = defaults.put(uuid, v);
+                defaults.put(uuid, v);
+                PlayerConfigValue.this.onChange().invoker().onChange(new ConfigValueChange.MultiChange<>(PlayerConfigValue.this, player, oldValue, v));
+            });
             defaults.remove(uuid);
             return Optional.empty();
         }

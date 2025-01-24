@@ -4,6 +4,7 @@ import com.koralix.oneforall.settings.registry.ConfigValueEntry;
 import com.koralix.oneforall.utils.IntoText;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
+import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -77,6 +78,8 @@ public interface ConfigValue<T> extends IntoText {
         Identifier id = entry().key().asIdentifier();
         return Text.translatable("settings." + id.getNamespace() + "." + id.getPath());
     }
+
+    Event<ConfigValueChange.OnChange<T>> onChange();
 
     static <T> SingletonConfigValue.Builder<T> singleton(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
         return new SingletonConfigValue.Builder<>(nominalValue, codec, command);

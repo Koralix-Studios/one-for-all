@@ -3,6 +3,8 @@ package com.koralix.oneforall.settings;
 import com.koralix.oneforall.settings.registry.ConfigValueEntry;
 import com.koralix.oneforall.utils.OnceCell;
 import com.mojang.serialization.Codec;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
@@ -18,6 +20,11 @@ public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
     private final ConfigValueAdapter.Command<T, ?> command;
     private final ConfigValidator<T> validator;
     private final Predicate<CommandSource> permission;
+    private final Event<ConfigValueChange.OnChange<T>> onChange = EventFactory.createArrayBacked(ConfigValueChange.OnChange.class, listeners -> change -> {
+        for (ConfigValueChange.OnChange<T> listener : listeners) {
+            listener.onChange(change);
+        }
+    });
 
     public AbstractConfigValue(
             T nominalValue,
@@ -69,6 +76,11 @@ public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
     @Override
     public boolean hasPermission(CommandSource source) {
         return permission.test(source);
+    }
+
+    @Override
+    public Event<ConfigValueChange.OnChange<T>> onChange() {
+        return onChange;
     }
 
     @Override
