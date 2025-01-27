@@ -1,8 +1,12 @@
 package com.koralix.oneforall.commands;
 
-import com.koralix.oneforall.settings.*;
+import com.koralix.oneforall.settings.ConfigValue;
+import com.koralix.oneforall.settings.ConfigValueAdapter;
+import com.koralix.oneforall.settings.ConfigValueView;
+import com.koralix.oneforall.settings.SettingsManager;
+import com.koralix.oneforall.settings.registry.ConfigValueRegistry;
+import com.koralix.oneforall.utils.IntoText;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -11,156 +15,144 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.function.BiFunction;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.Predicate;
 
 public final class OfaCommand {
     private OfaCommand() {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
+    @FunctionalInterface
+    public interface SendFeedback<S> {
+        void send(S source, Text message, boolean ops);
+    }
+
     public static void register(
-            @NotNull CommandDispatcher<ServerCommandSource> dispatcher,
+            CommandDispatcher<ServerCommandSource> dispatcher,
             CommandRegistryAccess registryAccess,
             CommandManager.RegistrationEnvironment environment
     ) {
         LiteralArgumentBuilder<ServerCommandSource> ofa = CommandManager.literal("ofa");
-        ofa.then(settings(CommandManager::literal, CommandManager::argument, ConfigValueAccessor::server, SettingsRegistry.Env.SERVER));
+
+        ofa.then(settings(
+                CommandManager::literal,
+                CommandManager::argument,
+                registry -> registry.environment().server(),
+                (source, message, ops) -> source.sendFeedback(() -> message, ops),
+                ServerCommandSource::sendError
+        ));
         dispatcher.register(ofa);
     }
 
-    public static <S extends CommandSource> LiteralArgumentBuilder<S> settings(
-            @NotNull Function<String, LiteralArgumentBuilder<S>> ofaLiteral,
-            @NotNull BiFunction<String, ArgumentType<?>, RequiredArgumentBuilder<S, ?>> ofaArgument,
-            @NotNull ConfigValueAccessorFactory<S> factory,
-            SettingsRegistry.Env @NotNull ... envs
+    public static <S extends CommandSource, A> LiteralArgumentBuilder<S> settings(
+            Function<String, LiteralArgumentBuilder<S>> literal,
+            ConfigValueAdapter.Command.ArgumentFactory<S, A> argument,
+            Predicate<ConfigValueRegistry> predicate,
+            SendFeedback<S> sendFeedback,
+            BiConsumer<S, Text> sendError
     ) {
-        LiteralArgumentBuilder<S> settings = ofaLiteral.apply("settings").executes(context -> listSettings(context, factory));
-        LiteralArgumentBuilder<S> def = ofaLiteral.apply("default");
-        LiteralArgumentBuilder<S> restore = ofaLiteral.apply("restore");
-        for (SettingsRegistry.Env env : envs) {
-            SettingsManager.forEach(env, (entry, configValue) ->
-                    settings.then(setting(ofaLiteral, ofaArgument, entry, def, restore, factory))
-            );
-        }
+        LiteralArgumentBuilder<S> settings = literal.apply("settings");
+        LiteralArgumentBuilder<S> def = literal.apply("default");
         settings.then(def);
-        settings.then(restore);
+
+        SettingsManager.forEach(predicate, configValue -> {
+            @SuppressWarnings("unchecked")
+            ConfigValueAdapter.Command<?, A> command = (ConfigValueAdapter.Command<?, A>) configValue.command();
+
+            LiteralArgumentBuilder<S> setting = setting(literal, argument, configValue, command, sendFeedback, sendError, true, arg -> {
+                arg.executes(context -> set(context, configValue, sendFeedback, sendError));
+            });
+            settings.then(setting);
+
+            setting = setting(literal, argument, configValue, command, sendFeedback, sendError, false, arg -> {
+                arg.executes(context -> setDefault(context, configValue, sendFeedback, sendError));
+            });
+            def.then(setting);
+        });
+
         return settings;
     }
 
-    private static <S extends CommandSource, T> LiteralArgumentBuilder<S> setting(
-            @NotNull Function<String, LiteralArgumentBuilder<S>> ofaLiteral,
-            @NotNull BiFunction<String, ArgumentType<?>, RequiredArgumentBuilder<S, ?>> ofaArgument,
-            @NotNull SettingEntry<T> entry,
-            @NotNull LiteralArgumentBuilder<S> def,
-            @NotNull LiteralArgumentBuilder<S> restore,
-            @NotNull ConfigValueAccessorFactory<S> factory
+    private static <S extends CommandSource, A> LiteralArgumentBuilder<S> setting(
+            Function<String, LiteralArgumentBuilder<S>> literal,
+            ConfigValueAdapter.Command.ArgumentFactory<S, A> argument,
+            ConfigValue<?> configValue,
+            ConfigValueAdapter.Command<?, A> command,
+            SendFeedback<S> sendFeedback,
+            BiConsumer<S, Text> sendError,
+            boolean status,
+            Consumer<RequiredArgumentBuilder<S, A>> consumer
     ) {
-        ConfigValueAccessor<S, T> accessor = factory.create(entry);
-
-        def.then(ofaLiteral.apply(entry.id().toString())
-                .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
-                .executes(context -> setSetting(context, entry, accessor))
-                .then(ArgumentTypeHelper.createSettingArg(ofaArgument, entry.setting())
-                        .executes(context -> setDefaultSetting(context, entry, accessor))));
-        restore
-                .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
-                .executes(context -> setDefaultSetting(context, entry, accessor));
-        return ofaLiteral.apply(entry.id().toString())
-                .requires(source -> !(source instanceof ServerCommandSource scs) || entry.setting().permission(scs))
-                .executes(context -> getSetting(context, entry, accessor))
-                .then(ArgumentTypeHelper.createSettingArg(ofaArgument, entry.setting())
-                        .executes(context -> setSetting(context, entry, accessor)));
+        LiteralArgumentBuilder<S> setting = literal.apply(configValue.toString());
+        RequiredArgumentBuilder<S, A> arg = command.argument(argument).requires(configValue::hasPermission);
+        consumer.accept(arg);
+        setting.then(arg);
+        if (status) setting.executes(context -> status(context, configValue, sendFeedback, sendError));
+        return setting;
     }
 
-    private static <S extends CommandSource> int listSettings(
-            @NotNull CommandContext<S> context,
-            @NotNull ConfigValueAccessorFactory<S> factory
+    private static <S extends CommandSource, T> int status(
+            CommandContext<S> context,
+            ConfigValue<T> configValue,
+            SendFeedback<S> sendFeedback,
+            BiConsumer<S, Text> sendError
     ) {
-        int[] result = {0}; // int* result;
-        SettingsManager.forEach(SettingsRegistry.Env.SERVER, (entry, configValue) -> {
-            result[0] += getSetting(context, entry, factory.create(entry));
-        });
-        return result[0];
-    }
-
-    private static <S extends CommandSource> int getSetting(
-            @NotNull CommandContext<S> context,
-            @NotNull SettingEntry<?> entry,
-            @NotNull ConfigValueAccessor<S, ?> accessor
-    ) {
-        if (context.getSource() instanceof ServerCommandSource scs && !entry.setting().permission(scs)) return 0;
-
-        Method method = null;
-        final Text text = Text.translatable(entry.translation())
-                .append(":\n")
-                .append("Value: ")
-                .append(accessor.get(context.getSource()).toString())
-                .append("\n")
-                .append("Default: ")
-                .append(accessor.getDefault(context.getSource()).toString())
-                .append("\n")
-                .append("Nominal: ")
-                .append(entry.setting().nominalValue().toString());
-        Object arg1 = text;
-        try {
-            method = context.getSource().getClass().getDeclaredMethod("sendFeedback", Supplier.class, boolean.class);
-            arg1 = (Supplier<?>) () -> text;
-            method.invoke(context.getSource(), arg1, false);
-        } catch (NoSuchMethodException e1) {
-            try {
-                method = context.getSource().getClass().getDeclaredMethod("sendFeedback", Text.class);
-                method.invoke(context.getSource(), arg1);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e2) {
-                throw new UnsupportedOperationException("Unsupported command source: " + context.getSource().getClass().getName());
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new UnsupportedOperationException("Failed to invoke method: " + method.getName());
-        }
-
+        ConfigValueView<T> view = configValue.view(context);
+        Text nominal = IntoText.into(configValue.nominalValue());
+        Text def = IntoText.into(view.defaultValue());
+        Text value = IntoText.into(view.value());
+        sendFeedback.send(
+                context.getSource(),
+                Text.translatable("commands.oneforall.settings.status", configValue.toText(), nominal, def, value),
+                false
+        );
         return 1;
     }
 
-    private static <S extends CommandSource, T> int setSetting(
-            @NotNull CommandContext<S> context,
-            @NotNull SettingEntry<T> entry,
-            @NotNull ConfigValueAccessor<S, T> accessor
+    private static <S extends CommandSource, T> int set(
+            CommandContext<S> context,
+            ConfigValue<T> configValue,
+            SendFeedback<S> sendFeedback,
+            BiConsumer<S, Text> sendError
     ) {
-        try {
-            T value = ArgumentTypeHelper.getSettingValue(context, "value", entry.setting());
-            Text text = accessor.set(context.getSource(), value);
-            if (text != null && context.getSource() instanceof ServerCommandSource scs) {
-                scs.sendError(text);
-                return 0;
-            }
-        } catch (IllegalArgumentException e) {
-            entry.setting().reset();
+        ConfigValueView<T> view = configValue.view(context);
+        T value = configValue.command().from(context);
+        Optional<Text> error = view.value(value);
+        if (error.isPresent()) {
+            sendError.accept(context.getSource(), error.get());
+            return 0;
         }
-
+        sendFeedback.send(
+                context.getSource(),
+                Text.translatable("commands.oneforall.settings.set", configValue.toText(), IntoText.into(value)),
+                true
+        );
         return 1;
     }
 
-    private static <S extends CommandSource, T> int setDefaultSetting(
-            @NotNull CommandContext<S> context,
-            @NotNull SettingEntry<T> entry,
-            @NotNull ConfigValueAccessor<S, T> accessor
+    private static <S extends CommandSource, T> int setDefault(
+            CommandContext<S> context,
+            ConfigValue<T> configValue,
+            SendFeedback<S> sendFeedback,
+            BiConsumer<S, Text> sendError
     ) {
-        try {
-            T value = ArgumentTypeHelper.getSettingValue(context, "value", entry.setting());
-            Text text = accessor.setDefault(context.getSource(), value);
-            if (text != null && context.getSource() instanceof ServerCommandSource scs) {
-                scs.sendError(text);
-                return 0;
-            }
-        } catch (IllegalArgumentException e) {
-            entry.setting().restore();
+        ConfigValueView<T> view = configValue.view(context);
+        T value = configValue.command().from(context);
+        Optional<Text> error = view.defaultValue(value);
+        if (error.isPresent()) {
+            sendError.accept(context.getSource(), error.get());
+            return 0;
         }
-
+        sendFeedback.send(
+                context.getSource(),
+                Text.translatable("commands.oneforall.settings.set_default", configValue.toText(), IntoText.into(value)),
+                true
+        );
         return 1;
     }
 }

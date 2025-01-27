@@ -4,6 +4,7 @@ import com.koralix.oneforall.commands.ClientCommands;
 import com.koralix.oneforall.network.ClientLoginManager;
 import com.koralix.oneforall.settings.ClientSettings;
 import com.koralix.oneforall.settings.SettingsManager;
+import com.koralix.oneforall.settings.registry.ConfigValueEnvironment;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 
@@ -14,7 +15,7 @@ public class ClientInitializer implements ClientModInitializer {
 
         ClientCommandRegistrationCallback.EVENT.register(ClientCommands::register);
 
-        SettingsManager.register(ClientSettings.class);
+        SettingsManager.register(OneForAll.id("client"), ClientSettings.class, ConfigValueEnvironment.CLIENT);
 
         ClientLoginManager.init();
     }

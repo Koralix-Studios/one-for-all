@@ -1,140 +1,91 @@
 package com.koralix.oneforall.settings;
 
-import com.mojang.datafixers.util.Pair;
+import com.koralix.oneforall.settings.registry.ConfigValueEntry;
+import com.koralix.oneforall.utils.IntoText;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
-import net.minecraft.server.command.ServerCommandSource;
+import net.fabricmc.fabric.api.event.Event;
+import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.Identifier;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
-public interface ConfigValue<T> {
-    @Contract(value = "_, _ -> new", pure = true)
-    static <T> @NotNull ConfigValueBuilder<T> of(@NotNull T value, @NotNull Codec<T> codec) {
-        return new ConfigValueBuilder<>(value, codec);
-    }
-
-    @Contract(value = "_, _ -> new", pure = true)
-    static <T> @NotNull ConfigValueBuilder<T> ofNull(@NotNull Class<T> clazz, @NotNull Codec<T> codec) {
-        return new ConfigValueBuilder<>(clazz, codec);
-    }
-
+public interface ConfigValue<T> extends IntoText {
     /**
-     * Get the registry of the config value
+     * Retrieves the entry associated with this config value.
+     * This entry represents the config value inside a particular ConfigValueRegistry.
      *
-     * @return the registry of the config value
+     * @return the config value entry
      */
-    SettingsRegistry registry();
+    ConfigValueEntry<T> entry();
 
     /**
-     * Get the identifier of the config value
+     * The nominal value of this config value.
+     * This value is used to determine the default value of the config value.
      *
-     * @return the identifier of the config value
-     */
-    SettingEntry<T> entry();
-
-    /**
-     * Test if the user satisfies the permission predicate
-     *
-     * @return whether the user satisfies the permission predicate
-     */
-    boolean permission(ServerCommandSource source);
-
-    /**
-     * Reset the config value to the default value
-     *
-     * @return if the config value was reset successfully
-     */
-    default void reset() {
-        value(defaultValue());
-    }
-
-    /**
-     * Restore the config value to standard settings
-     *
-     * @return if the config value was restored successfully
-     */
-    default void restore() {
-        defaultValue(nominalValue());
-        reset();
-    }
-
-    /**
-     * Get the nominal value of the config value
-     *
-     * @return the nominal value
+     * @return the nominal value of this config value
      */
     T nominalValue();
 
     /**
-     * Get the default value of the config value
+     * The codec of this config value.
+     * This codec is used to serialize and deserialize the config value.
      *
-     * @return the default value
+     * @return the codec of this config value
      */
-    T defaultValue();
-
-    /**
-     * Set the default value of the config value
-     *
-     * @param value the new default value
-     * @return if the default value was set successfully
-     */
-    Text defaultValue(T value);
-
-    /**
-     * Get the current value of the config value
-     *
-     * @return the current value
-     */
-    T value();
-
-
-    /**
-     * Set the current value of the config value
-     *
-     * @param value the new value
-     * @return if the value was set successfully
-     */
-    Text value(T value);
-
-    /**
-     * Get the class of the config value
-     *
-     * @return the class of the config value
-     */
-    Class<T> clazz();
-
-    default <V> void serialize(DynamicOps<V> ops, Consumer<V> consumer) {
-        Codec<T> defaultCodec = codec().fieldOf("default").codec();
-        Codec<T> valueCodec = codec().fieldOf("value").codec();
-        Codec<Pair<T, T>> codec = Codec.pair(defaultCodec, valueCodec);
-
-        codec.encodeStart(ops, Pair.of(defaultValue(), value())).result().ifPresentOrElse(
-                consumer,
-                () -> {
-                    throw new IllegalStateException("Failed to serialize config value");
-                }
-        );
-    }
-
-    default <V> void deserialize(DynamicOps<V> ops, V input) {
-        Codec<T> defaultCodec = codec().fieldOf("default").codec();
-        Codec<T> valueCodec = codec().fieldOf("value").codec();
-        Codec<Pair<T, T>> codec = Codec.pair(defaultCodec, valueCodec);
-        DataResult<Pair<T, T>> result = codec.parse(ops, input);
-        result.result().ifPresentOrElse(
-                pair -> {
-                    defaultValue(pair.getFirst());
-                    value(pair.getSecond());
-                },
-                () -> {
-                    throw new IllegalStateException("Failed to deserialize config value");
-                }
-        );
-    }
-
     Codec<T> codec();
+
+    /**
+     * Validate the given value.
+     * If the value is valid, the value is accepted and the action is performed.
+     * If the value is invalid, the value is rejected and the error message is returned.
+     *
+     * @param value the value to validate
+     * @param action the action to perform if the value is valid
+     * @return the error message if the value is invalid, otherwise empty
+     */
+    Optional<Text> validate(T value, Consumer<T> action);
+
+    /**
+     * Create a config value view with the given context.
+     *
+     * @param context the context to create the config value view with
+     * @param <S> the type of the command sourcea
+     * @return the config value view
+     */
+    ConfigValueView<T> view(CommandContext<? extends CommandSource> context);
+
+    /**
+     * The command adapter of this config value.
+     * This adapter is used to create the command for this config value.
+     *
+     * @return the command adapter of this config value
+     */
+    ConfigValueAdapter.Command<T, ?> command();
+
+    /**
+     * Check if the given command source has permission to access this config value.
+     *
+     * @param source the command source to check
+     * @return true if the command source has permission, otherwise false
+     */
+    boolean hasPermission(CommandSource source);
+
+    @Override
+    default Text toText() {
+        Identifier id = entry().key().asIdentifier();
+        return Text.translatable("settings." + id.getNamespace() + "." + id.getPath());
+    }
+
+    Event<ConfigValueChange.OnChange<T>> onChange();
+
+    static <T> SingletonConfigValue.Builder<T> singleton(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
+        return new SingletonConfigValue.Builder<>(nominalValue, codec, command);
+    }
+
+    static <T> PlayerConfigValue.Builder<T> player(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
+        return new PlayerConfigValue.Builder<>(nominalValue, codec, command);
+    }
 }

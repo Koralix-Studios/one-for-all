@@ -10,7 +10,10 @@ public final class ClientCommands {
     }
 
 
-    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
-        ClientOfaCommand.register(dispatcher, registryAccess);
+    public static void register(
+            CommandDispatcher<FabricClientCommandSource> dispatcher,
+            CommandRegistryAccess registryAccess
+    ) {
+         ClientOfaCommand.register(dispatcher, registryAccess);
     }
 }

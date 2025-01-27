@@ -2,9 +2,8 @@ package com.koralix.oneforall.settings;
 
 import java.util.Objects;
 
-@SettingsRegistry(id = "client_settings", env = SettingsRegistry.Env.CLIENT)
 public class ClientSettings {
-    public static final ConfigValue<ProtocolUsageConditions> PROTOCOL_USAGE_CONDITIONS = ConfigValue.of(ProtocolUsageConditions.ALWAYS, ProtocolUsageConditions.CODEC)
+    public static final SingletonConfigValue<ProtocolUsageConditions> PROTOCOL_USAGE_CONDITIONS = ConfigValue.singleton(ProtocolUsageConditions.ALWAYS, ProtocolUsageConditions.CODEC, ProtocolUsageConditions.COMMAND)
             .test(Objects::nonNull)
             .build();
 }

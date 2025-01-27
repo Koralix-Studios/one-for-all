@@ -3,8 +3,11 @@ package com.koralix.oneforall.lang;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.settings.ConfigValueAdapter;
+import com.koralix.oneforall.utils.IntoText;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.minecraft.text.Text;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,7 +18,7 @@ import java.util.Optional;
 
 import static net.minecraft.datafixer.fix.BlockEntitySignTextStrictJsonFix.GSON;
 
-public enum Language {
+public enum Language implements IntoText {
     ENGLISH("en_us"),
     SPANISH("es_es"),
     GALICIAN("gl_es");
@@ -25,6 +28,11 @@ public enum Language {
         Language language = Language.fromCode(s);
         return language == null ? DataResult.error(() -> "Unknown language: " + s) : DataResult.success(language);
     }, Language::toString);
+    public static final ConfigValueAdapter.Command<Language, String> COMMAND = ConfigValueAdapter.Command.enumOf(
+            Language.values(),
+            language -> language.code,
+            Language::fromCode
+    );
 
     static {
         Map<String, Language> languages = new HashMap<>();
@@ -77,5 +85,10 @@ public enum Language {
 
     public static Language fromCode(String s) {
         return LANGUAGES.get(s);
+    }
+
+    @Override
+    public Text toText() {
+        return Text.of(code);
     }
 }
