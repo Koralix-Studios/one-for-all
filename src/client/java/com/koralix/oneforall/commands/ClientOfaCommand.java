@@ -1,5 +1,6 @@
 package com.koralix.oneforall.commands;
 
+import com.koralix.oneforall.settings.registry.ConfigValueEnvironment;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -19,7 +20,7 @@ public final class ClientOfaCommand {
         cofa.then(OfaCommand.settings(
                 ClientCommandManager::literal,
                 ClientCommandManager::argument,
-                registry -> registry.environment().server(),
+                registry -> registry.environment().equals(ConfigValueEnvironment.CLIENT),
                 (source, message, ops) -> source.sendFeedback(message),
                 FabricClientCommandSource::sendError
         ));
