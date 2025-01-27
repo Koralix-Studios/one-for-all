@@ -4,6 +4,7 @@
     "package": "com.koralix.oneforall.mixin.client",
     "compatibilityLevel": "JAVA_21",
     "client": [
+        "centeredflowers.AbstractBlockStateMixin",
         "commands.ClientCommandSourceMixin",
         "input.KeyboardInterceptor",
         "input.MouseInterceptor"
