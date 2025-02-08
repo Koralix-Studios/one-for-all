@@ -36,8 +36,11 @@ class MinecraftVersionData {
 
 class FabricData {
     val loader = property("fabric.loader").toString()
+    val loaderDependency = property("fabric.loader.dependency").toString()
     val api = property("fabric.api").toString()
+    val apiDependency = property("fabric.api.dependency").toString()
     val yarn = property("fabric.yarn").toString()
+    val yarnDependency = property("fabric.yarn.dependency").toString()
 }
 
 class ModDependencies {
@@ -120,20 +123,37 @@ java {
     sourceCompatibility = java
 }
 
+tasks.named<ProcessResources>("processClientResources") {
+    processResources(this)
+}
+
 tasks.processResources {
-    inputs.property("id", mod.id)
-    inputs.property("name", mod.name)
-    inputs.property("version", mod.version)
-    inputs.property("minecraft_dependency", minecraftVersion.dependency)
+    processResources(this)
+}
+
+fun processResources(obj: ProcessResources) {
+    obj.inputs.property("id", mod.id)
+    obj.inputs.property("name", mod.name)
+    obj.inputs.property("version", mod.version)
+    obj.inputs.property("minecraft_dependency", minecraftVersion.dependency)
+    obj.inputs.property("fabric_loader", fabric.loaderDependency)
+    obj.inputs.property("fabric_api", fabric.apiDependency)
+    obj.inputs.property("yarn", fabric.yarnDependency)
+    obj.inputs.property("java", minecraftVersion.javaVersion)
 
     val map = mapOf(
         "id" to mod.id,
         "name" to mod.name,
         "version" to mod.version,
         "minecraft_dependency" to minecraftVersion.dependency,
+        "fabric_loader" to fabric.loaderDependency,
+        "fabric_api" to fabric.apiDependency,
+        "yarn" to fabric.yarnDependency,
+        "java_version" to if (minecraftVersion.javaVersion == 17) "JAVA_17" else "JAVA_21"
     )
 
-    filesMatching("fabric.mod.json") { expand(map) }
+    obj.filesMatching("fabric.mod.json") { expand(map) }
+    obj.filesMatching("*.mixins.json") { expand(map) }
 }
 
 tasks.register<Copy>("buildAndCollect") {
