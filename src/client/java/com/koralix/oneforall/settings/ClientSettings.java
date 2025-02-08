@@ -20,4 +20,8 @@ public class ClientSettings {
             mc.worldRenderer.reload();
         });
     }
+
+    public static final SingletonConfigValue<Boolean> NO_USE_FIREWORKS = ConfigValue.singleton(false, Codec.BOOL, ConfigValueAdapter.Command.BOOLEAN)
+            .test(Objects::nonNull)
+            .build();
 }

@@ -7,7 +7,9 @@
         "centeredflowers.AbstractBlockStateMixin",
         "commands.ClientCommandSourceMixin",
         "input.KeyboardInterceptor",
-        "input.MouseInterceptor"
+        "input.MouseInterceptor",
+        "dontconsumefireworks.ClientPlayerInteractionManagerMixin",
+        "dontconsumefireworks.FireworkRocketEntityMixin"
     ],
     "injectors": {
         "defaultRequire": 1
