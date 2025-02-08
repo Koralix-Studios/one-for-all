@@ -36,8 +36,11 @@ class MinecraftVersionData {
 
 class FabricData {
     val loader = property("fabric.loader").toString()
+    val loaderDependency = property("fabric.loader.dependency").toString()
     val api = property("fabric.api").toString()
+    val apiDependency = property("fabric.api.dependency").toString()
     val yarn = property("fabric.yarn").toString()
+    val yarnDependency = property("fabric.yarn.dependency").toString()
 }
 
 class ModDependencies {
@@ -125,15 +128,25 @@ tasks.processResources {
     inputs.property("name", mod.name)
     inputs.property("version", mod.version)
     inputs.property("minecraft_dependency", minecraftVersion.dependency)
+    inputs.property("fabric_loader", fabric.loaderDependency)
+    inputs.property("fabric_api", fabric.apiDependency)
+    inputs.property("yarn", fabric.yarnDependency)
+    inputs.property("java", minecraftVersion.javaVersion)
+    inputs.property("java_version", if (minecraftVersion.javaVersion == 17) "JAVA_17" else "JAVA_21")
 
     val map = mapOf(
         "id" to mod.id,
         "name" to mod.name,
         "version" to mod.version,
         "minecraft_dependency" to minecraftVersion.dependency,
+        "fabric_loader" to fabric.loaderDependency,
+        "fabric_api" to fabric.apiDependency,
+        "yarn" to fabric.yarnDependency,
+        "java_version" to if (minecraftVersion.javaVersion == 17) "JAVA_17" else "JAVA_21"
     )
 
     filesMatching("fabric.mod.json") { expand(map) }
+    filesMatching("*.mixins.json") { expand(map) }
 }
 
 tasks.register<Copy>("buildAndCollect") {

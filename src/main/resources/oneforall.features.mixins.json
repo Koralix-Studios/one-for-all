@@ -2,7 +2,7 @@
     "required": true,
     "minVersion": "0.8",
     "package": "com.koralix.oneforall.mixin.features",
-    "compatibilityLevel": "JAVA_21",
+    "compatibilityLevel": "${java_version}",
     "mixins": [
         "carefulbreak.BlockMixin"
     ],
