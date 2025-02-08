@@ -1,6 +1,6 @@
-package com.koralix.oneforall.mixin.client.nousefireworks;
+package com.koralix.oneforall.mixin.client.dontconsumefireworks;
 
-import com.koralix.oneforall.duck.FireworkGetter;
+import com.koralix.oneforall.duck.DontConsumeFirework;
 import com.koralix.oneforall.settings.ClientSettings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
@@ -18,12 +18,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerInteractionManager.class)
-public class ClientPlayerInteractionManagerMixin implements FireworkGetter {
+public class ClientPlayerInteractionManagerMixin {
     @Unique
     private static final MinecraftClient mc = MinecraftClient.getInstance();
-
-    @Unique
-    private FireworkRocketEntity firework = null;
 
     @Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
     private void interactItem(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
@@ -34,18 +31,9 @@ public class ClientPlayerInteractionManagerMixin implements FireworkGetter {
             mc.world.addEntity(entity.getId(), entity);
             mc.world.playSoundFromEntity(mc.player, entity, SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.AMBIENT, 3.0F, 1.0F);
 
-            if (firework != null) {
-                firework.discard();
-            }
-            firework = entity;
+            ((DontConsumeFirework) entity).oneforall$DontConsumeFirework();
 
             cir.setReturnValue(ActionResult.PASS);
         }
-    }
-
-    @Override
-    @Unique
-    public boolean isActiveFirework(FireworkRocketEntity firework) {
-        return firework == this.firework;
     }
 }

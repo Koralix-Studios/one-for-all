@@ -8,8 +8,8 @@
         "commands.ClientCommandSourceMixin",
         "input.KeyboardInterceptor",
         "input.MouseInterceptor",
-        "nousefireworks.ClientPlayerInteractionManagerMixin",
-        "nousefireworks.FireworkRocketEntityMixin"
+        "dontconsumefireworks.ClientPlayerInteractionManagerMixin",
+        "dontconsumefireworks.FireworkRocketEntityMixin"
     ],
     "injectors": {
         "defaultRequire": 1
