@@ -5,7 +5,9 @@ import com.koralix.oneforall.utils.IntoText;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.loader.api.SemanticVersion;
 import net.minecraft.command.CommandSource;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -52,7 +54,6 @@ public interface ConfigValue<T> extends IntoText {
      * Create a config value view with the given context.
      *
      * @param context the context to create the config value view with
-     * @param <S> the type of the command sourcea
      * @return the config value view
      */
     ConfigValueView<T> view(CommandContext<? extends CommandSource> context);
@@ -79,13 +80,40 @@ public interface ConfigValue<T> extends IntoText {
         return Text.translatable("settings." + id.getNamespace() + "." + id.getPath());
     }
 
+    /**
+     * The event that is triggered when the value of this config value changes.
+     *
+     * @return the event that is triggered when the value of this config value changes
+     */
     Event<ConfigValueChange.OnChange<T>> onChange();
 
-    static <T> SingletonConfigValue.Builder<T> singleton(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
-        return new SingletonConfigValue.Builder<>(nominalValue, codec, command);
+    /**
+     * The version when this config value was added.
+     * This version is used to determine if a saved config value is compatible with the current config value.
+     *
+     * @return the version when this config value was added
+     */
+    SemanticVersion since();
+
+    /**
+     * Load the config value from the given compound.
+     *
+     * @param compound the compound to load the config value from
+     */
+    void read(NbtCompound compound);
+
+    /**
+     * Save the config value to the given compound.
+     *
+     * @param compound the compound to save the config value to
+     */
+    void write(NbtCompound compound);
+
+    static <T> SingletonConfigValue.Builder<T> singleton(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command, SemanticVersion since) {
+        return new SingletonConfigValue.Builder<>(nominalValue, codec, command, since);
     }
 
-    static <T> PlayerConfigValue.Builder<T> player(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
-        return new PlayerConfigValue.Builder<>(nominalValue, codec, command);
+    static <T> PlayerConfigValue.Builder<T> player(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command, SemanticVersion since) {
+        return new PlayerConfigValue.Builder<>(nominalValue, codec, command, since);
     }
 }

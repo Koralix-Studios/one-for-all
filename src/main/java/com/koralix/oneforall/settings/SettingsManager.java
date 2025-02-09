@@ -6,11 +6,18 @@ import com.koralix.oneforall.settings.registry.ConfigValueRegistry;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.VersionParsingException;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.registry.MutableRegistry;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -62,5 +69,57 @@ public final class SettingsManager {
                 registry.forEach(action);
             }
         });
+    }
+
+    public static void load(ConfigValueEnvironment environment) {
+        load(environment, environment.server() ? ConfigValueEnvironment::server : ConfigValueEnvironment.CLIENT::equals);
+    }
+
+    public static void load(ConfigValueEnvironment environment, Predicate<ConfigValueEnvironment> predicate) {
+        if (!predicate.test(environment)) throw new IllegalArgumentException("Environment does not match predicate");
+        File file = environment.file(false);
+        try {
+            NbtCompound compound = NbtIo.readCompressed(file);
+            Version version = Version.parse(compound.getString("version"));
+            forEach(
+                    configValueRegistry -> predicate.test(configValueRegistry.environment()),
+                    configValue -> load(configValue, compound, version)
+            );
+        } catch (FileNotFoundException ignored) {
+        } catch (IOException | VersionParsingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static <T> void load(ConfigValue<T> configValue, NbtCompound compound, Version version) {
+        if (version.compareTo(configValue.since()) < 0) {
+            OneForAll.LOGGER.warn("Skipping config value {} because it was saved before it was added ({} < {})", configValue.entry().key().toString(), version, configValue.since());
+            return;
+        }
+        configValue.read(compound);
+    }
+
+    public static void save(ConfigValueEnvironment environment) {
+        save(environment, environment.server() ? ConfigValueEnvironment::server : ConfigValueEnvironment.CLIENT::equals);
+    }
+
+    public static void save(ConfigValueEnvironment environment, Predicate<ConfigValueEnvironment> predicate) {
+        if (!predicate.test(environment)) throw new IllegalArgumentException("Environment does not match predicate");
+        File file = environment.file(true);
+        NbtCompound compound = new NbtCompound();
+        compound.putString("version", OneForAll.MOD_VERSION);
+        forEach(
+                configValueRegistry -> predicate.test(configValueRegistry.environment()),
+                configValue -> save(configValue, compound)
+        );
+        try {
+            NbtIo.writeCompressed(compound, file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static <T> void save(ConfigValue<T> configValue, NbtCompound compound) {
+        configValue.write(compound);
     }
 }

@@ -1,6 +1,7 @@
 package com.koralix.oneforall.settings;
 
 import com.koralix.oneforall.utils.IntoText;
+import com.koralix.oneforall.utils.SemVer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,7 +49,8 @@ public final class PlayerSettings {
     public static final PlayerConfigValue<CAREFUL_BREAK_MODE> CAREFUL_BREAK = ConfigValue.player(
                     CAREFUL_BREAK_MODE.NEVER,
                     CAREFUL_BREAK_MODE.CODEC,
-                    CAREFUL_BREAK_MODE.COMMAND
+                    CAREFUL_BREAK_MODE.COMMAND,
+                    SemVer.parse("0.1.0")
             )
             .test(Objects::nonNull)
             .build();

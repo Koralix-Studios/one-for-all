@@ -1,6 +1,7 @@
 package com.koralix.oneforall.settings;
 
 import com.mojang.serialization.Codec;
+import net.fabricmc.loader.api.SemanticVersion;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
@@ -13,9 +14,10 @@ public abstract class AbstractMultiConfigValue<K, T> extends AbstractConfigValue
             Codec<T> codec,
             ConfigValueAdapter.Command<T, ?> command,
             ConfigValidator<T> validator,
-            Predicate<CommandSource> permission
+            Predicate<CommandSource> permission,
+            SemanticVersion since
     ) {
-        super(nominalValue, codec, command, validator, permission);
+        super(nominalValue, codec, command, validator, permission, since);
     }
 
     /**

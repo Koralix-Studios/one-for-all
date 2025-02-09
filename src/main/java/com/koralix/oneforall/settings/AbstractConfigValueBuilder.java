@@ -1,6 +1,7 @@
 package com.koralix.oneforall.settings;
 
 import com.mojang.serialization.Codec;
+import net.fabricmc.loader.api.SemanticVersion;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
@@ -10,14 +11,16 @@ public abstract class AbstractConfigValueBuilder<T, C extends ConfigValue<T>> {
     protected final T nominalValue;
     protected final Codec<T> codec;
     protected final ConfigValueAdapter.Command<T, ?> command;
+    protected final SemanticVersion since;
 
     protected ConfigValidator<T> validator = value -> null;
     protected Predicate<CommandSource> permission = source -> true;
 
-    public AbstractConfigValueBuilder(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command) {
+    public AbstractConfigValueBuilder(T nominalValue, Codec<T> codec, ConfigValueAdapter.Command<T, ?> command, SemanticVersion since) {
         this.nominalValue = nominalValue;
         this.codec = codec;
         this.command = command;
+        this.since = since;
     }
 
     public AbstractConfigValueBuilder<T, C> test(ConfigValidator<T> validator) {

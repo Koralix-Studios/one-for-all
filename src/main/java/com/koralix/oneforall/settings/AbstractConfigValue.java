@@ -5,6 +5,7 @@ import com.koralix.oneforall.utils.OnceCell;
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.loader.api.SemanticVersion;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
@@ -25,19 +26,22 @@ public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
             listener.onChange(change);
         }
     });
+    private final SemanticVersion since;
 
     public AbstractConfigValue(
             T nominalValue,
             Codec<T> codec,
             ConfigValueAdapter.Command<T, ?> command,
             ConfigValidator<T> validator,
-            Predicate<CommandSource> permission
+            Predicate<CommandSource> permission,
+            SemanticVersion since
     ) {
         this.nominalValue = nominalValue;
         this.codec = codec;
         this.command = command;
         this.validator = validator;
         this.permission = permission;
+        this.since = since;
     }
 
     @Override
@@ -81,6 +85,11 @@ public abstract class AbstractConfigValue<T> implements ConfigValue<T> {
     @Override
     public Event<ConfigValueChange.OnChange<T>> onChange() {
         return onChange;
+    }
+
+    @Override
+    public SemanticVersion since() {
+        return since;
     }
 
     @Override

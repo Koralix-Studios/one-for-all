@@ -24,7 +24,7 @@ public class ClientPlayerInteractionManagerMixin {
 
     @Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
     private void interactItem(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        if (ClientSettings.NO_USE_FIREWORKS.value() && player.getStackInHand(hand).getItem() instanceof FireworkRocketItem) {
+        if (ClientSettings.DONT_CONSUME_FIREWORKS.value() && player.getStackInHand(hand).getItem() instanceof FireworkRocketItem) {
             if (!player.isFallFlying() || mc.currentScreen != null) return;
 
             FireworkRocketEntity entity = new FireworkRocketEntity(player.getWorld(), player.getStackInHand(hand), player);
