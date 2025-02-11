@@ -8,6 +8,7 @@
         "protocol.ClientConnectionMixin",
         "protocol.PacketByteBufMixin",
         "protocol.ServerLoginNetworkHandlerMixin",
+        "protocol.ServerPlayerEntityMixin",
         "protocol.ServerPlayNetworkHandlerMixin"
     ],
     "injectors": {

@@ -6,10 +6,10 @@
     "client": [
         "centeredflowers.AbstractBlockStateMixin",
         "commands.ClientCommandSourceMixin",
-        "input.KeyboardInterceptor",
-        "input.MouseInterceptor",
         "dontconsumefireworks.ClientPlayerInteractionManagerMixin",
-        "dontconsumefireworks.FireworkRocketEntityMixin"
+        "dontconsumefireworks.FireworkRocketEntityMixin",
+        "input.KeyboardInterceptor",
+        "input.MouseInterceptor"
     ],
     "injectors": {
         "defaultRequire": 1

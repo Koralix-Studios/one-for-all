@@ -1,19 +1,19 @@
 package com.koralix.oneforall.lang;
 
 import com.koralix.oneforall.network.ClientSession;
-import com.koralix.oneforall.network.ServerLoginManager;
+import com.koralix.oneforall.network.ClientSessionWrapper;
 import com.koralix.oneforall.settings.ServerSettings;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 
 import java.util.ListIterator;
 import java.util.Optional;
-import java.util.UUID;
 
 public class TranslationUnit {
     private final static Language DEFAULT_LANGUAGE = Language.ENGLISH;
-    private static Optional<UUID> TARGET_PLAYER = Optional.empty();
+    private static Optional<ServerPlayerEntity> TARGET_PLAYER = Optional.empty();
 
     public static String translate(Language lang, String code) {
         return lang.translate(code)
@@ -22,8 +22,8 @@ public class TranslationUnit {
                 .orElse(code);
     }
 
-    public static void prepare(UUID uuid) {
-        TARGET_PLAYER = Optional.of(uuid);
+    public static void prepare(ServerPlayerEntity player) {
+        TARGET_PLAYER = Optional.of(player);
     }
 
     public static Text adaptText(Text text) {
@@ -31,7 +31,7 @@ public class TranslationUnit {
 
         ClientSession session = null;
         if (TARGET_PLAYER.isPresent()) {
-            session = ServerLoginManager.SESSIONS.get(TARGET_PLAYER.get());
+            session = ((ClientSessionWrapper) TARGET_PLAYER.get()).session();
         }
 
         if (session != null && session.modVersion() != null) { // TODO: Version dependent translations

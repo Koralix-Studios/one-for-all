@@ -14,16 +14,12 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 
 public class ServerLoginManager {
-    public static final Map<UUID, ClientSession> SESSIONS = new HashMap<>();
     public static void init() {
         ServerLoginConnectionEvents.QUERY_START.register(ServerLoginManager::onQueryStart);
     }
@@ -79,15 +75,14 @@ public class ServerLoginManager {
             ServerLoginNetworking.LoginSynchronizer synchronizer,
             PacketSender responseSender
     ) {
-        ClientSession session = new ClientSession();
+        ClientSession session = ((ClientSessionFactory) handler).create();
         ((ClientSessionWrapper) handler).session(session);
-        ActOnPlayPacketHandler.register(ClientSettingsC2SPacket.class, session, (connection, player, packet) -> {
+
+        session.onPlayPacket(ClientSettingsC2SPacket.class, (connection, player, packet) -> {
             ClientSession sessionWrapper = ((ClientSessionWrapper) connection).session();
             sessionWrapper.language(Language.fromCode(packet.language()));
-
-            ((ClientSessionWrapper) connection).session(sessionWrapper);
-            ServerLoginManager.SESSIONS.put(player.getUuid(), sessionWrapper);
         });
+
         if (!understood && ServerSettings.ENFORCE_PROTOCOL.value()) {
             return Optional.of(Text.translatable("text.oneforall.disconnected.notUsingProtocol"));
         } else if (!understood) {
