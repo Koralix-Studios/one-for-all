@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(PacketByteBuf.class)
 public class PacketByteBufMixin {
     @ModifyArg(
-            method = "Lnet/minecraft/network/PacketByteBuf;writeText(Lnet/minecraft/text/Text;)Lnet/minecraft/network/PacketByteBuf;",
+            method = "writeText(Lnet/minecraft/text/Text;)Lnet/minecraft/network/PacketByteBuf;",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/text/Text$Serializer;toJson(Lnet/minecraft/text/Text;)Ljava/lang/String;"
