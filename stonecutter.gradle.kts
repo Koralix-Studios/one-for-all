@@ -36,5 +36,5 @@ stonecutter parameters {
 
     // Dependencies add targets to check versions against
     // Using `node.property()` in this block gets the versioned property
-    dependency("fapi", node!!.property("fabric.api").toString())
+    dependency("fapi", node!!.project.property("fabric.api") as String)
 }
