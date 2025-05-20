@@ -1,8 +1,13 @@
 pluginManagement {
     repositories {
+        maven {
+            name = "Fabric"
+            url = uri("https://maven.fabricmc.net/")
+        }
         mavenCentral()
         gradlePluginPortal()
-        maven("https://maven.fabricmc.net/")
+        maven("https://maven.kikugie.dev/releases")
+        maven("https://maven.kikugie.dev/snapshots")
     }
 }
 
@@ -15,9 +20,15 @@ stonecutter {
     centralScript = "build.gradle.kts"
 
     shared {
-        versions("1.20.1")
+        versions("1.21.5")
+        vcsVersion = "1.21.5"
     }
-    create(rootProject)
+
+    create("ofa-api")
+    create("ofa-impl")
 }
 
-rootProject.name = "oneforall"
+rootProject.name = "one-for-all"
+
+include("ofa-api")
+include("ofa-impl")

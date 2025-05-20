@@ -1,0 +1,16 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod.id}",
+    "version": "${mod.version}",
+    "entrypoints": {
+        "main": [
+            "com.koralix.oneforall.OneForAll"
+        ]
+    },
+    "depends": {
+        "minecraft": "${deps.minecraft}",
+        "fabricloader": "${deps.fabric.loader}",
+        "fabric": "${deps.fabric.api}",
+        "java": "${deps.java}"
+    }
+}
