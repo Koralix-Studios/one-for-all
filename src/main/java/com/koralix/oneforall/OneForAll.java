@@ -27,7 +27,7 @@ public class OneForAll implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Initializing OneForAll...");
+        LOGGER.info("Initializing {} version {}...", MOD_ID, MOD_VERSION);
 
         CommandRegistrationCallback.EVENT.register(Commands::register);
 
