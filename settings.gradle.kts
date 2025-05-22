@@ -24,11 +24,11 @@ stonecutter {
         vcsVersion = "1.21.5"
     }
 
-    create("ofa-api")
-    create("ofa-impl")
+    create("ofa-core")
+    create("ofa-base")
 }
 
 rootProject.name = "one-for-all"
 
-include("ofa-api")
-include("ofa-impl")
+include("ofa-core")
+include("ofa-base")

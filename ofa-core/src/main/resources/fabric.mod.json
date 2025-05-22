@@ -4,7 +4,7 @@
     "version": "${mod.version}",
     "entrypoints": {
         "main": [
-            "com.koralix.oneforall.OneForAll"
+            "com.koralix.oneforall.Initializer"
         ]
     },
     "depends": {

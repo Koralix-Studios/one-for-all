@@ -28,7 +28,7 @@ stonecutter {
     swap("mod.version", "\"${properties["mod.version"] as String}\";")
 }
 
-project.evaluationDependsOn(":ofa-api:${stonecutter.current.project}")
+project.evaluationDependsOn(":ofa-core:${stonecutter.current.project}")
 
 dependencies {
     minecraft("com.mojang:minecraft:${stonecutter.current.project}")
@@ -36,8 +36,8 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric.loader")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric.api")}+${stonecutter.current.version}")
 
-    api(project(":ofa-api:${stonecutter.current.project}", configuration = "namedElements"))
-    include(project(":ofa-api:${stonecutter.current.project}"))
+    api(project(":ofa-core:${stonecutter.current.project}", configuration = "namedElements"))
+    include(project(":ofa-core:${stonecutter.current.project}"))
 }
 
 loom {
