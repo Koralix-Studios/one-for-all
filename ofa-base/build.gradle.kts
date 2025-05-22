@@ -85,6 +85,7 @@ fun processResources(obj: ProcessResources) {
     )
 
     obj.filesMatching("fabric.mod.json") { expand(map) }
+    obj.filesMatching("*.mixins.json") { expand(map) }
 }
 
 fun getDeps(): Map<String, Any> {

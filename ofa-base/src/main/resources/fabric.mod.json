@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod.id}",
+  "version": "${mod.version}",
+  "entrypoints": {
+    "client": [
+      "com.koralix.oneforall.base.CofaInitializer"
+    ]
+  },
+  "depends": {
+    "minecraft": "${deps.minecraft}",
+    "fabricloader": "${deps.fabric.loader}",
+    "fabric": "${deps.fabric.api}",
+    "java": "${deps.java}"
+  },
+  "mixins": [
+    {
+      "config": "${mod.id}.client.mixins.json",
+      "environment": "client"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.koralix.oneforall.base.mixin.client",
+    "compatibilityLevel": "JAVA_${deps.java}",
+    "client": [
+        "centerflowers.AbstractBlockStateMixin",
+        "dontconsumefireworks.FireworkRocketEntityMixin",
+        "dontconsumefireworks.ClientPlayerInteractionManagerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
