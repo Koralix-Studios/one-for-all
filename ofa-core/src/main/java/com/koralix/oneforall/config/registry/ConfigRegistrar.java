@@ -32,6 +32,7 @@ public class ConfigRegistrar {
     public <V, C extends ConfigValue<V>> ConfigEntry<V> register(@NotNull List<VersionedIdentifier> ids, @NotNull C configValue) {
         ConfigEntry<V> entry = new ConfigEntry<>(new ConfigKey(id, ids.getLast().identifier()), configValue);
         this.versioned.putAll(ids, entry);
+        this.configValues.put(entry.key().configId(), entry);
         return entry;
     }
 
