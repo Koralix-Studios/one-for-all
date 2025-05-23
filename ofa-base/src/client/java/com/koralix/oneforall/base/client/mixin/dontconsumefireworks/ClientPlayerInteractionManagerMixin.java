@@ -1,5 +1,6 @@
 package com.koralix.oneforall.base.client.mixin.dontconsumefireworks;
 
+import com.koralix.oneforall.base.client.ClientSettings;
 import com.koralix.oneforall.base.client.duck.DontConsumeFireworks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
@@ -26,8 +27,7 @@ public class ClientPlayerInteractionManagerMixin {
 
     @Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
     private void interactItem(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        // FIXME(ArtikGz): Add config check
-        if (false) return;
+        if (!ClientSettings.DONT_CONSUME_FIREWORKS.value()) return;
 
         FireworksComponent fireworksComponent = player.getStackInHand(hand).get(DataComponentTypes.FIREWORKS);
 

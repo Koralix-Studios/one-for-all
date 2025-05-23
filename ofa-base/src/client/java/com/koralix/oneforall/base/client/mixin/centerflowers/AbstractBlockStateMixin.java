@@ -1,5 +1,6 @@
 package com.koralix.oneforall.base.client.mixin.centerflowers;
 
+import com.koralix.oneforall.base.client.ClientSettings;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowerBlock;
@@ -18,8 +19,7 @@ public abstract class AbstractBlockStateMixin {
 
     @Inject(method = "getModelOffset", at = @At("HEAD"), cancellable = true)
     public void getModelOffset(BlockPos pos, CallbackInfoReturnable<Vec3d> cir) {
-        // FIXME(ArtikGz): Add config check
-        if (this.getBlock() instanceof FlowerBlock) {
+        if (ClientSettings.CENTER_FLOWERS.value() && this.getBlock() instanceof FlowerBlock) {
             cir.setReturnValue(Vec3d.ZERO);
         }
     }

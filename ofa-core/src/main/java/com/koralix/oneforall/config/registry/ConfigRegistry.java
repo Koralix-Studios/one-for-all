@@ -5,10 +5,12 @@ import com.koralix.oneforall.config.ConfigValue;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.VersionParsingException;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -37,6 +39,19 @@ public class ConfigRegistry {
         this.versioned = versioned;
         for (VersionedIdentifier vId : ids) {
             VERSIONED.put(vId.version(), vId.identifier(), this);
+        }
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull ConfigRegistryBuilder builder(@NotNull Version version, @NotNull Identifier identifier) {
+        return new ConfigRegistryBuilder(version, identifier);
+    }
+
+    public static @NotNull ConfigRegistryBuilder builder(@NotNull String version, @NotNull Identifier identifier) {
+        try {
+            return builder(Version.parse(version), identifier);
+        } catch (VersionParsingException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -2,6 +2,7 @@ package com.koralix.oneforall.config.registry;
 
 import com.koralix.oneforall.config.ConfigValue;
 import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.loader.api.Version;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -16,7 +17,7 @@ public class ConfigValueBuilder<V, C extends ConfigValue<V>> {
     private final ConfigRegistrar registrar;
     private final V nominal;
     private final Codec<V> codec;
-    private final PacketCodec<PacketByteBuf, V> packetCodec;
+    private final PacketCodec<? extends ByteBuf, V> packetCodec;
     private final ConfigValueFactory<V, C> factory;
     private final List<VersionedIdentifier> ids = new ArrayList<>();
 
@@ -25,7 +26,7 @@ public class ConfigValueBuilder<V, C extends ConfigValue<V>> {
             @NotNull ConfigRegistrar registrar,
             @NotNull V nominal,
             @NotNull Codec<V> codec,
-            @NotNull PacketCodec<PacketByteBuf, V> packetCodec,
+            @NotNull PacketCodec<? extends ByteBuf, V> packetCodec,
             @NotNull ConfigValueFactory<V, C> factory
     ) {
         this.ids.add(id);
@@ -63,7 +64,7 @@ public class ConfigValueBuilder<V, C extends ConfigValue<V>> {
                 @NotNull Function<C, ConfigEntry<V>> registerFn,
                 @NotNull V nominal,
                 @NotNull Codec<V> codec,
-                @NotNull PacketCodec<PacketByteBuf, V> packetCodec
+                @NotNull PacketCodec<? extends ByteBuf, V> packetCodec
         );
     }
 }

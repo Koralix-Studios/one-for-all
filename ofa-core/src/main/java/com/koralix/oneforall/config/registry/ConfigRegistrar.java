@@ -4,6 +4,7 @@ import com.koralix.oneforall.config.ConfigValue;
 import com.koralix.oneforall.config.MonoConfigValue;
 import com.koralix.oneforall.config.SingletonConfigValue;
 import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.util.Identifier;
@@ -24,7 +25,7 @@ public class ConfigRegistrar {
         this.ids = ids;
     }
 
-    public <V> ConfigValueBuilder<V, MonoConfigValue<V>> mono(@NotNull VersionedIdentifier id, @NotNull V nominal, @NotNull Codec<V> codec, @NotNull PacketCodec<PacketByteBuf, V> packetCodec) {
+    public <V> ConfigValueBuilder<V, MonoConfigValue<V>> mono(@NotNull VersionedIdentifier id, @NotNull V nominal, @NotNull Codec<V> codec, @NotNull PacketCodec<? extends ByteBuf, V> packetCodec) {
         return new ConfigValueBuilder<>(id, this, nominal, codec, packetCodec, SingletonConfigValue::new);
     }
 
