@@ -6,7 +6,8 @@
     "client": [
         "centerflowers.AbstractBlockStateMixin",
         "dontconsumefireworks.FireworkRocketEntityMixin",
-        "dontconsumefireworks.ClientPlayerInteractionManagerMixin"
+        "dontconsumefireworks.ClientPlayerInteractionManagerMixin",
+        "flyinertia.LivingEntityMixin"
     ],
     "injectors": {
         "defaultRequire": 1

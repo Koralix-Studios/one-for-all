@@ -17,18 +17,18 @@ public abstract class FireworkRocketEntityMixin implements DontConsumeFireworks 
     private int lifeTime;
 
     @Unique
-    private boolean dontConsumeFirework = false;
+    private boolean consumeFirework = true;
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(final CallbackInfo info) {
         FireworkRocketEntity self = (FireworkRocketEntity) (Object) this;
-        if (dontConsumeFirework && life > lifeTime) {
+        if (!consumeFirework && life > lifeTime) {
             self.discard();
         }
     }
 
     @Unique
     public void oneforall$dontConsumeFirework() {
-        this.dontConsumeFirework = true;
+        this.consumeFirework = false;
     }
 }
