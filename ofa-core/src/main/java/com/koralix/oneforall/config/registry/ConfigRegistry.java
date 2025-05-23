@@ -7,33 +7,63 @@ import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.Version;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-public interface ConfigRegistry {
-    RegistryKey<Registry<ConfigRegistry>> REGISTRY_KEY = RegistryKey.ofRegistry(OneForAll.id("config_registry"));
-    Registry<ConfigRegistry> REGISTRY = FabricRegistryBuilder.createSimple(REGISTRY_KEY)
+public class ConfigRegistry {
+    public static final RegistryKey<Registry<ConfigRegistry>> REGISTRY_KEY = RegistryKey.ofRegistry(OneForAll.id("config_registry"));
+    public static final Registry<ConfigRegistry> REGISTRY = FabricRegistryBuilder.createSimple(REGISTRY_KEY)
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
-    VersionedIdentifierMap<ConfigRegistry> VERSIONED = VersionedIdentifierMap.create();
+    private static final VersionedIdentifierMap<ConfigRegistry> VERSIONED = VersionedIdentifierMap.create();
 
-    static @NotNull Optional<ConfigValue<?>> which(Version version, Identifier registryId, Identifier configId) {
+    private final RegistryEntry.Reference<ConfigRegistry> entry;
+    private final Map<Identifier, ConfigEntry<?>> configValues;
+    private final VersionedIdentifierMap<ConfigEntry<?>> versioned;
+
+    ConfigRegistry(
+            @NotNull Identifier id,
+            @NotNull List<VersionedIdentifier> ids,
+            @NotNull Map<Identifier, ConfigEntry<?>> configValues,
+            @NotNull VersionedIdentifierMap<ConfigEntry<?>> versioned
+    ) {
+        this.entry = Registry.registerReference(REGISTRY, id, this);
+        this.configValues = configValues;
+        this.versioned = versioned;
+        for (VersionedIdentifier vId : ids) {
+            VERSIONED.put(vId.version(), vId.identifier(), this);
+        }
+    }
+
+    public static void freeze() {
+        REGISTRY.freeze();
+        VERSIONED.freeze();
+    }
+
+    public static @NotNull Optional<ConfigValue<?>> which(Version version, Identifier registryId, Identifier configId) {
         return ConfigRegistry
                 .getConfigRegistry(version, registryId)
                 .flatMap(registry -> registry.getConfigValue(version, configId));
     }
 
-    static @NotNull Optional<ConfigRegistry> getConfigRegistry(@NotNull Identifier id) {
+    public static @NotNull Optional<ConfigRegistry> getConfigRegistry(@NotNull Identifier id) {
         return Optional.ofNullable(REGISTRY.get(id));
     }
 
-    static @NotNull Optional<ConfigRegistry> getConfigRegistry(Version version, Identifier id) {
+    public static @NotNull Optional<ConfigRegistry> getConfigRegistry(Version version, Identifier id) {
         return VERSIONED.get(version, id);
     }
 
-    @NotNull Optional<ConfigValue<?>> getConfigValue(Identifier id);
+    public @NotNull Optional<ConfigValue<?>> getConfigValue(Identifier id) {
+        return Optional.ofNullable(this.configValues.get(id)).map(ConfigEntry::configValue);
+    }
 
-    @NotNull Optional<ConfigValue<?>> getConfigValue(Version version, Identifier id);
+    public @NotNull Optional<ConfigValue<?>> getConfigValue(Version version, Identifier id) {
+        return this.versioned.get(version, id).map(ConfigEntry::configValue);
+    }
 }

@@ -18,4 +18,6 @@ public interface OneForAll {
     static @NotNull Identifier id(@NotNull String path) {
         return Identifier.of(MOD_ID, path);
     }
+
+    void onInitialize();
 }

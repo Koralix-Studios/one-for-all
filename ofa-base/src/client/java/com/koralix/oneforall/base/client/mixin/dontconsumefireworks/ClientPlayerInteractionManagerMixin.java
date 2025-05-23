@@ -1,13 +1,12 @@
-package com.koralix.oneforall.base.mixin.client.dontconsumefireworks;
+package com.koralix.oneforall.base.client.mixin.dontconsumefireworks;
 
-import com.koralix.oneforall.base.duck.DontConsumeFireworks;
+import com.koralix.oneforall.base.client.duck.DontConsumeFireworks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FireworksComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundCategory;
@@ -41,7 +40,7 @@ public class ClientPlayerInteractionManagerMixin {
         mc.world.addEntity(entity);
         mc.world.playSoundFromEntity(mc.player, entity, SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.AMBIENT, 3.0F, 1.0F);
 
-        ((DontConsumeFireworks) entity).oneforall$DontConsumeFirework();
+        ((DontConsumeFireworks) entity).dontConsumeFirework();
 
         cir.setReturnValue(ActionResult.PASS);
     }

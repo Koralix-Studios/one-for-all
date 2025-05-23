@@ -1,8 +1,9 @@
-package com.koralix.oneforall.base;
+package com.koralix.oneforall.base.client;
 
 import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.client.OneForAllClient;
 
-public class CofaInitializer implements net.fabricmc.api.ClientModInitializer  {
+public class ClientInitializer implements OneForAllClient {
     @Override
     public void onInitializeClient() {
         OneForAll.LOGGER.info("Client initialized successfully.");

@@ -5,6 +5,12 @@
     "entrypoints": {
         "main": [
             "com.koralix.oneforall.Initializer"
+        ],
+        "client": [
+            "com.koralix.oneforall.client.ClientInitializer"
+        ],
+        "server": [
+            "com.koralix.oneforall.ServerInitializer"
         ]
     },
     "depends": {

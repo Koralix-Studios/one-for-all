@@ -3,15 +3,22 @@
   "id": "${mod.id}",
   "version": "${mod.version}",
   "entrypoints": {
-    "client": [
-      "com.koralix.oneforall.base.CofaInitializer"
+    "ofa": [
+      "com.koralix.oneforall.base.Initializer"
+    ],
+    "ofa-client": [
+      "com.koralix.oneforall.base.client.ClientInitializer"
+    ],
+    "ofa-server": [
+      "com.koralix.oneforall.base.ServerInitializer"
     ]
   },
   "depends": {
     "minecraft": "${deps.minecraft}",
     "fabricloader": "${deps.fabric.loader}",
     "fabric": "${deps.fabric.api}",
-    "java": "${deps.java}"
+    "java": "${deps.java}",
+    "oneforall": "${deps.oneforall}"
   },
   "mixins": [
     {

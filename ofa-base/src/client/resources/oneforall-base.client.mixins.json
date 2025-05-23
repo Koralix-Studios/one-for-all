@@ -1,7 +1,7 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "com.koralix.oneforall.base.mixin.client",
+    "package": "com.koralix.oneforall.base.client.mixin",
     "compatibilityLevel": "JAVA_${deps.java}",
     "client": [
         "centerflowers.AbstractBlockStateMixin",

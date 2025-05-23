@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id("java")
     id("fabric-loom")
@@ -18,8 +20,13 @@ class ModInfo(
 }
 
 val modInfo: ModInfo = ModInfo()
+val core = project(":ofa-core:${stonecutter.current.project}")
 
 version = properties["mod.version"] as String
+
+base {
+    archivesName.set("${modInfo.id}-${stonecutter.current.project}")
+}
 
 stonecutter {
     swap("mod.id", "\"${properties["mod.id"] as String}\";")
@@ -31,13 +38,15 @@ stonecutter {
 project.evaluationDependsOn(":ofa-core:${stonecutter.current.project}")
 
 dependencies {
+//    val clientImplementation = configurations.getByName("clientImplementation")
+
     minecraft("com.mojang:minecraft:${stonecutter.current.project}")
     mappings("net.fabricmc:yarn:${stonecutter.current.version}+build.${property("deps.fabric.yarn")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric.loader")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric.api")}+${stonecutter.current.version}")
 
-    api(project(":ofa-core:${stonecutter.current.project}", configuration = "namedElements"))
-    include(project(":ofa-core:${stonecutter.current.project}"))
+    implementation(project(core.path, configuration = "namedElements"))
+    implementation(core.sourceSets["client"].output)
 }
 
 loom {
@@ -68,6 +77,14 @@ java {
         JavaVersion.VERSION_17
     sourceCompatibility = java
     targetCompatibility = java
+}
+
+tasks.named<RemapJarTask>("remapJar") {
+    val core = project(":ofa-core:${stonecutter.current.project}").tasks.getByName<RemapJarTask>("remapJar")
+    dependsOn(core)
+    inputs.files(core.archiveFile)
+    nestedJars.from(core.archiveFile)
+    addNestedDependencies.set(true)
 }
 
 tasks.named<ProcessResources>("processClientResources") {

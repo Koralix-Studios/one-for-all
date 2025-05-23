@@ -1,16 +1,15 @@
-package com.koralix.oneforall.base.mixin.client.dontconsumefireworks;
+package com.koralix.oneforall.base.client.mixin.dontconsumefireworks;
 
-import com.koralix.oneforall.base.duck.DontConsumeFireworks;
+import com.koralix.oneforall.base.client.duck.DontConsumeFireworks;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FireworkRocketEntity.class)
-public class FireworkRocketEntityMixin implements DontConsumeFireworks {
+@Implements(@Interface(iface = DontConsumeFireworks.class, prefix = "oneforall$"))
+public abstract class FireworkRocketEntityMixin implements DontConsumeFireworks {
     @Shadow
     private int life;
 
@@ -28,9 +27,8 @@ public class FireworkRocketEntityMixin implements DontConsumeFireworks {
         }
     }
 
-    @Override
     @Unique
-    public void oneforall$DontConsumeFirework() {
+    public void oneforall$dontConsumeFirework() {
         this.dontConsumeFirework = true;
     }
 }

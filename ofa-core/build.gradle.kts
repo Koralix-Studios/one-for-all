@@ -21,6 +21,10 @@ val modInfo: ModInfo = ModInfo()
 
 version = properties["mod.version"] as String
 
+base {
+    archivesName.set("${modInfo.id}-${stonecutter.current.project}")
+}
+
 stonecutter {
     swap("mod.id", "\"${properties["mod.id"] as String}\";")
     swap("mod.name", "\"${properties["mod.name"] as String}\";")
@@ -47,10 +51,6 @@ loom {
         get("vineflower").apply {
             options.put("mark-corresponding-synthetics", "1")
         }
-    }
-    runs {
-        remove(get("server"))
-        remove(get("client"))
     }
     runConfigs.all {
         ideConfigGenerated(true)
@@ -84,6 +84,7 @@ fun processResources(obj: ProcessResources) {
     )
 
     obj.filesMatching("fabric.mod.json") { expand(map) }
+    obj.filesMatching("*.mixins.json") { expand(map) }
 }
 
 fun getDeps(): Map<String, Any> {
