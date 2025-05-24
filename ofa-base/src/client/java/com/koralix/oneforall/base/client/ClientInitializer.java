@@ -7,5 +7,7 @@ public class ClientInitializer implements OneForAllClient {
     @Override
     public void onInitializeClient() {
         OneForAll.LOGGER.info("Client initialized successfully.");
+
+        ClientSettings.register();
     }
 }

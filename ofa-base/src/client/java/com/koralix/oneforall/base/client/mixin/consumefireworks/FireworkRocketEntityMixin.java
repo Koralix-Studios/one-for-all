@@ -1,4 +1,4 @@
-package com.koralix.oneforall.base.client.mixin.dontconsumefireworks;
+package com.koralix.oneforall.base.client.mixin.consumefireworks;
 
 import com.koralix.oneforall.base.client.duck.DontConsumeFireworks;
 import net.minecraft.entity.projectile.FireworkRocketEntity;

@@ -5,8 +5,9 @@
     "compatibilityLevel": "JAVA_${deps.java}",
     "client": [
         "centerflowers.AbstractBlockStateMixin",
-        "dontconsumefireworks.FireworkRocketEntityMixin",
-        "dontconsumefireworks.ClientPlayerInteractionManagerMixin",
+        "consumefireworks.ClientPlayerInteractionManagerMixin",
+        "consumefireworks.FireworkRocketEntityMixin",
+        "flatdigger.ClientPlayerInteractionManagerMixin",
         "flyinertia.LivingEntityMixin"
     ],
     "injectors": {

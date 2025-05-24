@@ -24,6 +24,10 @@ public class ClientSettings {
             .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("fly_inertia")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
             .build();
 
+    public static final MonoConfigValue<Boolean> FLAT_DIGGER = REGISTRAR
+            .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("flat_digger")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
+            .build();
+
     public static @NotNull ConfigRegistry register() {
         return REGISTRAR.complete();
     }
