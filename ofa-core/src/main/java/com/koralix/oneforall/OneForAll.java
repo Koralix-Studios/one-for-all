@@ -1,5 +1,7 @@
 package com.koralix.oneforall;
 
+import com.koralix.oneforall.util.Functions;
+import net.fabricmc.loader.api.Version;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +15,7 @@ public interface OneForAll {
     String MOD_VERSION = /*$ mod.version*/ "0.1.0";
 
     Logger LOGGER = LoggerFactory.getLogger(OneForAll.MOD_NAME);
+    Version VERSION = Functions.tryCatch(Version::parse).apply(MOD_VERSION);
 
     @Contract(value = "_ -> new", pure = true)
     static @NotNull Identifier id(@NotNull String path) {
