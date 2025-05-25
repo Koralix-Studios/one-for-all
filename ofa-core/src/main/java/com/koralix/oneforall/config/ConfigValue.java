@@ -4,7 +4,6 @@ import com.koralix.oneforall.config.registry.ConfigEntry;
 import com.koralix.oneforall.config.registry.ConfigKey;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import org.jetbrains.annotations.NotNull;
 
