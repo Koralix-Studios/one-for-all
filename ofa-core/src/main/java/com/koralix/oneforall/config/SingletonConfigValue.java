@@ -10,53 +10,56 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public class SingletonConfigValue<V> implements MonoConfigValue<V> {
-    private final @NotNull ConfigEntry<V> entry;
-    private final @NotNull V nominal;
-    private final @NotNull Codec<V> codec;
-    private final @NotNull PacketCodec<? extends ByteBuf, V> packetCodec;
-    private V value;
+public class SingletonConfigValue<T, B extends ByteBuf> implements MonoConfigValue<T, B> {
+    private final @NotNull ConfigEntry<T> entry;
+    private final @NotNull T nominal;
+    private final @NotNull Codec<T> codec;
+    private final @NotNull PacketCodec<B, T> packetCodec;
+    private final @NotNull ConfigTest<T> test;
+    private T value;
 
     public SingletonConfigValue(
-            @NotNull Function<MonoConfigValue<V>, ConfigEntry<V>> registerFn,
-            @NotNull V nominal,
-            @NotNull Codec<V> codec,
-            @NotNull PacketCodec<? extends ByteBuf, V> packetCodec
+            @NotNull Function<MonoConfigValue<T, B>, ConfigEntry<T>> registerFn,
+            @NotNull T nominal,
+            @NotNull Codec<T> codec,
+            @NotNull PacketCodec<B, T> packetCodec,
+            @NotNull ConfigTest<T> test
     ) {
         this.entry = registerFn.apply(this);
         this.nominal = nominal;
         this.codec = codec;
         this.packetCodec = packetCodec;
+        this.test = test;
         this.value = null;
     }
 
     @Override
-    public @NotNull V value() {
+    public @NotNull T value() {
         return this.value == null ? this.nominal : this.value;
     }
 
     @Override
-    public void value(@Nullable V value) {
+    public void value(@Nullable T value) {
         this.value = value;
     }
 
     @Override
-    public @NotNull ConfigEntry<V> entry() {
+    public @NotNull ConfigEntry<T> entry() {
         return this.entry;
     }
 
     @Override
-    public @NotNull V nominal() {
+    public @NotNull T nominal() {
         return this.nominal;
     }
 
     @Override
-    public @NotNull Codec<V> codec() {
+    public @NotNull Codec<T> codec() {
         return this.codec;
     }
 
     @Override
-    public @NotNull PacketCodec<? extends ByteBuf, V> packetCodec() {
+    public @NotNull PacketCodec<B, T> packetCodec() {
         return this.packetCodec;
     }
 }

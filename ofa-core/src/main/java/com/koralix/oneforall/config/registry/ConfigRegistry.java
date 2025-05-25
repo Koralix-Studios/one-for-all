@@ -60,7 +60,7 @@ public class ConfigRegistry {
         VERSIONED.freeze();
     }
 
-    public static @NotNull Optional<ConfigValue<?>> which(Version version, Identifier registryId, Identifier configId) {
+    public static @NotNull Optional<ConfigValue<?, ?>> which(Version version, Identifier registryId, Identifier configId) {
         return ConfigRegistry
                 .getConfigRegistry(version, registryId)
                 .flatMap(registry -> registry.getConfigValue(version, configId));
@@ -74,11 +74,11 @@ public class ConfigRegistry {
         return VERSIONED.get(version, id);
     }
 
-    public @NotNull Optional<ConfigValue<?>> getConfigValue(Identifier id) {
+    public @NotNull Optional<ConfigValue<?, ?>> getConfigValue(Identifier id) {
         return Optional.ofNullable(this.configValues.get(id)).map(ConfigEntry::configValue);
     }
 
-    public @NotNull Optional<ConfigValue<?>> getConfigValue(Version version, Identifier id) {
+    public @NotNull Optional<ConfigValue<?, ?>> getConfigValue(Version version, Identifier id) {
         return this.versioned.get(version, id).map(ConfigEntry::configValue);
     }
 }

@@ -1,10 +1,10 @@
 package com.koralix.oneforall.config.registry;
 
+import com.koralix.oneforall.config.ConfigTest;
 import com.koralix.oneforall.config.ConfigValue;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.loader.api.Version;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -12,22 +12,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
-public class ConfigValueBuilder<V, C extends ConfigValue<V>> {
+public class ConfigValueBuilder<T, C extends ConfigValue<T, B>, B extends ByteBuf> {
     private final ConfigRegistrar registrar;
-    private final V nominal;
-    private final Codec<V> codec;
-    private final PacketCodec<? extends ByteBuf, V> packetCodec;
-    private final ConfigValueFactory<V, C> factory;
+    private final T nominal;
+    private final Codec<T> codec;
+    private final PacketCodec<B, T> packetCodec;
+    private final ConfigValueFactory<T, C, B> factory;
     private final List<VersionedIdentifier> ids = new ArrayList<>();
+    private ConfigTest<T> test;
 
     public ConfigValueBuilder(
             @NotNull VersionedIdentifier id,
             @NotNull ConfigRegistrar registrar,
-            @NotNull V nominal,
-            @NotNull Codec<V> codec,
-            @NotNull PacketCodec<? extends ByteBuf, V> packetCodec,
-            @NotNull ConfigValueFactory<V, C> factory
+            @NotNull T nominal,
+            @NotNull Codec<T> codec,
+            @NotNull PacketCodec<B, T> packetCodec,
+            @NotNull ConfigValueFactory<T, C, B> factory
     ) {
         this.ids.add(id);
         this.registrar = registrar;
@@ -37,7 +39,7 @@ public class ConfigValueBuilder<V, C extends ConfigValue<V>> {
         this.factory = factory;
     }
 
-    public ConfigValueBuilder<V, C> id(@NotNull VersionedIdentifier id) {
+    public ConfigValueBuilder<T, C, B> id(@NotNull VersionedIdentifier id) {
         if (this.ids.getLast().compareTo(id) >= 0) {
             throw new IllegalArgumentException("VersionedIdentifier must be in ascending order");
         }
@@ -45,8 +47,17 @@ public class ConfigValueBuilder<V, C extends ConfigValue<V>> {
         return this;
     }
 
-    public ConfigValueBuilder<V, C> id(@NotNull Version version, @NotNull Identifier id) {
+    public ConfigValueBuilder<T, C, B> id(@NotNull Version version, @NotNull Identifier id) {
         return id(new VersionedIdentifier(version, id));
+    }
+
+    public ConfigValueBuilder<T, C, B> test(ConfigTest<T> test) {
+        this.test = this.test == null ? test : this.test.and(test);
+        return this;
+    }
+
+    public ConfigValueBuilder<T, C, B> test(Predicate<T> test) {
+        return test(ConfigTest.of(test));
     }
 
     public C build() {
@@ -54,17 +65,19 @@ public class ConfigValueBuilder<V, C extends ConfigValue<V>> {
                 c -> this.registrar.register(this.ids, c),
                 this.nominal,
                 this.codec,
-                this.packetCodec
+                this.packetCodec,
+                this.test == null ? ConfigTest.tauto() : this.test
         );
     }
 
     @FunctionalInterface
-    public interface ConfigValueFactory<V, C extends ConfigValue<V>> {
+    public interface ConfigValueFactory<T, C extends ConfigValue<T, B>, B extends ByteBuf> {
         @NotNull C create(
-                @NotNull Function<C, ConfigEntry<V>> registerFn,
-                @NotNull V nominal,
-                @NotNull Codec<V> codec,
-                @NotNull PacketCodec<? extends ByteBuf, V> packetCodec
+                @NotNull Function<C, ConfigEntry<T>> registerFn,
+                @NotNull T nominal,
+                @NotNull Codec<T> codec,
+                @NotNull PacketCodec<B, T> packetCodec,
+                @NotNull ConfigTest<T> test
         );
     }
 }

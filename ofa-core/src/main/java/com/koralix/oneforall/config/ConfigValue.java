@@ -7,9 +7,9 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import org.jetbrains.annotations.NotNull;
 
-public interface ConfigValue<V> {
-    @NotNull ConfigEntry<V> entry();
-    @NotNull V nominal();
-    @NotNull Codec<V> codec();
-    @NotNull PacketCodec<? extends ByteBuf, V> packetCodec();
+public interface ConfigValue<T, B extends ByteBuf> {
+    @NotNull ConfigEntry<T> entry();
+    @NotNull T nominal();
+    @NotNull Codec<T> codec();
+    @NotNull PacketCodec<B, T> packetCodec();
 }

@@ -5,7 +5,6 @@ import com.koralix.oneforall.config.MonoConfigValue;
 import com.koralix.oneforall.config.SingletonConfigValue;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -25,12 +24,12 @@ public class ConfigRegistrar {
         this.ids = ids;
     }
 
-    public <V> ConfigValueBuilder<V, MonoConfigValue<V>> mono(@NotNull VersionedIdentifier id, @NotNull V nominal, @NotNull Codec<V> codec, @NotNull PacketCodec<? extends ByteBuf, V> packetCodec) {
+    public <T, B extends ByteBuf> ConfigValueBuilder<T, MonoConfigValue<T, B>, B> mono(@NotNull VersionedIdentifier id, @NotNull T nominal, @NotNull Codec<T> codec, @NotNull PacketCodec<B, T> packetCodec) {
         return new ConfigValueBuilder<>(id, this, nominal, codec, packetCodec, SingletonConfigValue::new);
     }
 
-    public <V, C extends ConfigValue<V>> ConfigEntry<V> register(@NotNull List<VersionedIdentifier> ids, @NotNull C configValue) {
-        ConfigEntry<V> entry = new ConfigEntry<>(new ConfigKey(id, ids.getLast().identifier()), configValue);
+    public <T, C extends ConfigValue<T, B>, B extends ByteBuf> ConfigEntry<T> register(@NotNull List<VersionedIdentifier> ids, @NotNull C configValue) {
+        ConfigEntry<T> entry = new ConfigEntry<>(new ConfigKey(id, ids.getLast().identifier()), configValue);
         this.versioned.putAll(ids, entry);
         this.configValues.put(entry.key().configId(), entry);
         return entry;
