@@ -38,8 +38,26 @@ public class SingletonConfigValue<T, B extends ByteBuf> implements MonoConfigVal
     }
 
     @Override
-    public void value(@Nullable T value) {
-        this.value = value;
+    public @NotNull ConfigResult<T> value(@Nullable T value) {
+        ConfigResult<T> result;
+        if (value == null || this.nominal.equals(value)) {
+            result = this.value == null ? ConfigResult.ok(this.nominal) : ConfigResult.ok(this.value, this.nominal);
+            this.value = null;
+        } else {
+            result = this.test.canChange(this.value(), value);
+            if (result.isOk()) this.value = value;
+        }
+        return result;
+    }
+
+    @Override
+    public @NotNull ConfigResult<T> value(@NotNull ConfigActor actor) {
+        return this.test.canObserve(actor).replace(this.value());
+    }
+
+    @Override
+    public @NotNull ConfigResult<T> value(@NotNull ConfigActor actor, @Nullable T value) {
+        return this.test.canChange(actor).and(this.value(value));
     }
 
     @Override
