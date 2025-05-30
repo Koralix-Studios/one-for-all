@@ -1,4 +1,4 @@
-package com.koralix.oneforall.base.client;
+package com.koralix.oneforall.base.client.settings;
 
 import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.config.MonoConfigValue;

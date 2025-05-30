@@ -1,4 +1,4 @@
-package com.koralix.oneforall.base;
+package com.koralix.oneforall.base.settings;
 
 import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.config.MonoConfigValue;
@@ -17,6 +17,11 @@ public class ServerSettings {
 
     public static final MonoConfigValue<Boolean, ByteBuf> CAREFUL_BREAK = REGISTRAR
             .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("careful_break")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
+            .test(Objects::nonNull)
+            .build();
+
+    public static final MonoConfigValue<Boolean, ByteBuf> XP_BAR_MENDING = REGISTRAR
+            .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("xp_bar_mending")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
             .test(Objects::nonNull)
             .build();
 

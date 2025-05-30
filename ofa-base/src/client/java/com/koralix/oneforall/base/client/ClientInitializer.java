@@ -1,6 +1,7 @@
 package com.koralix.oneforall.base.client;
 
 import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.base.client.settings.ClientSettings;
 import com.koralix.oneforall.client.OneForAllClient;
 
 public class ClientInitializer implements OneForAllClient {

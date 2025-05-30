@@ -1,7 +1,8 @@
 package com.koralix.oneforall.base.mixin.carefulbreak;
 
 import com.koralix.oneforall.OneForAll;
-import com.koralix.oneforall.base.PlayerSettings;
+import com.koralix.oneforall.base.settings.PlayerSettings;
+import com.koralix.oneforall.base.settings.ServerSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.BedPart;
@@ -31,7 +32,7 @@ public class BlockMixin {
     @Inject(method = "dropStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)V", at = @At("HEAD"), cancellable = true)
     private static void dropStacks(BlockState state, World world, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
         if (world instanceof ServerWorld && entity instanceof PlayerEntity player) {
-            if (PlayerSettings.CAREFUL_BREAK.value(player.getUuid()).isActive(player)) {
+            if (PlayerSettings.CAREFUL_BREAK.value(player.getUuid()).isActive(player, ServerSettings.CAREFUL_BREAK)) {
                 getDroppedStacks(state, (ServerWorld) world, pos, blockEntity, entity, stack).forEach((itemStack) -> {
                     Item item = itemStack.getItem();
                     int itemAmount = itemStack.getCount();
@@ -50,7 +51,7 @@ public class BlockMixin {
 
     @Inject(method = "onBreak", at = @At("HEAD"))
     private void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfoReturnable<BlockState> cir) {
-        if (PlayerSettings.CAREFUL_BREAK.value(player.getUuid()).isActive(player)) {
+        if (PlayerSettings.CAREFUL_BREAK.value(player.getUuid()).isActive(player, ServerSettings.CAREFUL_BREAK)) {
             if (Blocks.PISTON_HEAD.equals(state.getBlock()))
                 fixMultiBlock(state.get(FacingBlock.FACING).getOpposite(), pos, world, player, PistonBlock.class);
             else if (state.getBlock() instanceof BedBlock && state.get(BedBlock.PART).equals(BedPart.FOOT))

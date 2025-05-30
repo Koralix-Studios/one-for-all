@@ -1,6 +1,6 @@
 package com.koralix.oneforall.base.client.mixin.flatdigger;
 
-import com.koralix.oneforall.base.client.ClientSettings;
+import com.koralix.oneforall.base.client.settings.ClientSettings;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;

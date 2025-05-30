@@ -1,7 +1,7 @@
 package com.koralix.oneforall.base.client.mixin.consumefireworks;
 
-import com.koralix.oneforall.base.client.ClientSettings;
 import com.koralix.oneforall.base.client.duck.DontConsumeFireworks;
+import com.koralix.oneforall.base.client.settings.ClientSettings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.component.DataComponentTypes;

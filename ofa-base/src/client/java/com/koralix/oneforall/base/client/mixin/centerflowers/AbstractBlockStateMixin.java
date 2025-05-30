@@ -1,6 +1,6 @@
 package com.koralix.oneforall.base.client.mixin.centerflowers;
 
-import com.koralix.oneforall.base.client.ClientSettings;
+import com.koralix.oneforall.base.client.settings.ClientSettings;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowerBlock;

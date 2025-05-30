@@ -4,7 +4,8 @@
     "package": "com.koralix.oneforall.base.mixin",
     "compatibilityLevel": "JAVA_${deps.java}",
     "mixins": [
-        "carefulbreak.BlockMixin"
+        "carefulbreak.BlockMixin",
+        "xpbarmending.PlayerEntityMixin"
     ],
     "injectors": {
         "defaultRequire": 1
