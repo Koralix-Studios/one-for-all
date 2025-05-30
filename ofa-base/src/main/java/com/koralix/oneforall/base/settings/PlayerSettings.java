@@ -23,6 +23,12 @@ public class PlayerSettings {
             .test(Objects::nonNull)
             .build();
 
+    public static final PlayerConfigValue<SettingMode, ByteBuf> CREATIVE_KILL = REGISTRAR
+            .player(VersionedIdentifier.of("0.1.0", OneForAll.id("creative_kill")), SettingMode.ALWAYS, SettingMode.CODEC, SettingMode.PACKET_CODEC, a -> false, a -> false)
+            .test(Objects::nonNull)
+            .build();
+
+
     public static @NotNull ConfigRegistry register() {
         return REGISTRAR.complete();
     }

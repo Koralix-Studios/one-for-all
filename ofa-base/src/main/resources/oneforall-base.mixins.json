@@ -5,6 +5,7 @@
     "compatibilityLevel": "JAVA_${deps.java}",
     "mixins": [
         "carefulbreak.BlockMixin",
+        "creativekill.PlayerEntityMixin",
         "xpbarmending.PlayerEntityMixin"
     ],
     "injectors": {

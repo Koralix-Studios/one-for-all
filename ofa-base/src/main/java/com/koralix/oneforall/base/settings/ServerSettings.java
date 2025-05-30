@@ -25,6 +25,11 @@ public class ServerSettings {
             .test(Objects::nonNull)
             .build();
 
+    public static final MonoConfigValue<Boolean, ByteBuf> CREATIVE_KILL = REGISTRAR
+            .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("creative_kill")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
+            .test(Objects::nonNull)
+            .build();
+
     public static @NotNull ConfigRegistry register() {
         return REGISTRAR.complete();
     }
