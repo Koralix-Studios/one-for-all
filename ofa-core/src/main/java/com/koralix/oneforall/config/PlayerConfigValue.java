@@ -18,7 +18,7 @@ public class PlayerConfigValue<T, B extends ByteBuf> extends DefaultedMapConfigV
     private final Predicate<ConfigActor> canChangeOthers;
 
     public PlayerConfigValue(
-            @NotNull Function<MultiConfigValue<UUID, T, B>, ConfigEntry<T>> registerFn,
+            @NotNull Function<ConfigValue<T, B>, ConfigEntry<T>> registerFn,
             @NotNull T nominal,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,

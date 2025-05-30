@@ -73,7 +73,7 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B>, B extends ByteBu
     @FunctionalInterface
     public interface ConfigValueFactory<T, C extends ConfigValue<T, B>, B extends ByteBuf> {
         @NotNull C create(
-                @NotNull Function<C, ConfigEntry<T>> registerFn,
+                @NotNull Function<ConfigValue<T, B>, ConfigEntry<T>> registerFn,
                 @NotNull T nominal,
                 @NotNull Codec<T> codec,
                 @NotNull PacketCodec<B, T> packetCodec,

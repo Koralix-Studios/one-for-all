@@ -17,4 +17,10 @@ public interface MultiConfigValue<K, T, B extends ByteBuf> extends ConfigValue<T
     @NotNull ConfigResult<T> defaultValue(@NotNull ConfigActor actor, @NotNull T defaultValue);
     @NotNull Codec<K> keyCodec();
     @NotNull Map<K, T> valueMap();
+    void onChange(@NotNull MultiConfigObserver<K, T> observer);
+
+    @FunctionalInterface
+    interface MultiConfigObserver<K, T> {
+        void onChange(@NotNull MultiConfigValue<K, T, ?> configValue, @Nullable K key, @Nullable T oldValue, @Nullable T newValue);
+    }
 }

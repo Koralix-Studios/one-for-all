@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+@SuppressWarnings("Convert2Diamond")
 public class ConfigRegistrar {
     private final @NotNull Identifier id;
     private final @NotNull List<VersionedIdentifier> ids;
@@ -23,18 +24,23 @@ public class ConfigRegistrar {
         this.ids = ids;
     }
 
-    public <T, B extends ByteBuf> ConfigValueBuilder<T, MonoConfigValue<T, B>, B> mono(@NotNull VersionedIdentifier id, @NotNull T nominal, @NotNull Codec<T> codec, @NotNull PacketCodec<B, T> packetCodec) {
-        return new ConfigValueBuilder<>(id, this, nominal, codec, packetCodec, SingletonConfigValue::new);
+    public <T, B extends ByteBuf> ConfigValueBuilder<T, SingletonConfigValue<T, B>, B> mono(
+            @NotNull VersionedIdentifier id,
+            @NotNull T nominal,
+            @NotNull Codec<T> codec,
+            @NotNull PacketCodec<B, T> packetCodec
+    ) {
+        return new ConfigValueBuilder<T, SingletonConfigValue<T, B>, B>(id, this, nominal, codec, packetCodec, SingletonConfigValue::new);
     }
 
-    public <K, T, B extends ByteBuf> ConfigValueBuilder<T, MultiConfigValue<K, T, B>, B> multi(
+    public <K, T, B extends ByteBuf> ConfigValueBuilder<T, DefaultedMapConfigValue<K, T, B>, B> multi(
             @NotNull VersionedIdentifier id,
             @NotNull T nominal,
             @NotNull Codec<K> keyCodec,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec
     ) {
-        return new ConfigValueBuilder<>(
+        return new ConfigValueBuilder<T, DefaultedMapConfigValue<K, T, B>, B>(
                 id,
                 this,
                 nominal,
@@ -59,14 +65,14 @@ public class ConfigRegistrar {
             @NotNull Predicate<ConfigActor> canObserveOthers,
             @NotNull Predicate<ConfigActor> canChangeOthers
     ) {
-        return new ConfigValueBuilder<>(
+        return new ConfigValueBuilder<T, PlayerConfigValue<T, B>, B>(
                 id,
                 this,
                 nominal,
                 codec,
                 packetCodec,
                 (registerFn, nominal1, codec1, packetCodec1, test1) -> new PlayerConfigValue<>(
-                        configValue -> registerFn.apply((PlayerConfigValue<T, B>) configValue),
+                        registerFn,
                         nominal1,
                         codec1,
                         packetCodec1,

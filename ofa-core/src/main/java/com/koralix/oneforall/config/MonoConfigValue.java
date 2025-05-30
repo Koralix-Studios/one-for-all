@@ -9,4 +9,10 @@ public interface MonoConfigValue<T, B extends ByteBuf> extends ConfigValue<T, B>
     @NotNull ConfigResult<T> value(@Nullable T value);
     @NotNull ConfigResult<T> value(@NotNull ConfigActor actor);
     @NotNull ConfigResult<T> value(@NotNull ConfigActor actor, @Nullable T value);
+    void onChange(@NotNull MonoConfigObserver<T> observer);
+
+    @FunctionalInterface
+    interface MonoConfigObserver<T> {
+        void onChange(@NotNull MonoConfigValue<T, ?> configValue, @Nullable T oldValue, @Nullable T newValue);
+    }
 }

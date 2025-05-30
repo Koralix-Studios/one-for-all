@@ -12,31 +12,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class DefaultedMapConfigValue<K, T, B extends ByteBuf> implements MultiConfigValue<K, T, B> {
-    private final @NotNull ConfigEntry<T> entry;
-    private final @NotNull T nominal;
+public class DefaultedMapConfigValue<K, T, B extends ByteBuf> extends AbstractConfigValue<T, B, MultiConfigValue.MultiConfigObserver<K, T>> implements MultiConfigValue<K, T, B> {
     private final @NotNull Codec<K> keyCodec;
-    private final @NotNull Codec<T> codec;
-    private final @NotNull PacketCodec<B, T> packetCodec;
-    private final @NotNull ConfigTest<T> test;
     private final @NotNull Map<K, T> valueMap = new HashMap<>();
-    private T defaultValue;
+    private T defaultValue = null;
 
     public DefaultedMapConfigValue(
-            @NotNull Function<MultiConfigValue<K, T, B>, ConfigEntry<T>> registerFn,
+            @NotNull Function<ConfigValue<T, B>, ConfigEntry<T>> registerFn,
             @NotNull T nominal,
             @NotNull Codec<K> keyCodec,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
             @NotNull ConfigTest<T> test
     ) {
-        this.entry = registerFn.apply(this);
-        this.nominal = nominal;
+        super(registerFn, nominal, codec, packetCodec, test);
         this.keyCodec = keyCodec;
-        this.codec = codec;
-        this.packetCodec = packetCodec;
-        this.test = test;
-        this.defaultValue = null;
     }
 
     @Override
@@ -48,10 +38,14 @@ public class DefaultedMapConfigValue<K, T, B extends ByteBuf> implements MultiCo
     public @NotNull ConfigResult<T> value(@NotNull K key, @Nullable T value) {
         if (value == null || this.nominal.equals(value)) {
             T v = this.valueMap.remove(key);
+            if (v != null) this.observers.forEach(observer -> observer.onChange(this, key, v, this.nominal));
             return v == null ? ConfigResult.ok(this.nominal) : ConfigResult.ok(v, this.nominal);
         } else {
             ConfigResult<T> result = this.test.canChange(this.value(key), value);
-            if (result.isOk()) this.valueMap.put(key, value);
+            if (result.isOk()) {
+                T v = this.valueMap.put(key, value);
+                this.observers.forEach(observer -> observer.onChange(this, key, v, value));
+            }
             return result;
         }
     }
@@ -91,25 +85,5 @@ public class DefaultedMapConfigValue<K, T, B extends ByteBuf> implements MultiCo
     @Override
     public @NotNull Map<K, T> valueMap() {
         return Collections.unmodifiableMap(this.valueMap);
-    }
-
-    @Override
-    public @NotNull ConfigEntry<T> entry() {
-        return this.entry;
-    }
-
-    @Override
-    public @NotNull T nominal() {
-        return this.nominal;
-    }
-
-    @Override
-    public @NotNull Codec<T> codec() {
-        return this.codec;
-    }
-
-    @Override
-    public @NotNull PacketCodec<B, T> packetCodec() {
-        return this.packetCodec;
     }
 }
