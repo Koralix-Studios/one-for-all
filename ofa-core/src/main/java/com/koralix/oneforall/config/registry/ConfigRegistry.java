@@ -3,7 +3,6 @@ package com.koralix.oneforall.config.registry;
 import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.config.ConfigValue;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.minecraft.registry.Registry;
@@ -20,7 +19,6 @@ import java.util.Optional;
 public class ConfigRegistry {
     public static final RegistryKey<Registry<ConfigRegistry>> REGISTRY_KEY = RegistryKey.ofRegistry(OneForAll.id("config_registry"));
     public static final Registry<ConfigRegistry> REGISTRY = FabricRegistryBuilder.createSimple(REGISTRY_KEY)
-            .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
     private static final VersionedIdentifierMap<ConfigRegistry> VERSIONED = VersionedIdentifierMap.create();
 
