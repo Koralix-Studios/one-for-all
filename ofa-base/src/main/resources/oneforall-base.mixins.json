@@ -1,0 +1,12 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.koralix.oneforall.base.mixin",
+    "compatibilityLevel": "JAVA_${deps.java}",
+    "mixins": [
+        "carefulbreak.BlockMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

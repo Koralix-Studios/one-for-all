@@ -21,6 +21,7 @@
     "oneforall": "${deps.oneforall}"
   },
   "mixins": [
+    "${mod.id}.mixins.json",
     {
       "config": "${mod.id}.client.mixins.json",
       "environment": "client"

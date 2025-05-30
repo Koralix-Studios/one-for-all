@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+
 public interface OneForAll {
     String MOD_ID = /*$ mod.id*/ "one-for-all";
     String MOD_NAME = /*$ mod.name*/ "One For All";
@@ -16,6 +18,7 @@ public interface OneForAll {
 
     Logger LOGGER = LoggerFactory.getLogger(OneForAll.MOD_NAME);
     Version VERSION = Functions.tryCatch(Version::parse).apply(MOD_VERSION);
+    Random RANDOM = new Random();
 
     @Contract(value = "_ -> new", pure = true)
     static @NotNull Identifier id(@NotNull String path) {

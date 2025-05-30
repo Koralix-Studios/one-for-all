@@ -56,7 +56,6 @@ public class ConfigRegistrar {
             @NotNull T nominal,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
-            @NotNull ConfigTest<T> test,
             @NotNull Predicate<ConfigActor> canObserveOthers,
             @NotNull Predicate<ConfigActor> canChangeOthers
     ) {

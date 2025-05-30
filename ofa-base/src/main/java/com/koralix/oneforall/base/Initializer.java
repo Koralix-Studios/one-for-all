@@ -6,5 +6,8 @@ public class Initializer implements OneForAll {
     @Override
     public void onInitialize() {
         OneForAll.LOGGER.info("Base mod initialized successfully.");
+
+        ServerSettings.register();
+        PlayerSettings.register();
     }
 }
