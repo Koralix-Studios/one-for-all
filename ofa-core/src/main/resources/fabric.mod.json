@@ -11,6 +11,9 @@
         ],
         "server": [
             "com.koralix.oneforall.ServerInitializer"
+        ],
+        "preLaunch": [
+            "com.koralix.oneforall.PreLaunchInitializer"
         ]
     },
     "depends": {
@@ -18,5 +21,8 @@
         "fabricloader": "${deps.fabric.loader}",
         "fabric": "${deps.fabric.api}",
         "java": "${deps.java}"
-    }
+    },
+    "mixins": [
+        "${mod.id}.mixins.json"
+    ]
 }

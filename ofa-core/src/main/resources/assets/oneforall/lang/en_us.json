@@ -1,0 +1,4 @@
+{
+    "text.${mod.id}.disconnect.enforce_protocol": "The server requires the protocol enabled to connect.",
+    "text.${mod.id}.disconnect.invalid_hello": "The client sent an invalid hello packet."
+}

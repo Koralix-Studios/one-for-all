@@ -19,9 +19,9 @@ public enum SettingMode {
                 SettingMode[] values = SettingMode.values();
                 return i >= 0 && i < values.length
                         ? DataResult.success(values[i])
-                        : DataResult.error(() -> "Invalid careful break mode: " + i);
+                        : DataResult.error(() -> "Invalid setting mode: " + i);
             },
-            carefulBreakMode -> (byte) carefulBreakMode.ordinal()
+            mode -> (byte) mode.ordinal()
     );
 
     public static final PacketCodec<ByteBuf, SettingMode> PACKET_CODEC = PacketCodecs.BYTE.xmap(
@@ -29,9 +29,9 @@ public enum SettingMode {
                 SettingMode[] values = SettingMode.values();
                 if (i >= 0 && i < values.length) return values[i];
 
-                throw new IllegalArgumentException("Invalid careful break mode: " + i);
+                throw new IllegalArgumentException("Invalid setting mode: " + i);
             },
-            carefulBreakMode -> (byte) carefulBreakMode.ordinal()
+            mode -> (byte) mode.ordinal()
     );
 
     public boolean isActive(PlayerEntity player, MonoConfigValue<Boolean, ?> config) {

@@ -1,6 +1,8 @@
 package com.koralix.oneforall.client;
 
 import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.client.session.LoginManager;
+import com.koralix.oneforall.client.settings.ClientSettings;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -9,8 +11,12 @@ public class ClientInitializer implements ClientModInitializer {
     public void onInitializeClient() {
         OneForAll.LOGGER.info("Initializing {}-client v{}", OneForAll.MOD_ID, OneForAll.MOD_VERSION);
 
+        ClientSettings.register();
+
         for (OneForAllClient ofa : FabricLoader.getInstance().getEntrypoints("ofa-client", OneForAllClient.class)) {
             ofa.onInitializeClient();
         }
+
+        LoginManager.init();
     }
 }

@@ -5,8 +5,8 @@ import com.koralix.oneforall.base.settings.ServerSettings;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.enchantment.EnchantmentEffectContext;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,10 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Optional;
 
-@Mixin(PlayerEntity.class)
-public class PlayerEntityMixin {
+@Mixin(ServerPlayerEntity.class)
+public class ServerPlayerEntityMixin {
     @Unique
-    private final PlayerEntity player = (PlayerEntity) (Object) this;
+    private final ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo ci) {

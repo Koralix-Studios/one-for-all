@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.koralix.oneforall.mixin",
+    "compatibilityLevel": "JAVA_${deps.java}",
+    "mixins": [
+        "session.ClientConnectionMixin",
+        "session.ServerCommonNetworkHandlerMixin",
+        "session.ServerLoginNetworkHandlerMixin",
+        "session.ServerPlayerEntityMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
