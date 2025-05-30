@@ -1,5 +1,8 @@
 package com.koralix.oneforall.config;
 
+import com.koralix.oneforall.OneForAll;
+import com.mojang.brigadier.Message;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +37,8 @@ public interface ConfigResult<T> {
         return new OkObserve<>(value);
     }
 
+    @NotNull Message message();
+
     record OkObserve<T>(
             T value
     ) implements ConfigResult<T> {
@@ -46,6 +51,11 @@ public interface ConfigResult<T> {
         @Override
         public boolean isError() {
             return false;
+        }
+
+        @Override
+        public @NotNull Message message() {
+            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.observe.ok", value);
         }
     }
 
@@ -63,6 +73,11 @@ public interface ConfigResult<T> {
         public boolean isError() {
             return false;
         }
+
+        @Override
+        public @NotNull Message message() {
+            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.change.valid", oldValue, newValue);
+        }
     }
 
     record InvalidChange<T>(
@@ -79,6 +94,11 @@ public interface ConfigResult<T> {
         public boolean isError() {
             return true;
         }
+
+        @Override
+        public @NotNull Message message() {
+            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.change.invalid", oldValue, newValue);
+        }
     }
 
     record ForbidObserve<T>(
@@ -93,6 +113,11 @@ public interface ConfigResult<T> {
         @Override
         public boolean isError() {
             return true;
+        }
+
+        @Override
+        public @NotNull Message message() {
+            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.observe.forbidden", actor);
         }
     }
 
@@ -109,6 +134,11 @@ public interface ConfigResult<T> {
         public boolean isError() {
             return true;
         }
+
+        @Override
+        public @NotNull Message message() {
+            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.change.forbidden", actor);
+        }
     }
 
     record OkChange<T>(
@@ -123,6 +153,11 @@ public interface ConfigResult<T> {
         @Override
         public boolean isError() {
             return false;
+        }
+
+        @Override
+        public @NotNull Message message() {
+            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.change.ok", actor);
         }
     }
 }

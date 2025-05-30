@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import org.jetbrains.annotations.NotNull;
 
 public enum SettingMode {
     NEVER,
@@ -34,7 +35,7 @@ public enum SettingMode {
             mode -> (byte) mode.ordinal()
     );
 
-    public boolean isActive(PlayerEntity player, MonoConfigValue<Boolean, ?> config) {
+    public boolean isActive(@NotNull PlayerEntity player, @NotNull MonoConfigValue<Boolean, ?, ?> config) {
         return config.value() && switch (this) {
             case NEVER -> false;
             case SNEAK -> player.isSneaking();

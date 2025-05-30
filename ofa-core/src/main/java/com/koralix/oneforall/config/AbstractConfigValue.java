@@ -8,27 +8,32 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class AbstractConfigValue<T, B extends ByteBuf, O> implements ConfigValue<T, B> {
+public abstract class AbstractConfigValue<T, B extends ByteBuf, O, S> implements ConfigValue<T, B, S> {
     protected final @NotNull ConfigEntry<T> entry;
     protected final @NotNull T nominal;
     protected final @NotNull Codec<T> codec;
     protected final @NotNull PacketCodec<B, T> packetCodec;
+    protected final @NotNull Codec<S> saveCodec;
     protected final @NotNull ConfigTest<T> test;
     protected final @NotNull List<O> observers = new ArrayList<>();
+    protected final @NotNull List<Function<S, Boolean>> dataObservers = new ArrayList<>();
 
     public AbstractConfigValue(
-            @NotNull Function<ConfigValue<T, B>, ConfigEntry<T>> registerFn,
+            @NotNull Function<ConfigValue<T, B, S>, ConfigEntry<T>> registerFn,
             @NotNull T nominal,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
+            @NotNull Codec<S> saveCodec,
             @NotNull ConfigTest<T> test
     ) {
         this.entry = registerFn.apply(this);
         this.nominal = nominal;
         this.codec = codec;
         this.packetCodec = packetCodec;
+        this.saveCodec = saveCodec;
         this.test = test;
     }
 
@@ -52,7 +57,29 @@ public abstract class AbstractConfigValue<T, B extends ByteBuf, O> implements Co
         return this.packetCodec;
     }
 
+    @Override
+    public @NotNull Codec<S> saveCodec() {
+        return this.saveCodec;
+    }
+
+    @Override
+    public void onChange(@NotNull Function<S, Boolean> observer) {
+        this.dataObservers.add(observer);
+    }
+
+    @Override
+    public void onChange(@NotNull Consumer<S> observer) {
+        this.dataObservers.add(s -> {
+            observer.accept(s);
+            return true;
+        });
+    }
+
     public void onChange(@NotNull O observer) {
         this.observers.add(observer);
+    }
+
+    protected void notifyDataObservers() {
+        this.dataObservers.removeIf(observer -> !observer.apply(saveData().orElse(null)));
     }
 }

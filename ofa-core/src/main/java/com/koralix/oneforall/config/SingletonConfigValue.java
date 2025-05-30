@@ -4,22 +4,24 @@ import com.koralix.oneforall.config.registry.ConfigEntry;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodec;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Function;
 
-public class SingletonConfigValue<T, B extends ByteBuf> extends AbstractConfigValue<T, B, MonoConfigValue.MonoConfigObserver<T>> implements MonoConfigValue<T, B> {
+public class SingletonConfigValue<T, B extends ByteBuf> extends AbstractConfigValue<T, B, MonoConfigValue.MonoConfigObserver<T>, SingletonConfigValue.SaveData<T>> implements MonoConfigValue<T, B, SingletonConfigValue.SaveData<T>> {
     private T value = null;
 
     public SingletonConfigValue(
-            @NotNull Function<ConfigValue<T, B>, ConfigEntry<T>> registerFn,
+            @NotNull Function<ConfigValue<T, B, SaveData<T>>, ConfigEntry<T>> registerFn,
             @NotNull T nominal,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
             @NotNull ConfigTest<T> test
     ) {
-        super(registerFn, nominal, codec, packetCodec, test);
+        super(registerFn, nominal, codec, packetCodec, SaveData.codec(codec), test);
     }
 
     @Override
@@ -43,6 +45,7 @@ public class SingletonConfigValue<T, B extends ByteBuf> extends AbstractConfigVa
                 this.observers.forEach(observer -> observer.onChange(this, oldValue, value));
             }
         }
+        if (result.isOk()) this.notifyDataObservers();
         return result;
     }
 
@@ -54,5 +57,24 @@ public class SingletonConfigValue<T, B extends ByteBuf> extends AbstractConfigVa
     @Override
     public @NotNull ConfigResult<T> value(@NotNull ConfigActor actor, @Nullable T value) {
         return this.test.canChange(actor).and(this.value(value));
+    }
+
+    @Override
+    public void loadData(@NotNull SaveData<T> data) {
+        this.value = data.value();
+    }
+
+    @Override
+    public @NotNull Optional<SaveData<T>> saveData() {
+        return this.value == null || this.nominal.equals(this.value)
+                ? Optional.empty()
+                : Optional.of(new SaveData<>(this.value));
+    }
+
+    public record SaveData<T>(@NotNull T value) {
+        @Contract("_ -> new")
+        private static <T> @NotNull Codec<SaveData<T>> codec(@NotNull Codec<T> codec) {
+            return codec.xmap(SaveData::new, SaveData::value);
+        }
     }
 }

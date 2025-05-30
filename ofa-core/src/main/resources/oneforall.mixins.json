@@ -4,6 +4,8 @@
     "package": "com.koralix.oneforall.mixin",
     "compatibilityLevel": "JAVA_${deps.java}",
     "mixins": [
+        "config.RegistriesMixin",
+        "config.ServerCommandSourceMixin",
         "session.ClientConnectionMixin",
         "session.ServerCommonNetworkHandlerMixin",
         "session.ServerLoginNetworkHandlerMixin",

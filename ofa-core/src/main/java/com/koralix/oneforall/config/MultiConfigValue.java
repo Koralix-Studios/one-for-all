@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public interface MultiConfigValue<K, T, B extends ByteBuf> extends ConfigValue<T, B> {
+public interface MultiConfigValue<K, T, B extends ByteBuf, S> extends ConfigValue<T, B, S> {
     @NotNull T value(K key);
     @NotNull ConfigResult<T> value(@NotNull K key, @Nullable T value);
     @NotNull ConfigResult<T> value(@NotNull ConfigActor actor, @NotNull K key);
@@ -21,6 +21,6 @@ public interface MultiConfigValue<K, T, B extends ByteBuf> extends ConfigValue<T
 
     @FunctionalInterface
     interface MultiConfigObserver<K, T> {
-        void onChange(@NotNull MultiConfigValue<K, T, ?> configValue, @Nullable K key, @Nullable T oldValue, @Nullable T newValue);
+        void onChange(@NotNull MultiConfigValue<K, T, ?, ?> configValue, @Nullable K key, @Nullable T oldValue, @Nullable T newValue);
     }
 }

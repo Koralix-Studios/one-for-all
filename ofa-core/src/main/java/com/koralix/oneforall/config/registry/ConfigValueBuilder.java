@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class ConfigValueBuilder<T, C extends ConfigValue<T, B>, B extends ByteBuf> {
+public class ConfigValueBuilder<T, C extends ConfigValue<T, B, S>, B extends ByteBuf, S> {
     private final ConfigRegistrar registrar;
     private final T nominal;
     private final Codec<T> codec;
     private final PacketCodec<B, T> packetCodec;
-    private final ConfigValueFactory<T, C, B> factory;
+    private final ConfigValueFactory<T, C, B, S> factory;
     private final List<VersionedIdentifier> ids = new ArrayList<>();
     private ConfigTest<T> test;
 
@@ -29,7 +29,7 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B>, B extends ByteBu
             @NotNull T nominal,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
-            @NotNull ConfigValueFactory<T, C, B> factory
+            @NotNull ConfigValueFactory<T, C, B, S> factory
     ) {
         this.ids.add(id);
         this.registrar = registrar;
@@ -39,7 +39,7 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B>, B extends ByteBu
         this.factory = factory;
     }
 
-    public ConfigValueBuilder<T, C, B> id(@NotNull VersionedIdentifier id) {
+    public ConfigValueBuilder<T, C, B, S> id(@NotNull VersionedIdentifier id) {
         if (this.ids.getLast().compareTo(id) >= 0) {
             throw new IllegalArgumentException("VersionedIdentifier must be in ascending order");
         }
@@ -47,16 +47,16 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B>, B extends ByteBu
         return this;
     }
 
-    public ConfigValueBuilder<T, C, B> id(@NotNull Version version, @NotNull Identifier id) {
+    public ConfigValueBuilder<T, C, B, S> id(@NotNull Version version, @NotNull Identifier id) {
         return id(new VersionedIdentifier(version, id));
     }
 
-    public ConfigValueBuilder<T, C, B> test(ConfigTest<T> test) {
+    public ConfigValueBuilder<T, C, B, S> test(ConfigTest<T> test) {
         this.test = this.test == null ? test : this.test.and(test);
         return this;
     }
 
-    public ConfigValueBuilder<T, C, B> test(Predicate<T> test) {
+    public ConfigValueBuilder<T, C, B, S> test(Predicate<T> test) {
         return test(ConfigTest.of(test));
     }
 
@@ -71,9 +71,9 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B>, B extends ByteBu
     }
 
     @FunctionalInterface
-    public interface ConfigValueFactory<T, C extends ConfigValue<T, B>, B extends ByteBuf> {
+    public interface ConfigValueFactory<T, C extends ConfigValue<T, B, S>, B extends ByteBuf, S> {
         @NotNull C create(
-                @NotNull Function<ConfigValue<T, B>, ConfigEntry<T>> registerFn,
+                @NotNull Function<ConfigValue<T, B, S>, ConfigEntry<T>> registerFn,
                 @NotNull T nominal,
                 @NotNull Codec<T> codec,
                 @NotNull PacketCodec<B, T> packetCodec,

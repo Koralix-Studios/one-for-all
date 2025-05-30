@@ -2,6 +2,7 @@ package com.koralix.oneforall.config.registry;
 
 import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.config.ConfigValue;
+import com.koralix.oneforall.config.loader.DynamicConfigStorage;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class ConfigRegistry {
     public static final RegistryKey<Registry<ConfigRegistry>> REGISTRY_KEY = RegistryKey.ofRegistry(OneForAll.id("config_registry"));
@@ -58,7 +60,7 @@ public class ConfigRegistry {
         VERSIONED.freeze();
     }
 
-    public static @NotNull Optional<ConfigValue<?, ?>> which(Version version, Identifier registryId, Identifier configId) {
+    public static @NotNull Optional<ConfigValue<?, ?, ?>> which(Version version, Identifier registryId, Identifier configId) {
         return ConfigRegistry
                 .getConfigRegistry(version, registryId)
                 .flatMap(registry -> registry.getConfigValue(version, configId));
@@ -72,11 +74,26 @@ public class ConfigRegistry {
         return VERSIONED.get(version, id);
     }
 
-    public @NotNull Optional<ConfigValue<?, ?>> getConfigValue(Identifier id) {
+    public static @NotNull Optional<ConfigValue<?, ?, ?>> get(@NotNull ConfigKey key) {
+        return getConfigRegistry(key.registryId()).flatMap(registry -> registry.getConfigValue(key.configId()));
+    }
+
+    public @NotNull Optional<ConfigValue<?, ?, ?>> getConfigValue(Identifier id) {
         return Optional.ofNullable(this.configValues.get(id)).map(ConfigEntry::configValue);
     }
 
-    public @NotNull Optional<ConfigValue<?, ?>> getConfigValue(Version version, Identifier id) {
+    public @NotNull Optional<ConfigValue<?, ?, ?>> getConfigValue(Version version, Identifier id) {
         return this.versioned.get(version, id).map(ConfigEntry::configValue);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void save(@NotNull DynamicConfigStorage storage) {
+        for (ConfigEntry<?> entry : this.configValues.values()) {
+            storage.add((ConfigValue<Object, ?, ?>) entry.configValue());
+        }
+    }
+
+    public void forEach(Consumer<ConfigEntry<?>> consumer) {
+        this.configValues.values().forEach(consumer);
     }
 }

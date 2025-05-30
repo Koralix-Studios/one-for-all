@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 @SuppressWarnings("Convert2Diamond")
@@ -24,23 +25,23 @@ public class ConfigRegistrar {
         this.ids = ids;
     }
 
-    public <T, B extends ByteBuf> ConfigValueBuilder<T, SingletonConfigValue<T, B>, B> mono(
+    public <T, B extends ByteBuf> ConfigValueBuilder<T, SingletonConfigValue<T, B>, B, SingletonConfigValue.SaveData<T>> mono(
             @NotNull VersionedIdentifier id,
             @NotNull T nominal,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec
     ) {
-        return new ConfigValueBuilder<T, SingletonConfigValue<T, B>, B>(id, this, nominal, codec, packetCodec, SingletonConfigValue::new);
+        return new ConfigValueBuilder<T, SingletonConfigValue<T, B>, B, SingletonConfigValue.SaveData<T>>(id, this, nominal, codec, packetCodec, SingletonConfigValue::new);
     }
 
-    public <K, T, B extends ByteBuf> ConfigValueBuilder<T, DefaultedMapConfigValue<K, T, B>, B> multi(
+    public <K, T, B extends ByteBuf> ConfigValueBuilder<T, DefaultedMapConfigValue<K, T, B>, B, DefaultedMapConfigValue.SaveData<K, T>> multi(
             @NotNull VersionedIdentifier id,
             @NotNull T nominal,
             @NotNull Codec<K> keyCodec,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec
     ) {
-        return new ConfigValueBuilder<T, DefaultedMapConfigValue<K, T, B>, B>(
+        return new ConfigValueBuilder<T, DefaultedMapConfigValue<K, T, B>, B, DefaultedMapConfigValue.SaveData<K, T>>(
                 id,
                 this,
                 nominal,
@@ -57,7 +58,7 @@ public class ConfigRegistrar {
         );
     }
 
-    public <T, B extends ByteBuf> ConfigValueBuilder<T, PlayerConfigValue<T, B>, B> player(
+    public <T, B extends ByteBuf> ConfigValueBuilder<T, PlayerConfigValue<T, B>, B, DefaultedMapConfigValue.SaveData<UUID, T>> player(
             @NotNull VersionedIdentifier id,
             @NotNull T nominal,
             @NotNull Codec<T> codec,
@@ -65,7 +66,7 @@ public class ConfigRegistrar {
             @NotNull Predicate<ConfigActor> canObserveOthers,
             @NotNull Predicate<ConfigActor> canChangeOthers
     ) {
-        return new ConfigValueBuilder<T, PlayerConfigValue<T, B>, B>(
+        return new ConfigValueBuilder<T, PlayerConfigValue<T, B>, B, DefaultedMapConfigValue.SaveData<UUID, T>>(
                 id,
                 this,
                 nominal,
@@ -83,7 +84,7 @@ public class ConfigRegistrar {
         );
     }
 
-    public <T, C extends ConfigValue<T, B>, B extends ByteBuf> ConfigEntry<T> register(@NotNull List<VersionedIdentifier> ids, @NotNull C configValue) {
+    public <T, C extends ConfigValue<T, B, S>, B extends ByteBuf, S> ConfigEntry<T> register(@NotNull List<VersionedIdentifier> ids, @NotNull C configValue) {
         ConfigEntry<T> entry = new ConfigEntry<>(new ConfigKey(id, ids.getLast().identifier()), configValue);
         this.versioned.putAll(ids, entry);
         this.configValues.put(entry.key().configId(), entry);

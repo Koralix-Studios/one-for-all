@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ClientSettings {
     private static final ConfigRegistrar REGISTRAR = ConfigRegistry.builder("0.1.0", OneForAll.id("client_settings")).prepare();
 
-    public static final MonoConfigValue<ProtocolUsageCondition, ByteBuf> PROTOCOL_USAGE_CONDITION = REGISTRAR
+    public static final MonoConfigValue<ProtocolUsageCondition, ByteBuf, ?> PROTOCOL_USAGE_CONDITION = REGISTRAR
             .mono(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("protocol_enabled")),
                     ProtocolUsageCondition.ALWAYS,

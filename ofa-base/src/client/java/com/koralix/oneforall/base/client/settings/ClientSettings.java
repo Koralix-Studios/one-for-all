@@ -15,22 +15,22 @@ import java.util.Objects;
 public class ClientSettings {
     private static final ConfigRegistrar REGISTRAR = ConfigRegistry.builder("0.1.0", OneForAll.id("client_settings")).prepare();
 
-    public static final MonoConfigValue<Boolean, ByteBuf> CONSUME_FIREWORKS = REGISTRAR
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> CONSUME_FIREWORKS = REGISTRAR
             .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("consume_fireworks")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
             .test(Objects::nonNull)
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf> CENTER_FLOWERS = REGISTRAR
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> CENTER_FLOWERS = REGISTRAR
             .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("center_flowers")), false, Codec.BOOL, PacketCodecs.BOOLEAN)
             .test(Objects::nonNull)
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf> FLY_INERTIA = REGISTRAR
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> FLY_INERTIA = REGISTRAR
             .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("fly_inertia")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
             .test(Objects::nonNull)
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf> FLAT_DIGGER = REGISTRAR
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> FLAT_DIGGER = REGISTRAR
             .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("flat_digger")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
             .test(Objects::nonNull)
             .build();

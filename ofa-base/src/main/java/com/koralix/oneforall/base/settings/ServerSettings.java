@@ -15,17 +15,17 @@ import java.util.Objects;
 public class ServerSettings {
     private static final ConfigRegistrar REGISTRAR = ConfigRegistry.builder("0.1.0", OneForAll.id("server_settings")).prepare();
 
-    public static final MonoConfigValue<Boolean, ByteBuf> CAREFUL_BREAK = REGISTRAR
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> CAREFUL_BREAK = REGISTRAR
             .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("careful_break")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
             .test(Objects::nonNull)
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf> XP_BAR_MENDING = REGISTRAR
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> XP_BAR_MENDING = REGISTRAR
             .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("xp_bar_mending")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
             .test(Objects::nonNull)
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf> CREATIVE_KILL = REGISTRAR
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> CREATIVE_KILL = REGISTRAR
             .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("creative_kill")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
             .test(Objects::nonNull)
             .build();

@@ -15,7 +15,7 @@ import java.util.Objects;
 public class ServerSettings {
     private static final ConfigRegistrar REGISTRAR = ConfigRegistry.builder("0.1.0", OneForAll.id("server_settings")).prepare();
 
-    public static final MonoConfigValue<Boolean, ByteBuf> PROTOCOL_ENABLED = REGISTRAR
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> PROTOCOL_ENABLED = REGISTRAR
             .mono(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("protocol_enabled")),
                     true,
@@ -25,7 +25,7 @@ public class ServerSettings {
             .test(Objects::nonNull)
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf> ENFORCE_PROTOCOL = REGISTRAR
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> ENFORCE_PROTOCOL = REGISTRAR
             .mono(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("enforce_protocol")),
                     false,
