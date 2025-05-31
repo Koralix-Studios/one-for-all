@@ -3,40 +3,29 @@ plugins {
     id("fabric-loom")
 }
 
-class ModInfo(
-    val id: String,
-    val name: String,
-    val description: String,
-    val version: String,
-) {
-    constructor() : this(
-        id = properties["mod.id"] as String,
-        name = properties["mod.name"] as String,
-        description = properties["mod.description"] as String,
-        version = properties["mod.version"] as String,
-    )
-}
+println(modInfo)
 
-val modInfo: ModInfo = ModInfo()
+val common = ModInfo(stonecutter.node.sibling("")!!.project)
+val minecraft = stonecutter.current.project
 
-version = properties["mod.version"] as String
+version = modInfo.prop("version")
 
 base {
-    archivesName.set("${modInfo.id}-${stonecutter.current.project}")
+    archivesName.set("${modInfo.id}-$minecraft")
 }
 
 stonecutter {
-    swap("mod.id", "\"${properties["mod.id"] as String}\";")
-    swap("mod.name", "\"${properties["mod.name"] as String}\";")
-    swap("mod.description", "\"${properties["mod.description"] as String}\";")
-    swap("mod.version", "\"${properties["mod.version"] as String}\";")
+    swap("mod.id", "\"${modInfo.prop("id")}\";")
+    swap("mod.name", "\"${modInfo.prop("name")}\";")
+    swap("mod.description", "\"${modInfo.prop("description")}\";")
+    swap("mod.version", "\"${modInfo.prop("version")}\";")
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${stonecutter.current.project}")
-    mappings("net.fabricmc:yarn:${stonecutter.current.version}+build.${property("deps.fabric.yarn")}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric.loader")}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric.api")}+${stonecutter.current.version}")
+    minecraft("com.mojang:minecraft:$minecraft")
+    mappings("net.fabricmc:yarn:$minecraft+build.${common.dep("fabric.yarn")}:v2")
+    modImplementation("net.fabricmc:fabric-loader:${common.dep("fabric.loader")}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${common.dep("fabric.api")}+$minecraft")
 }
 
 loom {
@@ -61,7 +50,7 @@ loom {
 java {
     withSourcesJar()
     withJavadocJar()
-    val java = if (stonecutter.eval(stonecutter.current.version, ">=1.20.5"))
+    val java = if (stonecutter.eval(minecraft, ">=1.20.5"))
         JavaVersion.VERSION_21
     else
         JavaVersion.VERSION_17
@@ -78,61 +67,15 @@ tasks.processResources {
 }
 
 fun processResources(obj: ProcessResources) {
-    val map = mapOf(
-        "mod" to modInfo,
-        "deps" to getDeps(),
+    obj.properties(listOf("fabric.mod.json", "*.mixins.json"),
+        "mod.id" to modInfo.id,
+        "mod.name" to modInfo.name,
+        "mod.description" to modInfo.description,
+        "mod.version" to modInfo.version,
+        "deps.fabric.yarn" to common.dep("fabric.yarn"),
+        "deps.fabric.loader" to common.dep("fabric.loader"),
+        "deps.fabric.api" to common.dep("fabric.api"),
+        "deps.minecraft" to minecraft,
+        "deps.java" to java.targetCompatibility.majorVersion
     )
-
-    obj.filesMatching("fabric.mod.json") { expand(map) }
-    obj.filesMatching("*.mixins.json") { expand(map) }
-}
-
-fun getDeps(): Map<String, Any> {
-    val deps = mutableMapOf<String, Any>()
-    properties.forEach { (key, value) ->
-        if (key.startsWith("deps.")) {
-            val replace = key.endsWith(".dependency")
-            val name = if (replace) {
-                key.substring("deps.".length, key.length - ".dependency".length)
-            } else {
-                key.substring("deps.".length)
-            }
-            val map = createRecursiveMap(name, value as String)
-            mergeRecursiveMaps(deps, map, replace)
-        }
-    }
-    deps.putIfAbsent("minecraft", stonecutter.current.version)
-    deps.putIfAbsent("java", java.targetCompatibility.majorVersion)
-    return deps
-}
-
-fun createRecursiveMap(key: String, value: String): MutableMap<String, Any> {
-    val keys = key.split(".")
-    val result = mutableMapOf<String, Any>()
-
-    fun buildMap(keys: List<String>, value: String): MutableMap<String, Any> {
-        return when (keys.size) {
-            1 -> mutableMapOf(keys[0] to value)
-            else -> mutableMapOf(keys[0] to buildMap(keys.drop(1), value))
-        }
-    }
-
-    return buildMap(keys, value).also { result.putAll(it) }
-}
-
-fun mergeRecursiveMaps(map1: MutableMap<String, Any>, map2: Map<String, Any>, replace: Boolean) {
-    map2.forEach { (key, value) ->
-        when {
-            value is Map<*, *> && map1[key] is Map<*, *> -> {
-                @Suppress("UNCHECKED_CAST")
-                mergeRecursiveMaps(
-                    map1[key] as MutableMap<String, Any>,
-                    value as MutableMap<String, Any>,
-                    replace
-                )
-            }
-            else -> if (key !in map1 || replace)
-                map1[key] = value
-        }
-    }
 }

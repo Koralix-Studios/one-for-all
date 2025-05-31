@@ -19,16 +19,13 @@ stonecutter {
     kotlinController = true
     centralScript = "build.gradle.kts"
 
-    shared {
+    create(rootProject) {
         versions("1.21.5")
         vcsVersion = "1.21.5"
-    }
 
-    create("ofa-core")
-    create("ofa-base")
+        branch("ofa-core")
+        branch("ofa-base")
+    }
 }
 
 rootProject.name = "one-for-all"
-
-include("ofa-core")
-include("ofa-base")

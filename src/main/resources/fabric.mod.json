@@ -1,0 +1,13 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod.id}",
+    "name": "${mod.name}",
+    "description": "${mod.description}",
+    "version": "${mod.version}",
+    "depends": {
+        "minecraft": "${deps.minecraft}",
+        "fabricloader": "${deps.fabric.loader}",
+        "fabric": "${deps.fabric.api}",
+        "java": "${deps.java}"
+    }
+}
