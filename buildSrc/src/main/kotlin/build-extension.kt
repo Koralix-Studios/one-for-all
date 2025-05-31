@@ -17,10 +17,10 @@ fun ProcessResources.properties(files: Iterable<String>, vararg properties: Pair
 
 @JvmInline
 value class ModInfo(private val project: Project) {
-    val id: String get() = requireNotNull(project.prop("mod.id")) { "Missing 'mod.id'" }
-    val name: String get() = requireNotNull(project.prop("mod.name")) { "Missing 'mod.name'" }
-    val description: String get() = requireNotNull(project.prop("mod.description")) { "Missing 'mod.description'" }
-    val version: String get() = requireNotNull(project.prop("mod.version")) { "Missing 'mod.version'" }
+    val id: String get() = requireNotNull(project.parent?.prop("mod.id")) { "Missing 'mod.id'" }
+    val name: String get() = requireNotNull(project.parent?.prop("mod.name")) { "Missing 'mod.name'" }
+    val description: String get() = requireNotNull(project.parent?.prop("mod.description")) { "Missing 'mod.description'" }
+    val version: String get() = requireNotNull(project.parent?.prop("mod.version")) { "Missing 'mod.version'" }
 
     fun prop(key: String) = requireNotNull(project.prop("mod.$key")) { "Missing 'mod.$key'" }
     fun dep(key: String) = requireNotNull(project.prop("deps.$key")) { "Missing 'deps.$key'" }

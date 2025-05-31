@@ -3,12 +3,10 @@ plugins {
     id("fabric-loom")
 }
 
-println(modInfo)
-
 val common = ModInfo(stonecutter.node.sibling("")!!.project)
 val minecraft = stonecutter.current.project
 
-version = modInfo.prop("version")
+version = modInfo.version
 
 base {
     archivesName.set("${modInfo.id}-$minecraft")

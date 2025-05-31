@@ -5,9 +5,7 @@ plugins {
     id("fabric-loom")
 }
 
-println(modInfo)
-
-version = prop("mod.version")!!
+version = modInfo.version
 
 val minecraft = stonecutter.current.project
 
@@ -21,10 +19,10 @@ base {
 }
 
 stonecutter {
-    swap("mod.id", "\"${prop("mod.id") as String}\";")
-    swap("mod.name", "\"${prop("mod.name") as String}\";")
-    swap("mod.description", "\"${prop("mod.description") as String}\";")
-    swap("mod.version", "\"${prop("mod.version") as String}\";")
+    swap("mod.id", "\"${modInfo.prop("id")}\";")
+    swap("mod.name", "\"${modInfo.prop("name")}\";")
+    swap("mod.description", "\"${modInfo.prop("description")}\";")
+    swap("mod.version", "\"${modInfo.prop("version")}\";")
 }
 
 projects.forEach {
@@ -33,9 +31,9 @@ projects.forEach {
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraft")
-    mappings("net.fabricmc:yarn:$minecraft+build.${prop("deps.fabric.yarn")}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${prop("deps.fabric.loader")}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${prop("deps.fabric.api")}+$minecraft")
+    mappings("net.fabricmc:yarn:$minecraft+build.${modInfo.dep("fabric.yarn")}:v2")
+    modImplementation("net.fabricmc:fabric-loader:${modInfo.dep("fabric.loader")}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${modInfo.dep("fabric.api")}+$minecraft")
 
     projects.forEach {
         implementation(project(it.path, configuration = "namedElements"))

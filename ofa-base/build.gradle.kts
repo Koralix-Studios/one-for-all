@@ -3,14 +3,13 @@ plugins {
     id("fabric-loom")
 }
 
-println(modInfo)
-
 val common = ModInfo(stonecutter.node.sibling("")!!.project)
 val minecraft = stonecutter.current.project
 
 val core = stonecutter.node.sibling("ofa-core")!!.project
+val coreModInfo = ModInfo(core)
 
-version = modInfo.prop("version")
+version = modInfo.version
 
 base {
     archivesName.set("${modInfo.id}-$minecraft")
@@ -49,8 +48,7 @@ loom {
         }
     }
     runConfigs.all {
-        ideConfigGenerated(true)
-        runDir = "../../run"
+        ideConfigGenerated(false)
     }
 }
 
@@ -82,6 +80,8 @@ fun processResources(obj: ProcessResources) {
         "deps.fabric.yarn" to common.dep("fabric.yarn"),
         "deps.fabric.loader" to common.dep("fabric.loader"),
         "deps.fabric.api" to common.dep("fabric.api"),
+        "deps.core.id" to coreModInfo.id,
+        "deps.core.version" to coreModInfo.version,
         "deps.minecraft" to minecraft,
         "deps.java" to java.targetCompatibility.majorVersion
     )
