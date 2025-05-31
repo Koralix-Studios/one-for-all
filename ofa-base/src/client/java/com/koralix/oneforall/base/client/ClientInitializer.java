@@ -8,7 +8,7 @@ import com.koralix.oneforall.config.loader.Storages;
 public class ClientInitializer implements OneForAllClient {
     @Override
     public void onInitializeClient() {
-        OneForAll.LOGGER.info("Client initialized successfully.");
+        OneForAll.logger().info("Client initialized successfully.");
 
         ClientSettings.register().save(Storages.UNIVERSAL);
     }

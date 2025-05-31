@@ -28,19 +28,19 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public final class OfaCommand {
     private static final DynamicCommandExceptionType INVALID_CONFIG_REGISTRY_EXCEPTION = new DynamicCommandExceptionType(
-            key -> Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".invalid_config_registry", key)
+            key -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".invalid_config_registry", key)
     );
     private static final DynamicCommandExceptionType UNKNOWN_CONFIG_EXCEPTION = new DynamicCommandExceptionType(
-            key -> Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".unknown_config", key)
+            key -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".unknown_config", key)
     );
     private static final DynamicCommandExceptionType INVALID_NBT_EXCEPTION = new DynamicCommandExceptionType(
-            nbt -> Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".invalid_nbt", nbt)
+            nbt -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".invalid_nbt", nbt)
     );
     private static final DynamicCommandExceptionType CONFIG_TEST_EXCEPTION = new DynamicCommandExceptionType(
             text -> (Text) text
     );
     private static final SimpleCommandExceptionType INVALID_CONFIG_TYPE_EXCEPTION = new SimpleCommandExceptionType(
-            Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.unsupported_type")
+            Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.unsupported_type")
     );
 
     private OfaCommand() {

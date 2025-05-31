@@ -18,9 +18,9 @@ public class RegistriesMixin {
     private static void onFreezeRegistries(CallbackInfo ci) {
         ConfigRegistry.freeze();
         try {
-            Storages.UNIVERSAL.path(FabricLoader.getInstance().getConfigDir().resolve(OneForAll.MOD_ID).resolve("universal.nbt"));
+            Storages.UNIVERSAL.path(FabricLoader.getInstance().getConfigDir().resolve(OneForAll.id()).resolve("universal.nbt"));
         } catch (IOException e) {
-            OneForAll.LOGGER.error("Failed to load universal config storage", e);
+            OneForAll.logger().error("Failed to load universal config storage", e);
         }
     }
 }

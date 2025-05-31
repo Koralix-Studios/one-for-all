@@ -15,7 +15,7 @@ public class PreLaunchInitializer implements PreLaunchEntrypoint {
 
         OneForAll.INTERNAL_DATA.freeze();
 
-        OneForAll.LOGGER.info("OneForAll pre-launch initialization complete.");
+        OneForAll.logger().info("OneForAll pre-launch initialization complete.");
 
         for (OneForAllPreLaunch ofa : FabricLoader.getInstance().getEntrypoints("ofa-preLaunch", OneForAllPreLaunch.class)) {
             ofa.onPreLaunch();

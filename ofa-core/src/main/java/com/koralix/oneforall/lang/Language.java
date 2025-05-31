@@ -44,10 +44,10 @@ public enum Language {
     Language(String code) {
         this.code = code;
 
-        OneForAll.LOGGER.info("Loading translations from {}", code);
+        OneForAll.logger().info("Loading translations from {}", code);
 
         Map<String, String> translationMap = new HashMap<>();
-        String languageFile = "/assets/" + OneForAll.MOD_ID + "/lang/" + code + ".json";
+        String languageFile = "/assets/" + OneForAll.id() + "/lang/" + code + ".json";
 
         try (InputStream inputStream = Language.class.getResourceAsStream(languageFile)) {
             JsonObject jsonObject = new Gson().fromJson(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8), JsonObject.class);

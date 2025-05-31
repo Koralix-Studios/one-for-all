@@ -96,7 +96,7 @@ public class DynamicConfigStorage extends ConfigStorage {
         try {
             if (this.path != null) this.save();
         } catch (Exception e) {
-            OneForAll.LOGGER.error("Failed to save config value for {} on {}: {}", key, this.path, e.getMessage(), e);
+            OneForAll.logger().error("Failed to save config value for {} on {}: {}", key, this.path, e.getMessage(), e);
         }
     }
 
@@ -106,7 +106,7 @@ public class DynamicConfigStorage extends ConfigStorage {
 
     @Contract("_ -> new")
     public static @NotNull DynamicConfigStorage create(@NotNull Collection<ConfigValue<?, ?, ?>> configs) {
-        DynamicConfigStorage storage = new DynamicConfigStorage(OneForAll.VERSION, new HashMap<>());
+        DynamicConfigStorage storage = new DynamicConfigStorage(OneForAll.version(), new HashMap<>());
 
         for (ConfigValue<?, ?, ?> config : configs) {
             storage.add(config);

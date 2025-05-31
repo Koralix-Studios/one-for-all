@@ -31,7 +31,7 @@ public class LoginManager {
         }
 
         PacketByteBuf response = PacketByteBufs.create();
-        response.writeString(OneForAll.MOD_VERSION);
+        response.writeString(OneForAll.version().getFriendlyString());
         response.writeString(client.options.language);
         return CompletableFuture.completedFuture(response);
     }

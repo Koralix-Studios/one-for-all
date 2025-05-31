@@ -11,7 +11,7 @@ import net.fabricmc.loader.api.FabricLoader;
 public class Initializer implements ModInitializer {
     @Override
     public void onInitialize() {
-        OneForAll.LOGGER.info("Initializing {} v{}", OneForAll.MOD_ID, OneForAll.MOD_VERSION);
+        OneForAll.logger().info("Initializing {} v{}", OneForAll.id(), OneForAll.version());
 
         ServerSettings.register().save(Storages.SERVER);
 

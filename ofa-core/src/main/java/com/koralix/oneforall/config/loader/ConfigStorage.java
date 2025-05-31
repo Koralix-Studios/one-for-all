@@ -77,7 +77,7 @@ public class ConfigStorage {
             config.saveData().ifPresent(o -> entries.put(config.key(), o));
         }
 
-        return new ConfigStorage(OneForAll.VERSION, entries);
+        return new ConfigStorage(OneForAll.version(), entries);
     }
 
     @Contract("_ -> new")

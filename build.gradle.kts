@@ -19,10 +19,10 @@ base {
 }
 
 stonecutter {
-    swap("mod.id", "\"${modInfo.prop("id")}\";")
-    swap("mod.name", "\"${modInfo.prop("name")}\";")
-    swap("mod.description", "\"${modInfo.prop("description")}\";")
-    swap("mod.version", "\"${modInfo.prop("version")}\";")
+    swap("mod.id", "\"${modInfo.id}\";")
+    swap("mod.name", "\"${modInfo.name}\";")
+    swap("mod.description", "\"${modInfo.description}\";")
+    swap("mod.version", "\"${modInfo.version}\";")
 }
 
 projects.forEach {
@@ -44,7 +44,7 @@ dependencies {
 loom {
     runConfigs.all {
         ideConfigGenerated(true)
-        runDir = "../run"
+        runDir = "../../run"
     }
 }
 

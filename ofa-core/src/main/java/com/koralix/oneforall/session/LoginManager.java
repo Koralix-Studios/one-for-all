@@ -24,7 +24,7 @@ public class LoginManager {
 
     private static @NotNull PacketByteBuf createHelloPacket() {
         PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeString(OneForAll.MOD_VERSION);
+        buf.writeString(OneForAll.version().getFriendlyString());
         buf.writeBoolean(ServerSettings.ENFORCE_PROTOCOL.value());
         return buf;
     }
@@ -62,7 +62,7 @@ public class LoginManager {
         });
 
         if (!understood && ServerSettings.ENFORCE_PROTOCOL.value()) {
-            return Optional.of(Text.translatable("text." + OneForAll.MOD_ID + ".disconnect.enforce_protocol"));
+            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.enforce_protocol"));
         } else if (!understood) {
             return Optional.empty();
         }
@@ -71,7 +71,7 @@ public class LoginManager {
         Optional<String> language = readSafe(buf, PacketByteBuf::readString);
 
         if (version.isEmpty() || language.isEmpty()) {
-            return Optional.of(Text.translatable("text." + OneForAll.MOD_ID + ".disconnect.invalid_hello"));
+            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.invalid_hello"));
         }
 
         try {
@@ -80,7 +80,7 @@ public class LoginManager {
             Language lang = Language.fromCode(language.get());
             if (lang != null) session.set(new LangComponent(lang));
         } catch (Exception e) {
-            return Optional.of(Text.translatable("text." + OneForAll.MOD_ID + ".disconnect.invalid_query"));
+            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.invalid_query"));
         }
 
         return Optional.empty();

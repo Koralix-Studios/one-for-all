@@ -10,7 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 public class ClientInitializer implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        OneForAll.LOGGER.info("Initializing {}-client v{}", OneForAll.MOD_ID, OneForAll.MOD_VERSION);
+        OneForAll.logger().info("Initializing {}-client v{}", OneForAll.id(), OneForAll.version());
 
         ClientSettings.register().save(Storages.UNIVERSAL);
 

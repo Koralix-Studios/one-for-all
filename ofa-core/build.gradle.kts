@@ -13,10 +13,10 @@ base {
 }
 
 stonecutter {
-    swap("mod.id", "\"${modInfo.prop("id")}\";")
-    swap("mod.name", "\"${modInfo.prop("name")}\";")
-    swap("mod.description", "\"${modInfo.prop("description")}\";")
-    swap("mod.version", "\"${modInfo.prop("version")}\";")
+    swap("mod.id", "\"${modInfo.id}\";")
+    swap("mod.name", "\"${modInfo.id}\";")
+    swap("mod.description", "\"${modInfo.id}\";")
+    swap("mod.version", "\"${modInfo.id}\";")
 }
 
 dependencies {

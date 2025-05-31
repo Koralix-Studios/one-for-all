@@ -55,7 +55,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.observe.ok", value);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.observe.ok", value);
         }
     }
 
@@ -76,7 +76,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.change.valid", oldValue, newValue);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.valid", oldValue, newValue);
         }
     }
 
@@ -97,7 +97,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.change.invalid", oldValue, newValue);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.invalid", oldValue, newValue);
         }
     }
 
@@ -117,7 +117,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.observe.forbidden", actor);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.observe.forbidden", actor);
         }
     }
 
@@ -137,7 +137,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.change.forbidden", actor);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.forbidden", actor);
         }
     }
 
@@ -157,7 +157,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.MOD_ID + ".config.change.ok", actor);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.ok", actor);
         }
     }
 }
