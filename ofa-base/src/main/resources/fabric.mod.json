@@ -18,7 +18,7 @@
     "fabricloader": "${deps.fabric.loader}",
     "fabric": "${deps.fabric.api}",
     "java": "${deps.java}",
-    "oneforall": "${deps.oneforall}"
+    "${deps.core.id}": "${deps.core.version}"
   },
   "mixins": [
     "${mod.id}.mixins.json",
