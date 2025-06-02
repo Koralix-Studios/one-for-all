@@ -40,7 +40,8 @@ public class DefaultedMapConfigValue<K, T, B extends ByteBuf> extends AbstractCo
     @Override
     public @NotNull ConfigResult<T> value(@NotNull K key, @Nullable T value) {
         T oldValue = this.valueMap.get(key);
-        if (oldValue.equals(value)) return ConfigResult.unchanged(oldValue);
+        if (oldValue != null && oldValue.equals(value)) return ConfigResult.unchanged(oldValue);
+        if (oldValue == null) oldValue = this.defaultValue();
         ConfigResult<T> result;
         if (value == null || this.nominal.equals(value)) {
             T v = this.valueMap.remove(key);
@@ -49,8 +50,10 @@ public class DefaultedMapConfigValue<K, T, B extends ByteBuf> extends AbstractCo
         } else {
             result = this.test.canChange(oldValue, value);
             if (result.isOk()) {
-                T v = this.valueMap.put(key, value);
-                this.observers.forEach(observer -> observer.onChange(this, key, v, value));
+                this.valueMap.put(key, value);
+                for (MultiConfigValue.MultiConfigObserver<K, T> observer : this.observers) {
+                    observer.onChange(this, key, oldValue, value);
+                }
             }
         }
         if (result.isChange()) this.notifyDataObservers();
