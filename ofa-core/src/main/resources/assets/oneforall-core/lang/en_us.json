@@ -1,4 +1,26 @@
 {
-    "text.${mod.id}.disconnect.enforce_protocol": "The server requires the protocol enabled to connect.",
-    "text.${mod.id}.disconnect.invalid_hello": "The client sent an invalid hello packet."
+    "text.${mod.id}.disconnect.enforce_protocol": "Connection failed: The server requires protocol support to join.",
+    "text.${mod.id}.disconnect.invalid_handshake": "Connection failed: The client sent an invalid handshake packet.",
+    "text.${mod.id}.disconnect.incompatible_version": "Connection failed: The client and server versions are incompatible.",
+    "text.${mod.id}.disconnect.incompatible_version.recommendation": "Connection failed: The client and server versions are incompatible. Use any version between %s (included) and %s (excluded).",
+    "command.${mod.id}.invalid_config_registry": "Error: '%s' is not a valid configuration registry.",
+    "command.${mod.id}.unknown_config": "Error: Unknown configuration '%s'.",
+    "command.${mod.id}.invalid_nbt": "Error: The provided NBT data is invalid: %s.",
+    "command.${mod.id}.config.unsupported_type": "Error: This configuration type is not supported.",
+    "command.${mod.id}.config.observe.ok": "Current value: %s.",
+    "command.${mod.id}.config.change.valid": "Successfully changed value from '%s' to '%s'.",
+    "command.${mod.id}.config.get": "Configuration '%s' has value: %s.",
+    "command.${mod.id}.config.change.invalid": "Failed to change value from '%s' to '%s'.",
+    "command.${mod.id}.config.observe.forbidden": "Access denied: You are not permitted to view this configuration (%s).",
+    "command.${mod.id}.config.change.forbidden": "Access denied: You are not permitted to modify this configuration (%s).",
+    "command.${mod.id}.config.change.allowed": "User '%s' is allowed to change this configuration.",
+    "command.${mod.id}.config.unchanged": "Configuration value remains unchanged (%s).",
+    "config.${mod.id}:client_settings/${mod.id}:protocol_enabled.name": "Protocol Support",
+    "config.${mod.id}:client_settings/${mod.id}:protocol_enabled.description": "Enable protocol support for the ${common.name} mod. This is required to connect to servers that enforce protocol support.",
+    "config.${mod.id}:server_settings/${mod.id}:protocol_enabled.name": "Protocol Support (Server)",
+    "config.${mod.id}:server_settings/${mod.id}:protocol_enabled.description": "Enable protocol support on the server. This allows clients with protocol support enabled to use it.",
+    "config.${mod.id}:server_settings/${mod.id}:enforce_protocol.name": "Enforce Protocol",
+    "config.${mod.id}:server_settings/${mod.id}:enforce_protocol.description": "Require clients to have protocol support enabled in order to join the server.",
+    "config.${mod.id}:server_settings/${mod.id}:default_language.name": "Default Language",
+    "config.${mod.id}:server_settings/${mod.id}:default_language.description": "The default language used by the server for messages and communication."
 }

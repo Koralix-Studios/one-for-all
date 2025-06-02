@@ -19,12 +19,18 @@ public interface ConfigResult<T> {
         return new ValidChange<>(oldValue, newValue);
     }
 
+    @Contract("_ -> new")
+    static <T> @NotNull ConfigResult<T> unchanged(T value) {
+        return new Unchanged<>(value);
+    }
+
     Optional<T> get();
 
     boolean isError();
     default boolean isOk() {
         return !isError();
     }
+    boolean isChange();
 
     default ConfigResult<T> and(ConfigResult<T> other) {
         if (isError()) return this;
@@ -54,6 +60,11 @@ public interface ConfigResult<T> {
         }
 
         @Override
+        public boolean isChange() {
+            return false;
+        }
+
+        @Override
         public @NotNull Message message() {
             return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.observe.ok", value);
         }
@@ -72,6 +83,11 @@ public interface ConfigResult<T> {
         @Override
         public boolean isError() {
             return false;
+        }
+
+        @Override
+        public boolean isChange() {
+            return true;
         }
 
         @Override
@@ -96,6 +112,11 @@ public interface ConfigResult<T> {
         }
 
         @Override
+        public boolean isChange() {
+            return false;
+        }
+
+        @Override
         public @NotNull Message message() {
             return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.invalid", oldValue, newValue);
         }
@@ -113,6 +134,11 @@ public interface ConfigResult<T> {
         @Override
         public boolean isError() {
             return true;
+        }
+
+        @Override
+        public boolean isChange() {
+            return false;
         }
 
         @Override
@@ -136,12 +162,17 @@ public interface ConfigResult<T> {
         }
 
         @Override
+        public boolean isChange() {
+            return false;
+        }
+
+        @Override
         public @NotNull Message message() {
             return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.forbidden", actor);
         }
     }
 
-    record OkChange<T>(
+    record AllowedChange<T>(
             ConfigActor actor
     ) implements ConfigResult<T> {
         @Contract(pure = true)
@@ -156,8 +187,36 @@ public interface ConfigResult<T> {
         }
 
         @Override
+        public boolean isChange() {
+            return false;
+        }
+
+        @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.ok", actor);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.allowed", actor);
+        }
+    }
+
+    record Unchanged<T>(T value) implements ConfigResult<T> {
+        @Contract(pure = true)
+        @Override
+        public @NotNull Optional<T> get() {
+            return Optional.of(value);
+        }
+
+        @Override
+        public boolean isError() {
+            return false;
+        }
+
+        @Override
+        public boolean isChange() {
+            return false;
+        }
+
+        @Override
+        public @NotNull Message message() {
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.unchanged", value);
         }
     }
 }

@@ -5,6 +5,7 @@ import com.koralix.oneforall.config.MonoConfigValue;
 import com.koralix.oneforall.config.registry.ConfigRegistrar;
 import com.koralix.oneforall.config.registry.ConfigRegistry;
 import com.koralix.oneforall.config.registry.VersionedIdentifier;
+import com.koralix.oneforall.lang.Language;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodecs;
@@ -31,6 +32,16 @@ public class ServerSettings {
                     false,
                     Codec.BOOL,
                     PacketCodecs.BOOLEAN
+            )
+            .test(Objects::nonNull)
+            .build();
+
+    public static final MonoConfigValue<Language, ByteBuf, ?> DEFAULT_LANGUAGE = REGISTRAR
+            .mono(
+                    VersionedIdentifier.of("0.1.0", OneForAll.id("default_language")),
+                    Language.ENGLISH,
+                    Language.CODEC,
+                    Language.PACKET_CODEC
             )
             .test(Objects::nonNull)
             .build();

@@ -3,6 +3,7 @@ package com.koralix.oneforall.client.settings;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,7 @@ public enum ProtocolUsageCondition {
                 ProtocolUsageCondition[] values = ProtocolUsageCondition.values();
                 if (i >= 0 && i < values.length) return values[i];
 
-                throw new IllegalArgumentException("Invalid protocol usage condition: " + i);
+                throw new DecoderException("Invalid protocol usage condition: " + i);
             },
             mode -> (byte) mode.ordinal()
     );

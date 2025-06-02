@@ -6,6 +6,8 @@
     "mixins": [
         "config.RegistriesMixin",
         "config.ServerCommandSourceMixin",
+        "lang.ClientConnectionMixin",
+        "lang.TextCodecsMixin",
         "session.ClientConnectionMixin",
         "session.ServerCommonNetworkHandlerMixin",
         "session.ServerLoginNetworkHandlerMixin",

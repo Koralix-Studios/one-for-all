@@ -42,6 +42,18 @@ dependencies {
 }
 
 loom {
+    splitEnvironmentSourceSets()
+    mods {
+        create(modInfo.id) {
+            sourceSet(sourceSets["main"])
+            sourceSet(sourceSets["client"])
+        }
+    }
+    decompilers {
+        get("vineflower").apply {
+            options.put("mark-corresponding-synthetics", "1")
+        }
+    }
     runConfigs.all {
         ideConfigGenerated(true)
         runDir = "../../run"

@@ -47,7 +47,7 @@ public interface ConfigTest<T> {
                         new ConfigResult.ValidChange<>(oldValue, newValue) :
                         new ConfigResult.InvalidChange<>(oldValue, newValue),
                 actor -> canChangeKey.test(actor) ?
-                        new ConfigResult.OkChange<>(actor) :
+                        new ConfigResult.AllowedChange<>(actor) :
                         new ConfigResult.ForbidChange<>(actor)
         );
     }

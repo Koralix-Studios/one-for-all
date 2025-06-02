@@ -48,9 +48,9 @@ public final class OfaCommand {
     }
 
     public static void register(
-            CommandDispatcher<ServerCommandSource> dispatcher,
-            CommandRegistryAccess registryAccess,
-            CommandManager.RegistrationEnvironment environment
+            @NotNull CommandDispatcher<ServerCommandSource> dispatcher,
+            @NotNull CommandRegistryAccess registryAccess,
+            @NotNull CommandManager.RegistrationEnvironment environment
     ) {
         LiteralArgumentBuilder<ServerCommandSource> ofa = literal("ofa");
 
@@ -65,11 +65,43 @@ public final class OfaCommand {
                                 }
                         ).then(
                                 argument("value", NbtElementArgumentType.nbtElement()).executes(OfaCommand::selfSet)
-                        )
+                        ).executes(OfaCommand::selfGet)
                 )
         );
 
         dispatcher.register(ofa);
+    }
+
+    private static <T> int getMono(ServerCommandSource source, @NotNull MonoConfigValue<T, ?, ?> configValue, ConfigActor actor) throws CommandSyntaxException {
+        ConfigResult<T> result = configValue.value(actor);
+        if (result.isError()) throw CONFIG_TEST_EXCEPTION.create(result.message());
+        source.sendFeedback(() -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.get", Text.stringifiedTranslatable(configValue.translationKey() + ".name"), result.get().orElseThrow()), false);
+        return 1;
+    }
+
+    private static <T> int getMono(@NotNull MonoConfigValue<T, ?, ?> configValue, ServerCommandSource source) throws CommandSyntaxException {
+        return getMono(source, configValue, (ConfigActor) source);
+    }
+
+    private static <K, T> int getMulti(ServerCommandSource source, @NotNull MultiConfigValue<K, T, ?, ?> configValue, ConfigActor actor, K key) throws CommandSyntaxException {
+        ConfigResult<T> result = configValue.value(actor, key);
+        if (result.isError()) throw CONFIG_TEST_EXCEPTION.create(result.message());
+        source.sendFeedback(() -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.get", Text.stringifiedTranslatable(configValue.translationKey() + ".name"), result.get().orElseThrow()), false);
+        return 1;
+    }
+
+    private static <K, T> int getMulti(@NotNull MultiConfigValue<K, T, ?, ?> configValue, ServerCommandSource source, K key) throws CommandSyntaxException {
+        return getMulti(source, configValue, (ConfigActor) source, key);
+    }
+
+    private static int selfGet(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ConfigValue<?, ?, ?> configValue = getConfigValue(context);
+        if (configValue instanceof MonoConfigValue<?, ?, ?> monoConfigValue) {
+            return getMono(monoConfigValue, context.getSource());
+        } else if (PlayerConfigValue.class.isAssignableFrom(configValue.getClass())) {
+            return getMulti((PlayerConfigValue<?, ?>) configValue, context.getSource(), context.getSource().getPlayerOrThrow().getUuid());
+        }
+        throw INVALID_CONFIG_TYPE_EXCEPTION.create();
     }
 
     private static <T> int setMono(ServerCommandSource source, @NotNull MonoConfigValue<T, ?, ?> configValue, ConfigActor actor, T value) throws CommandSyntaxException {
@@ -108,9 +140,7 @@ public final class OfaCommand {
     }
 
     private static int selfSet(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ConfigRegistry registry = getConfigRegistry(context);
-        Identifier configId = IdentifierArgumentType.getIdentifier(context, "config");
-        ConfigValue<?, ?, ?> configValue = registry.getConfigValue(configId).orElseThrow(() -> UNKNOWN_CONFIG_EXCEPTION.create(configId));
+        ConfigValue<?, ?, ?> configValue = getConfigValue(context);
         NbtElement nbt = NbtElementArgumentType.getNbtElement(context, "value");
         return selfSet(configValue, context.getSource(), nbt);
     }
@@ -120,5 +150,11 @@ public final class OfaCommand {
         ConfigRegistry registry = ConfigRegistry.REGISTRY.get(registryKey);
         if (registry == null) throw INVALID_CONFIG_REGISTRY_EXCEPTION.create(registryKey);
         return registry;
+    }
+
+    private static @NotNull ConfigValue<?, ?, ?> getConfigValue(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ConfigRegistry registry = getConfigRegistry(context);
+        Identifier configId = IdentifierArgumentType.getIdentifier(context, "config");
+        return registry.getConfigValue(configId).orElseThrow(() -> UNKNOWN_CONFIG_EXCEPTION.create(configId));
     }
 }

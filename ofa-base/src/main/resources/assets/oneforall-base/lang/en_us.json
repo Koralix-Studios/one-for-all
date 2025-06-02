@@ -1,0 +1,15 @@
+{
+    "config.${mod.id}:player_settings/${mod.id}:careful_break.name": "Careful Break",
+    "config.${mod.id}:player_settings/${mod.id}:careful_break.description": "Enable careful block breaking to receive items in your inventory instead of dropping them on the ground.",
+    "config.${mod.id}:player_settings/${mod.id}:xp_bar_mending.name": "XP Bar Mending",
+    "config.${mod.id}:player_settings/${mod.id}:xp_bar_mending.description": "Use the XP bar for mending items automatically.",
+    "config.${mod.id}:player_settings/${mod.id}:creative_kill.name": "Creative Kill",
+    "config.${mod.id}:player_settings/${mod.id}:creative_kill.description": "Allow instant kill in creative mode.",
+
+    "config.${mod.id}:server_settings/${mod.id}:careful_break.name": "Careful Break (Server)",
+    "config.${mod.id}:server_settings/${mod.id}:careful_break.description": "Enable careful block breaking for all players on the server.",
+    "config.${mod.id}:server_settings/${mod.id}:xp_bar_mending.name": "XP Bar Mending (Server)",
+    "config.${mod.id}:server_settings/${mod.id}:xp_bar_mending.description": "Use the XP bar for mending items automatically for all players.",
+    "config.${mod.id}:server_settings/${mod.id}:creative_kill.name": "Creative Kill (Server)",
+    "config.${mod.id}:server_settings/${mod.id}:creative_kill.description": "Allow instant kill in creative mode for all players."
+}

@@ -96,4 +96,8 @@ public class InternalData {
                         .orElseThrow(() -> new IllegalCallerException("Cannot determine mod ID from stack trace."))
                 )));
     }
+
+    public @NotNull Collection<OFA> extensions() {
+        return Collections.unmodifiableCollection(this.ofaIdMap.values());
+    }
 }

@@ -1,6 +1,5 @@
 package com.koralix.oneforall;
 
-import com.koralix.oneforall.util.Functions;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.util.Identifier;

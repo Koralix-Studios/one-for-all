@@ -6,6 +6,7 @@ import com.koralix.oneforall.session.component.LangComponent;
 import com.koralix.oneforall.session.component.VersionComponent;
 import com.koralix.oneforall.settings.ServerSettings;
 import net.fabricmc.fabric.api.networking.v1.*;
+import net.fabricmc.loader.api.SemanticVersion;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.common.ClientOptionsC2SPacket;
 import net.minecraft.server.MinecraftServer;
@@ -71,16 +72,29 @@ public class LoginManager {
         Optional<String> language = readSafe(buf, PacketByteBuf::readString);
 
         if (version.isEmpty() || language.isEmpty()) {
-            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.invalid_hello"));
+            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.invalid_handshake"));
         }
 
         try {
-            session.set(new VersionComponent(version.get()));
+            VersionComponent versionComponent = new VersionComponent(version.get());
+            if (ServerSettings.ENFORCE_PROTOCOL.value() && !versionComponent.isCompatible()) {
+                if (!(OneForAll.version() instanceof SemanticVersion semver)) {
+                    return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.incompatible_version"));
+                }
+                int major = semver.getVersionComponent(0);
+                int minor = semver.getVersionComponent(1);
+                return Optional.of(Text.translatable(
+                        "text." + OneForAll.id() + ".disconnect.incompatible_version.recommendation",
+                        "%s.%s.*".formatted(major, minor),
+                        "%s.*.*".formatted(major + 1)
+                ));
+            }
+            session.set(versionComponent);
 
             Language lang = Language.fromCode(language.get());
             if (lang != null) session.set(new LangComponent(lang));
         } catch (Exception e) {
-            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.invalid_query"));
+            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.invalid_handshake"));
         }
 
         return Optional.empty();

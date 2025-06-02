@@ -65,11 +65,20 @@ tasks.processResources {
 }
 
 fun processResources(obj: ProcessResources) {
-    obj.properties(listOf("fabric.mod.json", "*.mixins.json"),
+    obj.properties(
+        listOf(
+            "fabric.mod.json",
+            "*.mixins.json",
+            "assets/${modInfo.id}/lang/*.json"
+        ),
         "mod.id" to modInfo.id,
         "mod.name" to modInfo.name,
         "mod.description" to modInfo.description,
         "mod.version" to modInfo.version,
+        "common.id" to common.id,
+        "common.name" to common.name,
+        "common.description" to common.description,
+        "common.version" to common.version,
         "deps.fabric.yarn" to common.dep("fabric.yarn"),
         "deps.fabric.loader" to common.dep("fabric.loader"),
         "deps.fabric.api" to common.dep("fabric.api"),

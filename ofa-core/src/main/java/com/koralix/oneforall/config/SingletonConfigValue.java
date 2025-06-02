@@ -31,9 +31,10 @@ public class SingletonConfigValue<T, B extends ByteBuf> extends AbstractConfigVa
 
     @Override
     public @NotNull ConfigResult<T> value(@Nullable T value) {
+        if (this.value != null && this.value.equals(value)) return ConfigResult.unchanged(this.value);
         ConfigResult<T> result;
         if (value == null || this.nominal.equals(value)) {
-            result = this.value == null ? ConfigResult.ok(this.nominal) : ConfigResult.ok(this.value, this.nominal);
+            result = this.value == null ? ConfigResult.unchanged(this.nominal) : ConfigResult.ok(this.value, this.nominal);
             T oldValue = this.value;
             this.value = null;
             if (oldValue != null) this.observers.forEach(observer -> observer.onChange(this, oldValue, this.nominal));
@@ -45,7 +46,7 @@ public class SingletonConfigValue<T, B extends ByteBuf> extends AbstractConfigVa
                 this.observers.forEach(observer -> observer.onChange(this, oldValue, value));
             }
         }
-        if (result.isOk()) this.notifyDataObservers();
+        if (result.isChange()) this.notifyDataObservers();
         return result;
     }
 

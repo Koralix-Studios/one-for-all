@@ -3,6 +3,8 @@ package com.koralix.oneforall.config.registry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public record ConfigKey(Identifier registryId, Identifier configId) {
     public static final Codec<ConfigKey> STRING_CODEC = Codec.STRING.comapFlatMap(
@@ -28,4 +30,10 @@ public record ConfigKey(Identifier registryId, Identifier configId) {
             },
             configKey -> configKey.registryId + "/" + configKey.configId
     );
+
+    @Contract(pure = true)
+    @Override
+    public @NotNull String toString() {
+        return registryId + "/" + configId;
+    }
 }

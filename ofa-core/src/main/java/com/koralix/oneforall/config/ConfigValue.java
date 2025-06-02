@@ -24,4 +24,7 @@ public interface ConfigValue<T, B extends ByteBuf, S> {
     @NotNull Optional<S> saveData();
     void onChange(@NotNull Function<S, Boolean> observer);
     void onChange(@NotNull Consumer<S> observer);
+    default @NotNull String translationKey() {
+        return "config." + this.key();
+    }
 }

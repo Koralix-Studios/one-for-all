@@ -4,6 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.Decoder;
 import com.mojang.serialization.Encoder;
 import net.fabricmc.loader.api.Version;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class CustomCodecs {
     public static final Codec<Version> VERSION = Codec.STRING.xmap(
@@ -11,7 +13,8 @@ public class CustomCodecs {
             Version::getFriendlyString
     );
 
-    public static <T> Codec<T> error(String error) {
+    @Contract("_ -> new")
+    public static <T> @NotNull Codec<T> error(String error) {
         return Codec.of(
                 Encoder.error(error),
                 Decoder.error(error)

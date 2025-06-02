@@ -10,11 +10,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Session {
     private final ClientConnection connection;
     private final Map<SessionComponentType<?>, SessionComponent<?>> components = new Reference2ObjectOpenHashMap<>();
-    private final Map<Class<? extends Packet<?>>, Set<Consumer<? extends Packet<?>>>> handlers = new Reference2ObjectOpenHashMap<>();
+    private final Map<Class<? extends Packet<?>>, Set<Function<? extends Packet<?>, Boolean>>> handlers = new Reference2ObjectOpenHashMap<>();
 
     public Session(ClientConnection connection) {
         this.connection = connection;
@@ -45,16 +46,25 @@ public class Session {
         this.components.remove(type);
     }
 
-    public <P extends Packet<?>> void on(Class<P> packet, Consumer<P> consumer) {
+    public <P extends Packet<?>> void on(Class<P> packet, Function<P, Boolean> consumer) {
         this.handlers.computeIfAbsent(packet, k -> new ReferenceOpenHashSet<>()).add(consumer);
     }
 
+    public <P extends Packet<?>> void on(Class<P> packet, Consumer<P> consumer) {
+        this.on(packet, p -> {
+            consumer.accept(p);
+            return false;
+        });
+    }
+
     @SuppressWarnings("unchecked")
-    public <P extends Packet<?>> void handle(@NotNull P packet) {
-        Set<Consumer<? extends Packet<?>>> consumers = this.handlers.get(packet.getClass());
-        if (consumers == null) return;
-        for (Consumer<? extends Packet<?>> consumer : consumers) {
-            ((Consumer<P>) consumer).accept(packet);
+    public <P extends Packet<?>> boolean handle(@NotNull P packet) {
+        Set<Function<? extends Packet<?>, Boolean>> consumers = this.handlers.get(packet.getClass());
+        if (consumers == null) return false;
+        boolean cancel = false;
+        for (Function<? extends Packet<?>, Boolean> consumer : consumers) {
+            cancel |= ((Function<P, Boolean>) consumer).apply(packet);
         }
+        return cancel;
     }
 }

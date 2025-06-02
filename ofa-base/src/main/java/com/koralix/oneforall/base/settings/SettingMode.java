@@ -4,6 +4,7 @@ import com.koralix.oneforall.config.MonoConfigValue;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -30,7 +31,7 @@ public enum SettingMode {
                 SettingMode[] values = SettingMode.values();
                 if (i >= 0 && i < values.length) return values[i];
 
-                throw new IllegalArgumentException("Invalid setting mode: " + i);
+                throw new DecoderException("Invalid setting mode: " + i);
             },
             mode -> (byte) mode.ordinal()
     );
