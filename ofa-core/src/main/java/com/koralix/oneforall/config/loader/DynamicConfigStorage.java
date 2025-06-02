@@ -36,10 +36,16 @@ public class DynamicConfigStorage extends ConfigStorage {
         NbtCompound nbt = NbtIo.read(path);
         if (nbt == null) return;
         DataResult<ConfigStorage> result = ConfigStorage.CODEC.parse(NbtOps.INSTANCE, nbt);
-        if (result.error().isPresent()) {
-            throw new IOException("Failed to load config storage from " + path + ": " + result.error().get().message());
+        Optional<ConfigStorage> opt = result.result();
+        Optional<DataResult.Error<ConfigStorage>> error = result.error();
+        if (error.isPresent()) {
+            OneForAll.logger().warn("Skipping some configs from {}: {}", path, error.get().message());
+            opt = error.get().partialValue();
         }
-        result.result().orElseThrow().entries.forEach((key, o) -> {
+        opt.orElseThrow(() -> error
+                .map(configStorageError -> new IOException("Failed to parse config storage from NBT: " + configStorageError.message()))
+                .orElseGet(() -> new IOException("Unexpected error while parsing config storage from NBT"))
+        ).entries.forEach((key, o) -> {
             ConfigValue<?, ?, ?> configValue = ConfigRegistry.get(key).orElseThrow();
             load(configValue, o);
             this.add(configValue);
