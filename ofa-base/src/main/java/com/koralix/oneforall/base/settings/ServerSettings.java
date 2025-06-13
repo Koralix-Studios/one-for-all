@@ -49,6 +49,17 @@ public class ServerSettings {
             .test(Objects::nonNull)
             .build();
 
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> SPLIT_SCATTERED_ITEMS = REGISTRAR
+            .mono(
+                    VersionedIdentifier.of("0.1.0", OneForAll.id("split_scattered_items")),
+                    true,
+                    Codec.BOOL,
+                    PacketCodecs.BOOLEAN,
+                    CommandAdapter.bool()
+            )
+            .test(Objects::nonNull)
+            .build();
+
     public static @NotNull ConfigRegistry register() {
         return REGISTRAR.complete();
     }

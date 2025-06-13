@@ -6,6 +6,7 @@
     "mixins": [
         "carefulbreak.BlockMixin",
         "creativekill.ServerPlayerEntityMixin",
+        "splitscattereditems.ItemScattererMixin",
         "xpbarmending.ServerPlayerEntityMixin"
     ],
     "injectors": {
