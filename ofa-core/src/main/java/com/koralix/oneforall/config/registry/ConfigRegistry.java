@@ -93,6 +93,14 @@ public class ConfigRegistry {
         }
     }
 
+    public @NotNull RegistryEntry.Reference<ConfigRegistry> entry() {
+        return this.entry;
+    }
+
+    public @NotNull Identifier id() {
+        return this.entry.registryKey().getValue();
+    }
+
     public void forEach(Consumer<ConfigEntry<?>> consumer) {
         this.configValues.values().forEach(consumer);
     }

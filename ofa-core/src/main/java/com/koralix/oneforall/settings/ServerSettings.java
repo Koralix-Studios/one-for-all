@@ -2,6 +2,7 @@ package com.koralix.oneforall.settings;
 
 import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.config.MonoConfigValue;
+import com.koralix.oneforall.config.adapter.CommandAdapter;
 import com.koralix.oneforall.config.registry.ConfigRegistrar;
 import com.koralix.oneforall.config.registry.ConfigRegistry;
 import com.koralix.oneforall.config.registry.VersionedIdentifier;
@@ -21,7 +22,8 @@ public class ServerSettings {
                     VersionedIdentifier.of("0.1.0", OneForAll.id("protocol_enabled")),
                     true,
                     Codec.BOOL,
-                    PacketCodecs.BOOLEAN
+                    PacketCodecs.BOOLEAN,
+                    CommandAdapter.bool()
             )
             .test(Objects::nonNull)
             .build();
@@ -31,7 +33,8 @@ public class ServerSettings {
                     VersionedIdentifier.of("0.1.0", OneForAll.id("enforce_protocol")),
                     false,
                     Codec.BOOL,
-                    PacketCodecs.BOOLEAN
+                    PacketCodecs.BOOLEAN,
+                    CommandAdapter.bool()
             )
             .test(Objects::nonNull)
             .build();
@@ -41,7 +44,8 @@ public class ServerSettings {
                     VersionedIdentifier.of("0.1.0", OneForAll.id("default_language")),
                     Language.ENGLISH,
                     Language.CODEC,
-                    Language.PACKET_CODEC
+                    Language.PACKET_CODEC,
+                    CommandAdapter.ofEnum(Language.class)
             )
             .test(Objects::nonNull)
             .build();

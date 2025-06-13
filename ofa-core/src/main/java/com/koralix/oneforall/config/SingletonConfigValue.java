@@ -1,5 +1,6 @@
 package com.koralix.oneforall.config;
 
+import com.koralix.oneforall.config.adapter.CommandAdapter;
 import com.koralix.oneforall.config.registry.ConfigEntry;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
@@ -19,9 +20,10 @@ public class SingletonConfigValue<T, B extends ByteBuf> extends AbstractConfigVa
             @NotNull T nominal,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
-            @NotNull ConfigTest<T> test
+            @NotNull ConfigTest<T> test,
+            @NotNull CommandAdapter<T> commandAdapter
     ) {
-        super(registerFn, nominal, codec, packetCodec, SaveData.codec(codec), test);
+        super(registerFn, nominal, codec, packetCodec, SaveData.codec(codec), test, commandAdapter);
     }
 
     @Override

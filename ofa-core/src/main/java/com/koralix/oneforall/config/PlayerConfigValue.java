@@ -1,5 +1,6 @@
 package com.koralix.oneforall.config;
 
+import com.koralix.oneforall.config.adapter.CommandAdapter;
 import com.koralix.oneforall.config.registry.ConfigEntry;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
@@ -23,10 +24,11 @@ public class PlayerConfigValue<T, B extends ByteBuf> extends DefaultedMapConfigV
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
             @NotNull ConfigTest<T> test,
+            @NotNull CommandAdapter<T> commandAdapter,
             @NotNull Predicate<ConfigActor> canObserveOthers,
             @NotNull Predicate<ConfigActor> canChangeOthers
     ) {
-        super(registerFn, nominal, Uuids.INT_STREAM_CODEC, codec, packetCodec, test);
+        super(registerFn, nominal, Uuids.INT_STREAM_CODEC, codec, packetCodec, test, commandAdapter);
         this.canObserveOthers = canObserveOthers;
         this.canChangeOthers = canChangeOthers;
     }

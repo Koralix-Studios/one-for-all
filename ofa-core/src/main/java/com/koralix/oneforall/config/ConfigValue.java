@@ -1,5 +1,6 @@
 package com.koralix.oneforall.config;
 
+import com.koralix.oneforall.config.adapter.CommandAdapter;
 import com.koralix.oneforall.config.registry.ConfigEntry;
 import com.koralix.oneforall.config.registry.ConfigKey;
 import com.mojang.serialization.Codec;
@@ -27,4 +28,5 @@ public interface ConfigValue<T, B extends ByteBuf, S> {
     default @NotNull String translationKey() {
         return "config." + this.key();
     }
+    @NotNull CommandAdapter<T> commandAdapter();
 }

@@ -2,6 +2,7 @@ package com.koralix.oneforall.base.settings;
 
 import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.config.MonoConfigValue;
+import com.koralix.oneforall.config.adapter.CommandAdapter;
 import com.koralix.oneforall.config.registry.ConfigRegistrar;
 import com.koralix.oneforall.config.registry.ConfigRegistry;
 import com.koralix.oneforall.config.registry.VersionedIdentifier;
@@ -16,17 +17,35 @@ public class ServerSettings {
     private static final ConfigRegistrar REGISTRAR = ConfigRegistry.builder("0.1.0", OneForAll.id("server_settings")).prepare();
 
     public static final MonoConfigValue<Boolean, ByteBuf, ?> CAREFUL_BREAK = REGISTRAR
-            .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("careful_break")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
+            .mono(
+                    VersionedIdentifier.of("0.1.0", OneForAll.id("careful_break")),
+                    true,
+                    Codec.BOOL,
+                    PacketCodecs.BOOLEAN,
+                    CommandAdapter.bool()
+            )
             .test(Objects::nonNull)
             .build();
 
     public static final MonoConfigValue<Boolean, ByteBuf, ?> XP_BAR_MENDING = REGISTRAR
-            .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("xp_bar_mending")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
+            .mono(
+                    VersionedIdentifier.of("0.1.0", OneForAll.id("xp_bar_mending")),
+                    true,
+                    Codec.BOOL,
+                    PacketCodecs.BOOLEAN,
+                    CommandAdapter.bool()
+            )
             .test(Objects::nonNull)
             .build();
 
     public static final MonoConfigValue<Boolean, ByteBuf, ?> CREATIVE_KILL = REGISTRAR
-            .mono(VersionedIdentifier.of("0.1.0", OneForAll.id("creative_kill")), true, Codec.BOOL, PacketCodecs.BOOLEAN)
+            .mono(
+                    VersionedIdentifier.of("0.1.0", OneForAll.id("creative_kill")),
+                    true,
+                    Codec.BOOL,
+                    PacketCodecs.BOOLEAN,
+                    CommandAdapter.bool()
+            )
             .test(Objects::nonNull)
             .build();
 

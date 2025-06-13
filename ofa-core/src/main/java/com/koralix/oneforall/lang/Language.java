@@ -5,39 +5,28 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koralix.oneforall.OneForAll;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import io.netty.buffer.ByteBuf;
-import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.function.ValueLists;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.IntFunction;
 
-public enum Language {
+public enum Language implements StringIdentifiable {
     ENGLISH("en_us", Locale.ENGLISH);
 
     private static final Map<String, Language> LANGUAGES;
-    public static final Codec<Language> CODEC = Codec.STRING.comapFlatMap(
-            s -> {
-                Language language = fromCode(s);
-                return language == null
-                        ? DataResult.error(() -> "Unknown language code: " + s)
-                        : DataResult.success(language);
-            },
-            Language::toString
+    public static final @NotNull Codec<Language> CODEC = StringIdentifiable.createCodec(Language::values);
+    private static final IntFunction<Language> BY_ID = ValueLists.createIndexToValueFunction(
+            Language::ordinal, values(), ValueLists.OutOfBoundsHandling.WRAP
     );
-    public static final PacketCodec<ByteBuf, Language> PACKET_CODEC = PacketCodecs.STRING.xmap(
-            s -> {
-                Language language = fromCode(s);
-                if (language == null) throw new DecoderException("Unknown language code: " + s);
-                return language;
-            },
-            Language::toString
-    );
+    public static final PacketCodec<ByteBuf, Language> PACKET_CODEC = PacketCodecs.indexed(BY_ID, Language::ordinal);
 
     static {
         Map<String, Language> languages = new HashMap<>();
@@ -101,5 +90,10 @@ public enum Language {
 
     public static Language fromCode(String s) {
         return LANGUAGES.get(s);
+    }
+
+    @Override
+    public String asString() {
+        return code;
     }
 }

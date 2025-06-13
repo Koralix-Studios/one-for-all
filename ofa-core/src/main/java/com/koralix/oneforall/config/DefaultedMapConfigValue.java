@@ -1,5 +1,6 @@
 package com.koralix.oneforall.config;
 
+import com.koralix.oneforall.config.adapter.CommandAdapter;
 import com.koralix.oneforall.config.registry.ConfigEntry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -26,9 +27,10 @@ public class DefaultedMapConfigValue<K, T, B extends ByteBuf> extends AbstractCo
             @NotNull Codec<K> keyCodec,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
-            @NotNull ConfigTest<T> test
-    ) {
-        super(registerFn, nominal, codec, packetCodec, SaveData.codec(keyCodec, codec), test);
+            @NotNull ConfigTest<T> test,
+            @NotNull CommandAdapter<T> commandAdapter
+            ) {
+        super(registerFn, nominal, codec, packetCodec, SaveData.codec(keyCodec, codec), test, commandAdapter);
         this.keyCodec = keyCodec;
     }
 

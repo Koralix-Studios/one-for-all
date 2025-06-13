@@ -2,6 +2,7 @@ package com.koralix.oneforall.config.registry;
 
 import com.koralix.oneforall.config.ConfigTest;
 import com.koralix.oneforall.config.ConfigValue;
+import com.koralix.oneforall.config.adapter.CommandAdapter;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.loader.api.Version;
@@ -19,6 +20,7 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B, S>, B extends Byt
     private final T nominal;
     private final Codec<T> codec;
     private final PacketCodec<B, T> packetCodec;
+    private final CommandAdapter<T> commandAdapter;
     private final ConfigValueFactory<T, C, B, S> factory;
     private final List<VersionedIdentifier> ids = new ArrayList<>();
     private ConfigTest<T> test;
@@ -29,6 +31,7 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B, S>, B extends Byt
             @NotNull T nominal,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
+            @NotNull CommandAdapter<T> commandAdapter,
             @NotNull ConfigValueFactory<T, C, B, S> factory
     ) {
         this.ids.add(id);
@@ -36,6 +39,7 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B, S>, B extends Byt
         this.nominal = nominal;
         this.codec = codec;
         this.packetCodec = packetCodec;
+        this.commandAdapter = commandAdapter;
         this.factory = factory;
     }
 
@@ -66,7 +70,8 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B, S>, B extends Byt
                 this.nominal,
                 this.codec,
                 this.packetCodec,
-                this.test == null ? ConfigTest.tauto() : this.test
+                this.test == null ? ConfigTest.tauto() : this.test,
+                this.commandAdapter
         );
     }
 
@@ -77,7 +82,8 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B, S>, B extends Byt
                 @NotNull T nominal,
                 @NotNull Codec<T> codec,
                 @NotNull PacketCodec<B, T> packetCodec,
-                @NotNull ConfigTest<T> test
+                @NotNull ConfigTest<T> test,
+                @NotNull CommandAdapter<T> commandAdapter
         );
     }
 }

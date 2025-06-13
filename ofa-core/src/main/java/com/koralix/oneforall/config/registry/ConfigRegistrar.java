@@ -1,6 +1,7 @@
 package com.koralix.oneforall.config.registry;
 
 import com.koralix.oneforall.config.*;
+import com.koralix.oneforall.config.adapter.CommandAdapter;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -29,9 +30,10 @@ public class ConfigRegistrar {
             @NotNull VersionedIdentifier id,
             @NotNull T nominal,
             @NotNull Codec<T> codec,
-            @NotNull PacketCodec<B, T> packetCodec
+            @NotNull PacketCodec<B, T> packetCodec,
+            @NotNull CommandAdapter<T> commandAdapter
     ) {
-        return new ConfigValueBuilder<T, SingletonConfigValue<T, B>, B, SingletonConfigValue.SaveData<T>>(id, this, nominal, codec, packetCodec, SingletonConfigValue::new);
+        return new ConfigValueBuilder<T, SingletonConfigValue<T, B>, B, SingletonConfigValue.SaveData<T>>(id, this, nominal, codec, packetCodec, commandAdapter, SingletonConfigValue::new);
     }
 
     public <K, T, B extends ByteBuf> ConfigValueBuilder<T, DefaultedMapConfigValue<K, T, B>, B, DefaultedMapConfigValue.SaveData<K, T>> multi(
@@ -39,7 +41,8 @@ public class ConfigRegistrar {
             @NotNull T nominal,
             @NotNull Codec<K> keyCodec,
             @NotNull Codec<T> codec,
-            @NotNull PacketCodec<B, T> packetCodec
+            @NotNull PacketCodec<B, T> packetCodec,
+            @NotNull CommandAdapter<T> commandAdapter
     ) {
         return new ConfigValueBuilder<T, DefaultedMapConfigValue<K, T, B>, B, DefaultedMapConfigValue.SaveData<K, T>>(
                 id,
@@ -47,13 +50,15 @@ public class ConfigRegistrar {
                 nominal,
                 codec,
                 packetCodec,
-                (registerFn, nominal1, codec1, packetCodec1, test) -> new DefaultedMapConfigValue<>(
+                commandAdapter,
+                (registerFn, nominal1, codec1, packetCodec1, test, commandAdapter1) -> new DefaultedMapConfigValue<>(
                         registerFn,
                         nominal1,
                         keyCodec,
                         codec1,
                         packetCodec1,
-                        test
+                        test,
+                        commandAdapter1
                 )
         );
     }
@@ -63,6 +68,7 @@ public class ConfigRegistrar {
             @NotNull T nominal,
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
+            @NotNull CommandAdapter<T> commandAdapter,
             @NotNull Predicate<ConfigActor> canObserveOthers,
             @NotNull Predicate<ConfigActor> canChangeOthers
     ) {
@@ -72,12 +78,14 @@ public class ConfigRegistrar {
                 nominal,
                 codec,
                 packetCodec,
-                (registerFn, nominal1, codec1, packetCodec1, test1) -> new PlayerConfigValue<>(
+                commandAdapter,
+                (registerFn, nominal1, codec1, packetCodec1, test1, commandAdapter1) -> new PlayerConfigValue<>(
                         registerFn,
                         nominal1,
                         codec1,
                         packetCodec1,
                         test1,
+                        commandAdapter1,
                         canObserveOthers,
                         canChangeOthers
                 )

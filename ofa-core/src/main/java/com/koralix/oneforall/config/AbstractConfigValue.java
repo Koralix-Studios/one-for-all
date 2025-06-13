@@ -1,5 +1,6 @@
 package com.koralix.oneforall.config;
 
+import com.koralix.oneforall.config.adapter.CommandAdapter;
 import com.koralix.oneforall.config.registry.ConfigEntry;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
@@ -20,6 +21,7 @@ public abstract class AbstractConfigValue<T, B extends ByteBuf, O, S> implements
     protected final @NotNull ConfigTest<T> test;
     protected final @NotNull List<O> observers = new ArrayList<>();
     protected final @NotNull List<Function<S, Boolean>> dataObservers = new ArrayList<>();
+    private final @NotNull CommandAdapter<T> commandAdapter;
 
     public AbstractConfigValue(
             @NotNull Function<ConfigValue<T, B, S>, ConfigEntry<T>> registerFn,
@@ -27,7 +29,8 @@ public abstract class AbstractConfigValue<T, B extends ByteBuf, O, S> implements
             @NotNull Codec<T> codec,
             @NotNull PacketCodec<B, T> packetCodec,
             @NotNull Codec<S> saveCodec,
-            @NotNull ConfigTest<T> test
+            @NotNull ConfigTest<T> test,
+            @NotNull CommandAdapter<T> commandAdapter
     ) {
         this.entry = registerFn.apply(this);
         this.nominal = nominal;
@@ -35,6 +38,7 @@ public abstract class AbstractConfigValue<T, B extends ByteBuf, O, S> implements
         this.packetCodec = packetCodec;
         this.saveCodec = saveCodec;
         this.test = test;
+        this.commandAdapter = commandAdapter;
     }
 
     @Override
@@ -73,6 +77,11 @@ public abstract class AbstractConfigValue<T, B extends ByteBuf, O, S> implements
             observer.accept(s);
             return true;
         });
+    }
+
+    @Override
+    public @NotNull CommandAdapter<T> commandAdapter() {
+        return this.commandAdapter;
     }
 
     public void onChange(@NotNull O observer) {

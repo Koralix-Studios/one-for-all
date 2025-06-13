@@ -1,37 +1,25 @@
 package com.koralix.oneforall.client.settings;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import io.netty.buffer.ByteBuf;
-import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.function.ValueLists;
 import org.jetbrains.annotations.NotNull;
 
-public enum ProtocolUsageCondition {
+import java.util.function.IntFunction;
+
+public enum ProtocolUsageCondition implements StringIdentifiable {
     ALWAYS,
     ONLY_ENFORCED,
     NEVER;
 
-    public static final @NotNull Codec<ProtocolUsageCondition> CODEC = Codec.BYTE.comapFlatMap(
-            i -> {
-                ProtocolUsageCondition[] values = ProtocolUsageCondition.values();
-                return i >= 0 && i < values.length
-                        ? DataResult.success(values[i])
-                        : DataResult.error(() -> "Invalid protocol usage condition: " + i);
-            },
-            condition -> (byte) condition.ordinal()
+    public static final @NotNull Codec<ProtocolUsageCondition> CODEC = StringIdentifiable.createCodec(ProtocolUsageCondition::values);
+    private static final IntFunction<ProtocolUsageCondition> BY_ID = ValueLists.createIndexToValueFunction(
+            ProtocolUsageCondition::ordinal, values(), ValueLists.OutOfBoundsHandling.WRAP
     );
-
-    public static final PacketCodec<ByteBuf, ProtocolUsageCondition> PACKET_CODEC = PacketCodecs.BYTE.xmap(
-            i -> {
-                ProtocolUsageCondition[] values = ProtocolUsageCondition.values();
-                if (i >= 0 && i < values.length) return values[i];
-
-                throw new DecoderException("Invalid protocol usage condition: " + i);
-            },
-            mode -> (byte) mode.ordinal()
-    );
+    public static final PacketCodec<ByteBuf, ProtocolUsageCondition> PACKET_CODEC = PacketCodecs.indexed(BY_ID, ProtocolUsageCondition::ordinal);
 
     public boolean isActive(boolean enforceProtocol) {
         return switch (this) {
@@ -39,5 +27,10 @@ public enum ProtocolUsageCondition {
             case ONLY_ENFORCED -> enforceProtocol;
             case NEVER -> false;
         };
+    }
+
+    @Override
+    public @NotNull String asString() {
+        return this.name().toLowerCase();
     }
 }
