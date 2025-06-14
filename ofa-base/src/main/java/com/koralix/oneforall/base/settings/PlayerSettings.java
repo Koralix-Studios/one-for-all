@@ -14,39 +14,39 @@ import java.util.Objects;
 public class PlayerSettings {
     private static final ConfigRegistrar REGISTRAR = ConfigRegistry.builder("0.1.0", OneForAll.id("player_settings")).prepare();
 
-    public static final PlayerConfigValue<SettingMode, ByteBuf> CAREFUL_BREAK = REGISTRAR
+    public static final PlayerConfigValue<SneakMode, ByteBuf> CAREFUL_BREAK = REGISTRAR
             .player(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("careful_break")),
-                    SettingMode.ALWAYS,
-                    SettingMode.CODEC,
-                    SettingMode.PACKET_CODEC,
-                    CommandAdapter.ofEnum(SettingMode.class),
+                    SneakMode.ALWAYS,
+                    SneakMode.CODEC,
+                    SneakMode.PACKET_CODEC,
+                    CommandAdapter.ofEnum(SneakMode.class),
                     a -> false,
                     a -> false
             )
             .test(Objects::nonNull)
             .build();
 
-    public static final PlayerConfigValue<SettingMode, ByteBuf> XP_BAR_MENDING = REGISTRAR
+    public static final PlayerConfigValue<SneakMode, ByteBuf> XP_BAR_MENDING = REGISTRAR
             .player(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("xp_bar_mending")),
-                    SettingMode.ALWAYS,
-                    SettingMode.CODEC,
-                    SettingMode.PACKET_CODEC,
-                    CommandAdapter.ofEnum(SettingMode.class),
+                    SneakMode.ALWAYS,
+                    SneakMode.CODEC,
+                    SneakMode.PACKET_CODEC,
+                    CommandAdapter.ofEnum(SneakMode.class),
                     a -> false,
                     a -> false
             )
             .test(Objects::nonNull)
             .build();
 
-    public static final PlayerConfigValue<SettingMode, ByteBuf> CREATIVE_KILL = REGISTRAR
+    public static final PlayerConfigValue<SneakMode, ByteBuf> CREATIVE_KILL = REGISTRAR
             .player(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("creative_kill")),
-                    SettingMode.ALWAYS,
-                    SettingMode.CODEC,
-                    SettingMode.PACKET_CODEC,
-                    CommandAdapter.ofEnum(SettingMode.class),
+                    SneakMode.ALWAYS,
+                    SneakMode.CODEC,
+                    SneakMode.PACKET_CODEC,
+                    CommandAdapter.ofEnum(SneakMode.class),
                     a -> false,
                     a -> false
             )
