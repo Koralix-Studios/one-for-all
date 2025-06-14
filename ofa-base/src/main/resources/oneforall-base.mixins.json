@@ -7,6 +7,9 @@
         "carefulbreak.BlockMixin",
         "creativekill.ServerPlayerEntityMixin",
         "splitscattereditems.ItemScattererMixin",
+        "stackshulkerboxes.HopperBlockEntityMixin",
+        "stackshulkerboxes.ItemEntityMixin",
+        "stackshulkerboxes.ItemStackMixin",
         "xpbarmending.ServerPlayerEntityMixin"
     ],
     "injectors": {

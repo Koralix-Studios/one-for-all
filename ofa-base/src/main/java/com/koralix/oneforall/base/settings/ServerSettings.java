@@ -60,6 +60,17 @@ public class ServerSettings {
             .test(Objects::nonNull)
             .build();
 
+    public static final MonoConfigValue<ShulkerStackMode, ByteBuf, ?> STACK_SHULKER_BOXES = REGISTRAR
+            .mono(
+                    VersionedIdentifier.of("0.1.0", OneForAll.id("stack_shulker_boxes")),
+                    ShulkerStackMode.NEVER,
+                    ShulkerStackMode.CODEC,
+                    ShulkerStackMode.PACKET_CODEC,
+                    CommandAdapter.ofEnum(ShulkerStackMode.class)
+            )
+            .test(Objects::nonNull)
+            .build();
+
     public static @NotNull ConfigRegistry register() {
         return REGISTRAR.complete();
     }
