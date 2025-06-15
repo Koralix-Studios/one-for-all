@@ -14,19 +14,30 @@ import java.util.function.Function;
 
 public interface ConfigValue<T, B extends ByteBuf, S> {
     @NotNull ConfigEntry<T> entry();
+
     default @NotNull ConfigKey key() {
         return this.entry().key();
     }
+
     @NotNull T nominal();
+
     @NotNull Codec<T> codec();
+
     @NotNull PacketCodec<B, T> packetCodec();
+
     @NotNull Codec<S> saveCodec();
+
     void loadData(@NotNull S data);
+
     @NotNull Optional<S> saveData();
+
     void onChange(@NotNull Function<S, Boolean> observer);
+
     void onChange(@NotNull Consumer<S> observer);
+
     default @NotNull String translationKey() {
         return "config." + this.key();
     }
+
     @NotNull CommandAdapter<T> commandAdapter();
 }

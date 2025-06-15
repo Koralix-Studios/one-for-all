@@ -82,7 +82,8 @@ tasks.named<RemapJarTask>("remapJar") {
 }
 
 tasks.processResources {
-    properties(listOf("fabric.mod.json"),
+    properties(
+        listOf("fabric.mod.json"),
         "mod.id" to modInfo.id,
         "mod.name" to modInfo.name,
         "mod.description" to modInfo.description,

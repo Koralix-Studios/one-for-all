@@ -28,7 +28,7 @@ public class ServerPlayerEntityMixin {
 
             ItemStack itemStack = entry.get().stack();
             int i = Math.min(player.totalExperience * 2, itemStack.getDamage());
-            player.addExperience(-(int)Math.ceil(i / 2D));
+            player.addExperience(-(int) Math.ceil(i / 2D));
             itemStack.setDamage(itemStack.getDamage() - i);
         }
     }

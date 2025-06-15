@@ -15,23 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Storages {
-    private Storages() {
-        // Prevent instantiation
-    }
-
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir();
     private static final List<ConfigLoader> DIRECT_LOADERS = new ArrayList<>();
-    private static final List<ConfigLoader> DEFERRED_LOADERS = new ArrayList<>();
-
     @Environment(EnvType.CLIENT)
     public static final ConfigLoaderProvider<FileConfigLoader> CLIENT = direct(
             "client",
             (name, modId) -> new FileConfigLoader(CONFIG_PATH.resolve(modId).resolve(name + ".nbt"))
     );
+    private static final List<ConfigLoader> DEFERRED_LOADERS = new ArrayList<>();
     public static final ConfigLoaderProvider<PersistentStateConfigLoader> SERVER = deferred(
             "server",
             (name, modId) -> new PersistentStateConfigLoader(modId + "-" + name, World.OVERWORLD)
     );
+    
+    private Storages() {
+        // Prevent instantiation
+    }
 
     @Contract(value = "_, _ -> new", pure = true)
     private static <C extends ConfigLoader> @NotNull ConfigLoaderProvider<C> direct(

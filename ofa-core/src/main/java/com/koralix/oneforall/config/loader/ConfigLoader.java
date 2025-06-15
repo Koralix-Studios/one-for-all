@@ -17,7 +17,12 @@ public abstract class ConfigLoader {
     private final Set<ConfigKey> keys = new HashSet<>();
     private boolean dirty = false;
 
+    private static ConfigValue<?, ?, ?> getConfigValue(@NotNull ConfigKey key) {
+        return ConfigRegistry.get(key).orElseThrow(() -> new IllegalArgumentException("Config value not found for key: " + key));
+    }
+
     protected abstract @Nullable ConfigStorage loadStorage() throws IOException;
+
     protected abstract void saveStorage(@NotNull ConfigStorage storage) throws IOException;
 
     public final void load() throws IOException {
@@ -69,9 +74,5 @@ public abstract class ConfigLoader {
         List<ConfigValue<?, ?, ?>> configValues = new ArrayList<>();
         this.keys.stream().map(ConfigLoader::getConfigValue).forEach(configValues::add);
         return ConfigStorage.create(configValues);
-    }
-
-    private static ConfigValue<?, ?, ?> getConfigValue(@NotNull ConfigKey key) {
-        return ConfigRegistry.get(key).orElseThrow(() -> new IllegalArgumentException("Config value not found for key: " + key));
     }
 }

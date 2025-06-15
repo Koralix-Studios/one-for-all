@@ -4,7 +4,6 @@ import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.lang.Language;
 import com.koralix.oneforall.session.component.LangComponent;
 import com.koralix.oneforall.session.component.VersionComponent;
-import com.koralix.oneforall.settings.PlayerSettings;
 import com.koralix.oneforall.settings.ServerSettings;
 import net.fabricmc.fabric.api.networking.v1.*;
 import net.fabricmc.loader.api.SemanticVersion;

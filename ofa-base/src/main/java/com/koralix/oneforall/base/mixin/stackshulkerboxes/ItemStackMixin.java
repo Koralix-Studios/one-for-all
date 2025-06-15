@@ -18,7 +18,8 @@ public abstract class ItemStackMixin {
 
     @Inject(method = "getMaxCount", at = @At("HEAD"), cancellable = true)
     private void getMaxCount(CallbackInfoReturnable<Integer> cir) {
-        if (ServerSettings.STACK_SHULKER_BOXES.value().equals(ShulkerStackMode.NEVER) || !this.isIn(ItemTags.SHULKER_BOXES)) return;
+        if (ServerSettings.STACK_SHULKER_BOXES.value().equals(ShulkerStackMode.NEVER) || !this.isIn(ItemTags.SHULKER_BOXES))
+            return;
         cir.setReturnValue(64);
     }
 }

@@ -26,8 +26,8 @@ import java.util.function.IntFunction;
 public enum Language implements StringIdentifiable {
     ENGLISH("en_us", Locale.ENGLISH);
 
-    private static final Map<String, Language> LANGUAGES;
     public static final @NotNull Codec<Language> CODEC = StringIdentifiable.createCodec(Language::values);
+    private static final Map<String, Language> LANGUAGES;
     private static final IntFunction<Language> BY_ID = ValueLists.createIndexToValueFunction(
             Language::ordinal, values(), ValueLists.OutOfBoundsHandling.WRAP
     );
@@ -83,6 +83,10 @@ public enum Language implements StringIdentifiable {
                 .orElse(ServerSettings.DEFAULT_LANGUAGE.value());
     }
 
+    public static Language fromCode(String s) {
+        return LANGUAGES.get(s);
+    }
+
     public String code() {
         return this.code;
     }
@@ -102,10 +106,6 @@ public enum Language implements StringIdentifiable {
     @Override
     public String toString() {
         return code;
-    }
-
-    public static Language fromCode(String s) {
-        return LANGUAGES.get(s);
     }
 
     @Override

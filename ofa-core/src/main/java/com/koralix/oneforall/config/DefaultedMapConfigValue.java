@@ -29,7 +29,7 @@ public class DefaultedMapConfigValue<K, T, B extends ByteBuf> extends AbstractCo
             @NotNull PacketCodec<B, T> packetCodec,
             @NotNull ConfigTest<T> test,
             @NotNull CommandAdapter<T> commandAdapter
-            ) {
+    ) {
         super(registerFn, nominal, codec, packetCodec, SaveData.codec(keyCodec, codec), test, commandAdapter);
         this.keyCodec = keyCodec;
     }

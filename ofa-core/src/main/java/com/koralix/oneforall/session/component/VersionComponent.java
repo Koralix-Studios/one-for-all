@@ -32,9 +32,10 @@ public record VersionComponent(Version version) implements SessionComponent<Vers
     public boolean isCompatible() {
         if (!(OneForAll.version() instanceof SemanticVersion currentSemVer)) return false;
         if (!(this.version instanceof SemanticVersion componentSemVer)) return false;
-        if (currentSemVer.getVersionComponentCount() < 2 || componentSemVer.getVersionComponentCount() < 2) return false;
+        if (currentSemVer.getVersionComponentCount() < 2 || componentSemVer.getVersionComponentCount() < 2)
+            return false;
         return currentSemVer.getVersionComponent(0) == componentSemVer.getVersionComponent(0) &&
-               currentSemVer.getVersionComponent(1) <= componentSemVer.getVersionComponent(1);
+                currentSemVer.getVersionComponent(1) <= componentSemVer.getVersionComponent(1);
     }
 
     @Override

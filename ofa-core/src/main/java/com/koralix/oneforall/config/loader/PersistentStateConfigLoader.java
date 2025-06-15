@@ -53,6 +53,13 @@ public class PersistentStateConfigLoader extends ConfigLoader {
         this.state.markDirty();
     }
 
+    @Override
+    public String toString() {
+        return "PersistentStateConfigLoader{" +
+                "type=" + type.toString() +
+                '}';
+    }
+
     private static class ConfigStorageState extends PersistentState {
         public static final Codec<ConfigStorageState> CODEC = ConfigStorage.CODEC.xmap(
                 ConfigStorageState::new,
@@ -67,12 +74,5 @@ public class PersistentStateConfigLoader extends ConfigLoader {
         public ConfigStorageState() {
             this.storage = ConfigStorage.create();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "PersistentStateConfigLoader{" +
-                "type=" + type.toString() +
-                '}';
     }
 }

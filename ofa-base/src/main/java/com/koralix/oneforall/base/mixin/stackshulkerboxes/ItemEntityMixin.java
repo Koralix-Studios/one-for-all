@@ -18,7 +18,8 @@ public class ItemEntityMixin {
             )
     )
     private boolean canMerge1(ItemEntity instance, Operation<Boolean> original) {
-        if (!ServerSettings.STACK_SHULKER_BOXES.value().onGround() && instance.getStack().isIn(ItemTags.SHULKER_BOXES)) return false;
+        if (!ServerSettings.STACK_SHULKER_BOXES.value().onGround() && instance.getStack().isIn(ItemTags.SHULKER_BOXES))
+            return false;
         return original.call(instance);
     }
 }

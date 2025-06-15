@@ -11,13 +11,13 @@ public class VersionedIdentifierMap<T> {
     private final NavigableMap<Version, Map<Identifier, T>> map;
     private boolean frozen = false;
 
+    private VersionedIdentifierMap(NavigableMap<Version, Map<Identifier, T>> map) {
+        this.map = map;
+    }
+
     @Contract(" -> new")
     public static <T> @NotNull VersionedIdentifierMap<T> create() {
         return new VersionedIdentifierMap<>(new TreeMap<>());
-    }
-
-    private VersionedIdentifierMap(NavigableMap<Version, Map<Identifier, T>> map) {
-        this.map = map;
     }
 
     public Optional<T> get(Version version, Identifier id) {

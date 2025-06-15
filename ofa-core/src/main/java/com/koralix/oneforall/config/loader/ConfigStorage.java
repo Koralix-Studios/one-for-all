@@ -42,9 +42,8 @@ public class ConfigStorage {
                     ).fieldOf("entries").forGetter(configStorage -> configStorage.entries)
             ).apply(instance, map -> new ConfigStorage(version, map)))
     );
-
-    private final Version version;
     protected final Map<ConfigKey, Object> entries;
+    private final Version version;
 
     protected ConfigStorage(Version version, Map<ConfigKey, Object> entries) {
         this.version = version;

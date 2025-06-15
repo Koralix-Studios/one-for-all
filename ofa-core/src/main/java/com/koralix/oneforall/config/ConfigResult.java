@@ -27,9 +27,11 @@ public interface ConfigResult<T> {
     Optional<T> get();
 
     boolean isError();
+
     default boolean isOk() {
         return !isError();
     }
+
     boolean isChange();
 
     default ConfigResult<T> and(ConfigResult<T> other) {

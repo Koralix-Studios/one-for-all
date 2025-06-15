@@ -66,7 +66,7 @@ public class BlockMixin {
     private void fixMultiBlock(Direction direction, BlockPos pos, World world, PlayerEntity player, Class<? extends Block>... blockClass) {
         pos = pos.offset(direction);
         BlockState blockState = world.getBlockState(pos);
-        for (Class<? extends Block> clazz: blockClass) {
+        for (Class<? extends Block> clazz : blockClass) {
             if (clazz.isInstance(blockState.getBlock())) {
                 Block.dropStacks(blockState, world, pos, null, player, player.getMainHandStack());
                 world.removeBlock(pos, false);

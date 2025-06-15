@@ -10,11 +10,6 @@ public final class Functions {
         // Prevent instantiation
     }
 
-    @FunctionalInterface
-    public interface FallibleFunction<T, R, E extends Throwable> {
-        R apply(T value) throws E;
-    }
-
     @Contract(pure = true)
     public static <T, R, E extends Throwable> @NotNull Function<T, R> tryCatch(FallibleFunction<T, R, E> function) {
         return (T t) -> {
@@ -30,5 +25,10 @@ public final class Functions {
                 }
             }
         };
+    }
+
+    @FunctionalInterface
+    public interface FallibleFunction<T, R, E extends Throwable> {
+        R apply(T value) throws E;
     }
 }

@@ -24,6 +24,9 @@ import static com.mojang.brigadier.builder.RequiredArgumentBuilder.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public final class OfaCommand {
+    public static final DynamicCommandExceptionType CONFIG_TEST_EXCEPTION = new DynamicCommandExceptionType(
+            text -> (Text) text
+    );
     private static final DynamicCommandExceptionType INVALID_CONFIG_REGISTRY_EXCEPTION = new DynamicCommandExceptionType(
             key -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".invalid_config_registry", key)
     );
@@ -32,9 +35,6 @@ public final class OfaCommand {
     );
     private static final DynamicCommandExceptionType INVALID_NBT_EXCEPTION = new DynamicCommandExceptionType(
             nbt -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".invalid_nbt", nbt)
-    );
-    public static final DynamicCommandExceptionType CONFIG_TEST_EXCEPTION = new DynamicCommandExceptionType(
-            text -> (Text) text
     );
     private static final SimpleCommandExceptionType INVALID_CONFIG_TYPE_EXCEPTION = new SimpleCommandExceptionType(
             Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.unsupported_type")

@@ -16,7 +16,8 @@ public record ConfigKey(Identifier registryId, Identifier configId) {
                 String config = s.substring(i + 1);
 
                 int j = registry.indexOf(':');
-                if (j <= 0 || j == registry.length() - 1) return DataResult.error(() -> "Invalid ConfigKey format: " + s);
+                if (j <= 0 || j == registry.length() - 1)
+                    return DataResult.error(() -> "Invalid ConfigKey format: " + s);
 
                 int k = config.indexOf(':');
                 if (k <= 0 || k == config.length() - 1) return DataResult.error(() -> "Invalid ConfigKey format: " + s);
