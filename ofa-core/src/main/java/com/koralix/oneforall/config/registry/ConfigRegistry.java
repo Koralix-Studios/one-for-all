@@ -2,7 +2,7 @@ package com.koralix.oneforall.config.registry;
 
 import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.config.ConfigValue;
-import com.koralix.oneforall.config.loader.DynamicConfigStorage;
+import com.koralix.oneforall.config.loader.ConfigLoader;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
@@ -86,10 +86,9 @@ public class ConfigRegistry {
         return this.versioned.get(version, id).map(ConfigEntry::configValue);
     }
 
-    @SuppressWarnings("unchecked")
-    public void save(@NotNull DynamicConfigStorage storage) {
+    public void save(@NotNull ConfigLoader storage) {
         for (ConfigEntry<?> entry : this.configValues.values()) {
-            storage.add((ConfigValue<Object, ?, ?>) entry.configValue());
+            storage.add(entry.configValue());
         }
     }
 
