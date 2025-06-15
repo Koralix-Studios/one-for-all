@@ -22,5 +22,7 @@
     "config.${mod.id}:server_settings/${mod.id}:enforce_protocol.name": "Enforce Protocol",
     "config.${mod.id}:server_settings/${mod.id}:enforce_protocol.description": "Require clients to have protocol support enabled in order to join the server.",
     "config.${mod.id}:server_settings/${mod.id}:default_language.name": "Default Language",
-    "config.${mod.id}:server_settings/${mod.id}:default_language.description": "The default language used by the server for messages and communication."
+    "config.${mod.id}:server_settings/${mod.id}:default_language.description": "The default language used by the server for messages and communication when a player does not have the client-side mod installed or has not selected a language.",
+    "config.${mod.id}:player_settings/${mod.id}:default_language.name": "Default Language (Player)",
+    "config.${mod.id}:player_settings/${mod.id}:default_language.description": "The language used for server-side messages and translations for this player when the client-side mod is not installed or the player has not selected a language. Overrides the server default for this player."
 }

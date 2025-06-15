@@ -1,15 +1,29 @@
 {
-    "config.${mod.id}:player_settings/${mod.id}:careful_break.name": "Careful Break",
-    "config.${mod.id}:player_settings/${mod.id}:careful_break.description": "Enable careful block breaking to receive items in your inventory instead of dropping them on the ground.",
-    "config.${mod.id}:player_settings/${mod.id}:xp_bar_mending.name": "XP Bar Mending",
-    "config.${mod.id}:player_settings/${mod.id}:xp_bar_mending.description": "Use the XP bar for mending items automatically.",
-    "config.${mod.id}:player_settings/${mod.id}:creative_kill.name": "Creative Kill",
-    "config.${mod.id}:player_settings/${mod.id}:creative_kill.description": "Allow instant kill in creative mode.",
-
     "config.${mod.id}:server_settings/${mod.id}:careful_break.name": "Careful Break (Server)",
-    "config.${mod.id}:server_settings/${mod.id}:careful_break.description": "Enable careful block breaking for all players on the server.",
+    "config.${mod.id}:server_settings/${mod.id}:careful_break.description": "When enabled, blocks broken by players will send their drops directly to the player's inventory instead of dropping them on the ground.",
     "config.${mod.id}:server_settings/${mod.id}:xp_bar_mending.name": "XP Bar Mending (Server)",
-    "config.${mod.id}:server_settings/${mod.id}:xp_bar_mending.description": "Use the XP bar for mending items automatically for all players.",
+    "config.${mod.id}:server_settings/${mod.id}:xp_bar_mending.description": "Uses the XP accumulated in the XP bar for the mending enchantment as if the XP was just picked up, automatically repairing items.",
     "config.${mod.id}:server_settings/${mod.id}:creative_kill.name": "Creative Kill (Server)",
-    "config.${mod.id}:server_settings/${mod.id}:creative_kill.description": "Allow instant kill in creative mode for all players."
+    "config.${mod.id}:server_settings/${mod.id}:creative_kill.description": "Allow instant kill in creative mode for all players.",
+
+    "config.${mod.id}:server_settings/${mod.id}:split_scattered_items.name": "Split Scattered Items (Server)",
+    "config.${mod.id}:server_settings/${mod.id}:split_scattered_items.description": "Controls the vanilla behavior where items dropped from certain inventories are split into sub-stacks instead of dropping as full stacks. Set to false to drop items as full stacks.",
+    "config.${mod.id}:server_settings/${mod.id}:stack_shulker_boxes.name": "Stack Shulker Boxes (Server)",
+    "config.${mod.id}:server_settings/${mod.id}:stack_shulker_boxes.description": "Control how shulker boxes are stacked for all players on the server.",
+
+    "config.${mod.id}:player_settings/${mod.id}:careful_break.name": "Careful Break",
+    "config.${mod.id}:player_settings/${mod.id}:careful_break.description": "Configures how careful break is triggered for the player. When enabled, blocks broken by the player will send their drops directly to the player's inventory instead of dropping them on the ground.",
+    "config.${mod.id}:player_settings/${mod.id}:xp_bar_mending.name": "XP Bar Mending",
+    "config.${mod.id}:player_settings/${mod.id}:xp_bar_mending.description": "Configures how XP bar mending is triggered for the player. Uses the XP accumulated in the XP bar for the mending enchantment as if the XP was just picked up.",
+    "config.${mod.id}:player_settings/${mod.id}:creative_kill.name": "Creative Kill",
+    "config.${mod.id}:player_settings/${mod.id}:creative_kill.description": "Configure how creative kill is triggered (e.g., always, while sneaking, never).",
+
+    "config.${mod.id}:client_settings/${mod.id}:consume_fireworks.name": "Consume Fireworks",
+    "config.${mod.id}:client_settings/${mod.id}:consume_fireworks.description": "When enabled, fireworks are consumed when used to fly with the elytra. When disabled, fireworks are not consumed.",
+    "config.${mod.id}:client_settings/${mod.id}:center_flowers.name": "Center Flowers",
+    "config.${mod.id}:client_settings/${mod.id}:center_flowers.description": "Render flowers centered in the block.",
+    "config.${mod.id}:client_settings/${mod.id}:fly_inertia.name": "Fly Inertia",
+    "config.${mod.id}:client_settings/${mod.id}:fly_inertia.description": "When enabled, creative flying includes inertia and drag (vanilla behavior). When disabled, you stop immediately when releasing movement input.",
+    "config.${mod.id}:client_settings/${mod.id}:flat_digger.name": "Flat Digger",
+    "config.${mod.id}:client_settings/${mod.id}:flat_digger.description": "Prevents mining blocks below the level of your feet, useful for digging perimeters layer by layer."
 }
