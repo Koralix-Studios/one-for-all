@@ -74,7 +74,7 @@ public final class OfaCommand {
     private static <T> int getMono(ServerCommandSource source, @NotNull MonoConfigValue<T, ?, ?> configValue, ConfigActor actor) throws CommandSyntaxException {
         ConfigResult<T> result = configValue.value(actor);
         if (result.isError()) throw CONFIG_TEST_EXCEPTION.create(result.message());
-        source.sendFeedback(() -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.get", Text.stringifiedTranslatable(configValue.translationKey() + ".name"), result.get().orElseThrow()), false);
+        source.sendFeedback(() -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.get", Text.stringifiedTranslatable(configValue.translationKey() + ".name"), result.get().orElseThrow().toString()), false);
         return 1;
     }
 
@@ -85,7 +85,7 @@ public final class OfaCommand {
     private static <K, T> int getMulti(ServerCommandSource source, @NotNull MultiConfigValue<K, T, ?, ?> configValue, ConfigActor actor, K key) throws CommandSyntaxException {
         ConfigResult<T> result = configValue.value(actor, key);
         if (result.isError()) throw CONFIG_TEST_EXCEPTION.create(result.message());
-        source.sendFeedback(() -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.get", Text.stringifiedTranslatable(configValue.translationKey() + ".name"), result.get().orElseThrow()), false);
+        source.sendFeedback(() -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.get", Text.stringifiedTranslatable(configValue.translationKey() + ".name"), result.get().orElseThrow().toString()), false);
         return 1;
     }
 
