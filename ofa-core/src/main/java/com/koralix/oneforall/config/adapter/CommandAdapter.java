@@ -10,6 +10,7 @@ import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import static com.mojang.brigadier.builder.LiteralArgumentBuilder.literal;
@@ -17,6 +18,19 @@ import static com.mojang.brigadier.builder.RequiredArgumentBuilder.argument;
 
 public interface CommandAdapter<T> {
     <S> void adapt(String name, ArgumentBuilder<S, ?> parent, BiConsumer<ArgumentBuilder<S, ?>, CommandAdapterGetter<T>> consumer);
+
+    default @NotNull CommandAdapter<Optional<T>> optional() {
+        return new CommandAdapter<>() {
+            @Override
+            public <S> void adapt(String name, ArgumentBuilder<S, ?> parent, BiConsumer<ArgumentBuilder<S, ?>, CommandAdapterGetter<Optional<T>>> consumer) {
+                LiteralArgumentBuilder<S> some = literal("some");
+                CommandAdapter.this.adapt(name, some, (builder, getter) -> consumer.accept(builder, getter.optional()));
+                LiteralArgumentBuilder<S> none = literal("none");
+                consumer.accept(none, CommandAdapterGetter.unit(Optional.empty()));
+                parent.then(some).then(none);
+            }
+        };
+    }
 
     @Contract("_ -> new")
     static <E extends Enum<E> & StringIdentifiable> @NotNull CommandAdapter<E> ofEnum(Class<E> enumClass) {
@@ -46,6 +60,10 @@ public interface CommandAdapter<T> {
     @FunctionalInterface
     interface CommandAdapterGetter<T> {
         T get(CommandContext<?> context, String name) throws CommandSyntaxException;
+
+        default CommandAdapterGetter<Optional<T>> optional() {
+            return (context, name) -> Optional.of(get(context, name));
+        }
 
         @Contract(pure = true)
         static <T> @NotNull CommandAdapterGetter<T> unit(T constant) {
