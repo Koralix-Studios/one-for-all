@@ -4,6 +4,7 @@ import com.koralix.oneforall.command.OfaCommand;
 import com.koralix.oneforall.config.loader.ConfigLoader;
 import com.koralix.oneforall.config.loader.Storages;
 import com.koralix.oneforall.session.LoginManager;
+import com.koralix.oneforall.settings.PlayerSettings;
 import com.koralix.oneforall.settings.ServerSettings;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -17,6 +18,7 @@ public class Initializer implements ModInitializer {
 
         ConfigLoader loader = Storages.SERVER.create(OneForAll.id());
         ServerSettings.register().save(loader);
+        PlayerSettings.register().save(loader);
 
         for (OneForAll ofa : FabricLoader.getInstance().getEntrypoints("ofa", OneForAll.class)) {
             ofa.onInitialize();

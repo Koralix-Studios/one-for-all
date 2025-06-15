@@ -4,6 +4,7 @@ import com.koralix.oneforall.OneForAll;
 import com.koralix.oneforall.lang.Language;
 import com.koralix.oneforall.session.component.LangComponent;
 import com.koralix.oneforall.session.component.VersionComponent;
+import com.koralix.oneforall.settings.PlayerSettings;
 import com.koralix.oneforall.settings.ServerSettings;
 import net.fabricmc.fabric.api.networking.v1.*;
 import net.fabricmc.loader.api.SemanticVersion;
@@ -57,8 +58,10 @@ public class LoginManager {
         Session session = ((SessionHolder) handler).get();
 
         session.on(ClientOptionsC2SPacket.class, packet -> {
+            if (session.has(LangComponent.TYPE)) return;
+
             Language language = Language.fromCode(packet.options().language());
-            if (language == null) session.remove(LangComponent.TYPE);
+            if (language == null) session.set(new LangComponent(Language.of(session)));
             else session.set(new LangComponent(language));
         });
 

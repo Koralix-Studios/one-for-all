@@ -4,6 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.session.Session;
+import com.koralix.oneforall.session.component.GameProfileComponent;
+import com.koralix.oneforall.session.component.LangComponent;
+import com.koralix.oneforall.settings.PlayerSettings;
+import com.koralix.oneforall.settings.ServerSettings;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -65,6 +70,17 @@ public enum Language implements StringIdentifiable {
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to load translations from " + code, e);
         }
+    }
+
+    public static @NotNull Language of(@NotNull Session session) {
+        LangComponent langComponent = session.get(LangComponent.TYPE);
+        if (langComponent != null) return langComponent.language();
+        GameProfileComponent profileComponent = session.get(GameProfileComponent.TYPE);
+        return profileComponent == null
+                ? ServerSettings.DEFAULT_LANGUAGE.value()
+                : PlayerSettings.DEFAULT_LANGUAGE
+                .value(profileComponent.profile().getId())
+                .orElse(ServerSettings.DEFAULT_LANGUAGE.value());
     }
 
     public String code() {
