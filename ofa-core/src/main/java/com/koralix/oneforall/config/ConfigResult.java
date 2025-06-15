@@ -219,4 +219,26 @@ public interface ConfigResult<T> {
             return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.unchanged", value);
         }
     }
+
+    record RequiredUUID<T>(@NotNull ConfigActor actor) implements ConfigResult<T> {
+        @Override
+        public Optional<T> get() {
+            return Optional.empty();
+        }
+
+        @Override
+        public boolean isError() {
+            return true;
+        }
+
+        @Override
+        public boolean isChange() {
+            return false;
+        }
+
+        @Override
+        public @NotNull Message message() {
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.required_uuid", actor);
+        }
+    }
 }
