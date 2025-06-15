@@ -15,6 +15,7 @@ public enum ShulkerStackMode implements StringIdentifiable {
     ON_INVENTORY,
     ON_INVENTORY_AND_GROUND,
     ON_INVENTORY_AND_HOPPER,
+    ALWAYS_EXCEPT_COMPARATOR,
     ALWAYS;
 
     public static final @NotNull Codec<ShulkerStackMode> CODEC = StringIdentifiable.createCodec(ShulkerStackMode::values);
@@ -30,21 +31,21 @@ public enum ShulkerStackMode implements StringIdentifiable {
 
     public boolean onGround() {
         return switch (this) {
-            case ON_INVENTORY_AND_GROUND, ALWAYS -> true;
+            case ON_INVENTORY_AND_GROUND, ALWAYS_EXCEPT_COMPARATOR, ALWAYS -> true;
             default -> false;
         };
     }
 
     public boolean onInventory() {
         return switch (this) {
-            case ON_INVENTORY, ON_INVENTORY_AND_GROUND, ON_INVENTORY_AND_HOPPER, ALWAYS -> true;
+            case ON_INVENTORY, ON_INVENTORY_AND_GROUND, ON_INVENTORY_AND_HOPPER, ALWAYS_EXCEPT_COMPARATOR, ALWAYS -> true;
             default -> false;
         };
     }
 
     public boolean byHopper() {
         return switch (this) {
-            case ON_INVENTORY_AND_HOPPER, ALWAYS -> true;
+            case ON_INVENTORY_AND_HOPPER, ALWAYS_EXCEPT_COMPARATOR, ALWAYS -> true;
             default -> false;
         };
     }

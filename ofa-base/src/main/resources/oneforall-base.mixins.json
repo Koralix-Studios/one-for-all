@@ -10,6 +10,7 @@
         "stackshulkerboxes.HopperBlockEntityMixin",
         "stackshulkerboxes.ItemEntityMixin",
         "stackshulkerboxes.ItemStackMixin",
+        "stackshulkerboxes.ScreenHandlerMixin",
         "xpbarmending.ServerPlayerEntityMixin"
     ],
     "injectors": {
