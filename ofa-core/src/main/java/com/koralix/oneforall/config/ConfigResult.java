@@ -68,7 +68,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.observe.ok", value);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.observe.ok", value.toString());
         }
     }
 
@@ -94,7 +94,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.valid", oldValue, newValue);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.valid", oldValue.toString(), newValue.toString());
         }
     }
 
@@ -120,7 +120,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.invalid", oldValue, newValue);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.change.invalid", oldValue.toString(), newValue.toString());
         }
     }
 
@@ -218,7 +218,7 @@ public interface ConfigResult<T> {
 
         @Override
         public @NotNull Message message() {
-            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.unchanged", value);
+            return Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.unchanged", value.toString());
         }
     }
 
