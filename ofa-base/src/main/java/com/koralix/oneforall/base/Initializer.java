@@ -1,11 +1,16 @@
 package com.koralix.oneforall.base;
 
 import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.base.command.BatchCommand;
+import com.koralix.oneforall.base.command.EnderchestCommand;
+import com.koralix.oneforall.base.command.SignalCommand;
+import com.koralix.oneforall.base.settings.CommandSettings;
 import com.koralix.oneforall.base.settings.Features;
 import com.koralix.oneforall.base.settings.PlayerSettings;
 import com.koralix.oneforall.base.settings.ServerSettings;
 import com.koralix.oneforall.config.loader.ConfigLoader;
 import com.koralix.oneforall.config.loader.Storages;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 public class Initializer implements OneForAll {
     @Override
@@ -14,7 +19,12 @@ public class Initializer implements OneForAll {
 
         ConfigLoader loader = Storages.SERVER.create(OneForAll.id());
         ServerSettings.register().save(loader);
+        CommandSettings.register().save(loader);
         PlayerSettings.register().save(loader);
         Features.register();
+
+        CommandRegistrationCallback.EVENT.register(BatchCommand::register);
+        CommandRegistrationCallback.EVENT.register(EnderchestCommand::register);
+        CommandRegistrationCallback.EVENT.register(SignalCommand::register);
     }
 }
