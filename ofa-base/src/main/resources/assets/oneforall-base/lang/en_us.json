@@ -25,5 +25,9 @@
     "config.${mod.id}:client_settings/${mod.id}:fly_inertia.name": "Fly Inertia",
     "config.${mod.id}:client_settings/${mod.id}:fly_inertia.description": "When enabled, creative flying includes inertia and drag (vanilla behavior). When disabled, you stop immediately when releasing movement input.",
     "config.${mod.id}:client_settings/${mod.id}:flat_digger.name": "Flat Digger",
-    "config.${mod.id}:client_settings/${mod.id}:flat_digger.description": "Prevents mining blocks below the level of your feet, useful for digging perimeters layer by layer."
+    "config.${mod.id}:client_settings/${mod.id}:flat_digger.description": "Prevents mining blocks below the level of your feet, useful for digging perimeters layer by layer.",
+
+    "command.${mod.id}.base2base.parse_error": "Invalid number representation",
+    "command.${mod.id}.base2base.big_part_error": "Each part must be less than the base",
+    "command.${mod.id}.base2base.result": "Base %s: %s\nBase %s: %s"
 }

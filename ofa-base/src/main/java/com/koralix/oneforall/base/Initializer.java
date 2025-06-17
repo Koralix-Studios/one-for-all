@@ -1,6 +1,7 @@
 package com.koralix.oneforall.base;
 
 import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.base.command.Base2BaseCommand;
 import com.koralix.oneforall.base.command.BatchCommand;
 import com.koralix.oneforall.base.command.EnderchestCommand;
 import com.koralix.oneforall.base.command.SignalCommand;
@@ -23,6 +24,7 @@ public class Initializer implements OneForAll {
         PlayerSettings.register().save(loader);
         Features.register();
 
+        CommandRegistrationCallback.EVENT.register(Base2BaseCommand::register);
         CommandRegistrationCallback.EVENT.register(BatchCommand::register);
         CommandRegistrationCallback.EVENT.register(EnderchestCommand::register);
         CommandRegistrationCallback.EVENT.register(SignalCommand::register);
