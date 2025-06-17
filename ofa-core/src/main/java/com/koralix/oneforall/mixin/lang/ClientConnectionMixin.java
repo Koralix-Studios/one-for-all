@@ -2,7 +2,9 @@ package com.koralix.oneforall.mixin.lang;
 
 import com.koralix.oneforall.lang.Language;
 import com.koralix.oneforall.lang.TranslationUnit;
+import com.koralix.oneforall.session.Session;
 import com.koralix.oneforall.session.SessionHolder;
+import com.koralix.oneforall.session.component.VersionComponent;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.Packet;
@@ -16,7 +18,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ClientConnectionMixin implements SessionHolder {
     @Inject(method = "sendInternal", at = @At("HEAD"))
     private void prepare(Packet<?> packet, @Nullable PacketCallbacks callbacks, boolean flush, CallbackInfo ci) {
-        TranslationUnit.prepare(Language.of(this.get()));
+        Session session = this.get();
+        VersionComponent version = session.get(VersionComponent.TYPE);
+        if (version != null && version.isCompatible()) return;
+        TranslationUnit.prepare(Language.of(session));
     }
 
     @Inject(method = "sendInternal", at = @At("RETURN"))
