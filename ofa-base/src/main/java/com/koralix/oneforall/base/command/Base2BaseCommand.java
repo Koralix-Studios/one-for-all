@@ -91,7 +91,7 @@ public class Base2BaseCommand {
                 BigInteger[] ints = quotient.divideAndRemainder(bigBase);
                 quotient = ints[0];
                 remainder = ints[1];
-                str.insert(0, remainder.toString());
+                str.insert(0, remainder.toString() + (str.isEmpty() ? "" : ","));
             }
         }
 
@@ -112,11 +112,17 @@ public class Base2BaseCommand {
     private static @NotNull BigInteger parse(@NotNull String value, int base) throws CommandSyntaxException {
         BigInteger bigBase = BigInteger.valueOf(base);
         String[] parts = value.split(",");
+
         int acc = parts.length - 1;
         BigInteger result = BigInteger.ZERO;
         for (String part : parts) {
             if (part.isEmpty()) throw PARSE_EXCEPTION.create();
             BigInteger parsedPart = parsePart(part, base > 36 ? 10 : base);
+
+            if (parts.length > 1 && parsedPart.compareTo(bigBase) >= 0) {
+                throw BIG_PART_EXCEPTION.create();
+            }
+
             result = result.add(parsedPart.multiply(bigBase.pow(acc--)));
         }
         return result;
@@ -146,18 +152,11 @@ public class Base2BaseCommand {
         String input = builder.getRemaining();
         if (input == null || input.isEmpty()) return chars;
         if (input.endsWith(",")) return extend(input, chars);
-        if (input.contains(",")) {
-            String[] parts = input.split(",");
-            for (String part : parts) {
-                if (parsePart(part, fromBase > 36 ? 10 : fromBase).compareTo(bigBase) >= 0) {
-                    throw BIG_PART_EXCEPTION.create();
-                }
-            }
-        }
         return extend(input, merge(chars, ","))
                 .stream()
                 .filter(s -> {
                     if (s.endsWith(",")) return true;
+                    if (!s.contains(",")) return true;
                     try {
                         return parsePart(s.substring(s.lastIndexOf(",") + 1), fromBase > 36 ? 10 : fromBase).compareTo(bigBase) < 0;
                     } catch (CommandSyntaxException e) {
