@@ -1,9 +1,10 @@
 package com.koralix.oneforall.base.parser.ast;
 
-import com.koralix.oneforall.base.parser.computable.ComputableNode;
 import com.koralix.oneforall.base.parser.computable.ComputeUnit;
-import com.koralix.oneforall.base.parser.computable.MacroComputableNode;
-import com.koralix.oneforall.base.parser.computable.MacroRootComputableNode;
+import com.koralix.oneforall.base.parser.computable.MacroRootScoreNode;
+import com.koralix.oneforall.base.parser.computable.MacroScoreNode;
+import com.koralix.oneforall.base.parser.computable.ScoreNode;
+import org.jetbrains.annotations.NotNull;
 
 public class MacroExpr implements Expression {
     private String macroIdentifier;
@@ -21,9 +22,9 @@ public class MacroExpr implements Expression {
     }
 
     @Override
-    public ComputableNode toComputable() {
-        MacroRootComputableNode macroRoot = ComputeUnit.macro(macroIdentifier).orElseThrow(() -> new IllegalArgumentException("Unrecognized macro identifier."));
+    public @NotNull ScoreNode toScoreNode(@NotNull ScoreNode parent) {
+        MacroRootScoreNode macroRoot = ComputeUnit.macro(macroIdentifier).orElseThrow(() -> new IllegalArgumentException("Unrecognized macro identifier."));
 
-        return new MacroComputableNode(macroRoot);
+        return new MacroScoreNode(parent, macroRoot);
     }
 }

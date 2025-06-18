@@ -11,6 +11,9 @@
         "stackshulkerboxes.ItemEntityMixin",
         "stackshulkerboxes.ItemStackMixin",
         "stackshulkerboxes.ScreenHandlerMixin",
+        "statscore.PlayerManagerMixin",
+        "statscore.StatHandlerMixin",
+        "statscore.UserCacheMixin",
         "xpbarmending.ServerPlayerEntityMixin"
     ],
     "injectors": {

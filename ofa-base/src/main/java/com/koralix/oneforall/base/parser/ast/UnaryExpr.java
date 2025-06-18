@@ -1,8 +1,10 @@
 package com.koralix.oneforall.base.parser.ast;
 
+import com.koralix.oneforall.base.parser.Expr2Node;
 import com.koralix.oneforall.base.parser.OpType;
-import com.koralix.oneforall.base.parser.computable.ComputableNode;
-import com.koralix.oneforall.base.parser.computable.UnaryComputableNode;
+import com.koralix.oneforall.base.parser.computable.ScoreNode;
+import com.koralix.oneforall.base.parser.computable.UnaryOpScoreNode;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -33,12 +35,12 @@ public class UnaryExpr implements Expression {
     }
 
     @Override
-    public ComputableNode toComputable() {
+    public @NotNull ScoreNode toScoreNode(@NotNull ScoreNode parent) {
         Function<BigDecimal, BigDecimal> function = child -> switch (operator) {
             case Substraction -> child.negate();
             default -> throw new IllegalStateException("Unary expression only supports substraction.");
         };
 
-        return new UnaryComputableNode(expr.toComputable(), function);
+        return new UnaryOpScoreNode(parent, new Expr2Node(expr::toScoreNode), function);
     }
 }

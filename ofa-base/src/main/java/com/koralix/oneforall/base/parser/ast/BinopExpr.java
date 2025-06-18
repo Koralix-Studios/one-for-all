@@ -1,8 +1,10 @@
 package com.koralix.oneforall.base.parser.ast;
 
+import com.koralix.oneforall.base.parser.Expr2Node;
 import com.koralix.oneforall.base.parser.OpType;
-import com.koralix.oneforall.base.parser.computable.BinopComputableNode;
-import com.koralix.oneforall.base.parser.computable.ComputableNode;
+import com.koralix.oneforall.base.parser.computable.BinOpScoreNode;
+import com.koralix.oneforall.base.parser.computable.ScoreNode;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,9 +47,7 @@ public class BinopExpr implements Expression {
     }
 
     @Override
-    public ComputableNode toComputable() {
-        ComputableNode lhs = this.lhs.toComputable();
-        ComputableNode rhs = this.rhs.toComputable();
+    public @NotNull ScoreNode toScoreNode(@NotNull ScoreNode parent) {
 
         BiFunction<BigDecimal, BigDecimal, BigDecimal> function = (lhs1, rhs1) -> switch (opType) {
             case Multiplication -> lhs1.multiply(rhs1);
@@ -56,6 +56,6 @@ public class BinopExpr implements Expression {
             case Substraction -> lhs1.subtract(rhs1);
         };
 
-        return new BinopComputableNode(lhs, rhs, function);
+        return new BinOpScoreNode(parent, new Expr2Node(lhs::toScoreNode), new Expr2Node(rhs::toScoreNode), function);
     }
 }

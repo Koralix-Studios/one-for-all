@@ -101,7 +101,7 @@ public class Lexer {
     }
 
     private String lexIdentifier() {
-        Pattern pattern = Pattern.compile("^[a-z0-9_.-]+:[a-z0-9/._-]+");
+        Pattern pattern = Pattern.compile("^[a-z0-9_.-]+:[a-z0-9._-]+");
         Matcher matcher = pattern.matcher(code.substring(loc));
 
         if (matcher.find()) {

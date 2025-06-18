@@ -1,7 +1,8 @@
 package com.koralix.oneforall.base.parser.ast;
 
-import com.koralix.oneforall.base.parser.computable.ComputableNode;
-import com.koralix.oneforall.base.parser.computable.ConstantComputableNode;
+import com.koralix.oneforall.base.parser.computable.ConstantScoreNode;
+import com.koralix.oneforall.base.parser.computable.ScoreNode;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 
@@ -21,7 +22,7 @@ public class IntegerExpr implements Expression {
     }
 
     @Override
-    public ComputableNode toComputable() {
-        return new ConstantComputableNode(BigDecimal.valueOf(integer));
+    public @NotNull ScoreNode toScoreNode(@NotNull ScoreNode parent) {
+        return new ConstantScoreNode(BigDecimal.valueOf(integer));
     }
 }

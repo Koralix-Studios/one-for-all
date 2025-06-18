@@ -1,7 +1,9 @@
 package com.koralix.oneforall.base.parser.ast;
 
-import com.koralix.oneforall.base.parser.computable.ComputableNode;
-import com.koralix.oneforall.base.parser.computable.FuncCallComputableNode;
+import com.koralix.oneforall.base.parser.Expr2Node;
+import com.koralix.oneforall.base.parser.computable.FuncCallScoreNode;
+import com.koralix.oneforall.base.parser.computable.ScoreNode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -31,7 +33,14 @@ public class FuncCallExpr implements Expression {
     }
 
     @Override
-    public ComputableNode toComputable() {
-        return new FuncCallComputableNode(name, arguments.stream().map(Expression::toComputable).toArray(ComputableNode[]::new));
+    public @NotNull ScoreNode toScoreNode(@NotNull ScoreNode parent) {
+        return new FuncCallScoreNode(
+                parent,
+                name,
+                arguments
+                        .stream()
+                        .map(expr -> new Expr2Node(expr::toScoreNode))
+                        .toArray(Expr2Node[]::new)
+        );
     }
 }
