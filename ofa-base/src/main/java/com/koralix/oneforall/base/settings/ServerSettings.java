@@ -9,6 +9,7 @@ import com.koralix.oneforall.config.registry.VersionedIdentifier;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.server.command.ServerCommandSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -25,6 +26,7 @@ public class ServerSettings {
                     CommandAdapter.bool()
             )
             .test(Objects::nonNull)
+            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
     public static final MonoConfigValue<Boolean, ByteBuf, ?> XP_BAR_MENDING = REGISTRAR
@@ -36,6 +38,7 @@ public class ServerSettings {
                     CommandAdapter.bool()
             )
             .test(Objects::nonNull)
+            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
     public static final MonoConfigValue<Boolean, ByteBuf, ?> CREATIVE_KILL = REGISTRAR
@@ -47,6 +50,7 @@ public class ServerSettings {
                     CommandAdapter.bool()
             )
             .test(Objects::nonNull)
+            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
     public static final MonoConfigValue<Boolean, ByteBuf, ?> SPLIT_SCATTERED_ITEMS = REGISTRAR
@@ -58,6 +62,7 @@ public class ServerSettings {
                     CommandAdapter.bool()
             )
             .test(Objects::nonNull)
+            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
     public static final MonoConfigValue<ShulkerStackMode, ByteBuf, ?> STACK_SHULKER_BOXES = REGISTRAR
@@ -69,6 +74,7 @@ public class ServerSettings {
                     CommandAdapter.ofEnum(ShulkerStackMode.class)
             )
             .test(Objects::nonNull)
+            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
     public static @NotNull ConfigRegistry register() {

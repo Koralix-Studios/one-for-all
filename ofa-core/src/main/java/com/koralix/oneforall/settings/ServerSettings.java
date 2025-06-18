@@ -10,6 +10,7 @@ import com.koralix.oneforall.lang.Language;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.server.command.ServerCommandSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -26,6 +27,7 @@ public class ServerSettings {
                     CommandAdapter.bool()
             )
             .test(Objects::nonNull)
+            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
     public static final MonoConfigValue<Boolean, ByteBuf, ?> ENFORCE_PROTOCOL = REGISTRAR
@@ -37,6 +39,7 @@ public class ServerSettings {
                     CommandAdapter.bool()
             )
             .test(Objects::nonNull)
+            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
     public static final MonoConfigValue<Language, ByteBuf, ?> DEFAULT_LANGUAGE = REGISTRAR
@@ -48,6 +51,7 @@ public class ServerSettings {
                     CommandAdapter.ofEnum(Language.class)
             )
             .test(Objects::nonNull)
+            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
     public static @NotNull ConfigRegistry register() {

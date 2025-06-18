@@ -1,5 +1,6 @@
 package com.koralix.oneforall.config.registry;
 
+import com.koralix.oneforall.config.ConfigActor;
 import com.koralix.oneforall.config.ConfigTest;
 import com.koralix.oneforall.config.ConfigValue;
 import com.koralix.oneforall.config.adapter.CommandAdapter;
@@ -62,6 +63,10 @@ public class ConfigValueBuilder<T, C extends ConfigValue<T, B, S>, B extends Byt
 
     public ConfigValueBuilder<T, C, B, S> test(Predicate<T> test) {
         return test(ConfigTest.of(test));
+    }
+
+    public ConfigValueBuilder<T, C, B, S> testActor(Predicate<ConfigActor> test) {
+        return test(ConfigTest.ofActor(test));
     }
 
     public C build() {

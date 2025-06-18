@@ -52,7 +52,7 @@ public class ClientSettings {
     public static final MonoConfigValue<Boolean, ByteBuf, ?> FLAT_DIGGER = REGISTRAR
             .mono(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("flat_digger")),
-                    true,
+                    false,
                     Codec.BOOL,
                     PacketCodecs.BOOLEAN,
                     CommandAdapter.bool()

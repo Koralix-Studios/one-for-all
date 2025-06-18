@@ -20,6 +20,7 @@ public class CommandSettings {
     public static final MonoConfigValue<Boolean, ByteBuf, ?> COMMAND_BATCH = create("0.1.0", "command_batch", false);
     public static final MonoConfigValue<Boolean, ByteBuf, ?> COMMAND_ENDERCHEST = create("0.1.0", "command_enderchest", false);
     public static final MonoConfigValue<Boolean, ByteBuf, ?> COMMAND_BASE2BASE = create("0.1.0", "command_base2base", false);
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> COMMAND_STATSCORE = create("0.1.0", "command_statscore", false);
 
     private static MonoConfigValue<Boolean, ByteBuf, ?> create(
             @NotNull String version,

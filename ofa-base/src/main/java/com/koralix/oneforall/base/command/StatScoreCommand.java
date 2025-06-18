@@ -2,6 +2,7 @@ package com.koralix.oneforall.base.command;
 
 import com.koralix.oneforall.base.parser.ParseException;
 import com.koralix.oneforall.base.parser.computable.ComputeUnit;
+import com.koralix.oneforall.base.settings.CommandSettings;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -25,6 +26,7 @@ public class StatScoreCommand {
             @NotNull CommandManager.RegistrationEnvironment environment
     ) {
         LiteralArgumentBuilder<ServerCommandSource> literalArgumentBuilder = literal("statscore")
+                .requires(source -> CommandSettings.COMMAND_STATSCORE.value())
                 .executes(StatScoreCommand::remove)
                 .then(argument("title", TextArgumentType.text(registryAccess))
                         .then(argument("input", StringArgumentType.greedyString())

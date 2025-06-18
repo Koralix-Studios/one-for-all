@@ -13,7 +13,7 @@ public interface ConfigTest<T> {
     static <T> @NotNull ConfigTest<T> create(
             @NotNull Function<ConfigActor, ConfigResult<T>> canObserve,
             @NotNull BiFunction<T, T, ConfigResult<T>> canChangeValue,
-            @NotNull Function<ConfigActor, ConfigResult<T>> canChangeKey
+            @NotNull Function<ConfigActor, ConfigResult<T>> canChangeActor
     ) {
         return new ConfigTest<T>() {
             @Override
@@ -28,7 +28,7 @@ public interface ConfigTest<T> {
 
             @Override
             public ConfigResult<T> canChange(ConfigActor actor) {
-                return canChangeKey.apply(actor);
+                return canChangeActor.apply(actor);
             }
         };
     }
@@ -37,7 +37,7 @@ public interface ConfigTest<T> {
     static <T> @NotNull ConfigTest<T> of(
             @NotNull Predicate<ConfigActor> canObserve,
             @NotNull BiPredicate<T, T> canChangeValue,
-            @NotNull Predicate<ConfigActor> canChangeKey
+            @NotNull Predicate<ConfigActor> canChangeActor
     ) {
         return create(
                 actor -> canObserve.test(actor) ?
@@ -46,7 +46,7 @@ public interface ConfigTest<T> {
                 (oldValue, newValue) -> canChangeValue.test(oldValue, newValue) ?
                         new ConfigResult.ValidChange<>(oldValue, newValue) :
                         new ConfigResult.InvalidChange<>(oldValue, newValue),
-                actor -> canChangeKey.test(actor) ?
+                actor -> canChangeActor.test(actor) ?
                         new ConfigResult.AllowedChange<>(actor) :
                         new ConfigResult.ForbidChange<>(actor)
         );
@@ -55,9 +55,9 @@ public interface ConfigTest<T> {
     @Contract(value = "_, _ -> new", pure = true)
     static <T> @NotNull ConfigTest<T> of(
             @NotNull Predicate<T> canChangeValue,
-            @NotNull Predicate<ConfigActor> canChangeKey
+            @NotNull Predicate<ConfigActor> canChangeActor
     ) {
-        return of(actor -> true, (o, n) -> canChangeValue.test(n), canChangeKey);
+        return of(actor -> true, (o, n) -> canChangeValue.test(n), canChangeActor);
     }
 
     @Contract(value = "_ -> new", pure = true)
@@ -65,6 +65,13 @@ public interface ConfigTest<T> {
             @NotNull Predicate<T> canChangeValue
     ) {
         return of(canChangeValue, actor -> true);
+    }
+
+    @Contract(value = "_ -> new", pure = true)
+    static <T> @NotNull ConfigTest<T> ofActor(
+            @NotNull Predicate<ConfigActor> canChangeActor
+    ) {
+        return of(value -> true, canChangeActor);
     }
 
     @Contract(value = " -> new", pure = true)

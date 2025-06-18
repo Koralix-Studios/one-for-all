@@ -17,7 +17,7 @@ public class PlayerSettings {
     public static final PlayerConfigValue<SneakMode, ByteBuf> CAREFUL_BREAK = REGISTRAR
             .player(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("careful_break")),
-                    SneakMode.ALWAYS,
+                    SneakMode.NEVER,
                     SneakMode.CODEC,
                     SneakMode.PACKET_CODEC,
                     CommandAdapter.ofEnum(SneakMode.class),
@@ -30,7 +30,7 @@ public class PlayerSettings {
     public static final PlayerConfigValue<SneakMode, ByteBuf> XP_BAR_MENDING = REGISTRAR
             .player(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("xp_bar_mending")),
-                    SneakMode.ALWAYS,
+                    SneakMode.NEVER,
                     SneakMode.CODEC,
                     SneakMode.PACKET_CODEC,
                     CommandAdapter.ofEnum(SneakMode.class),
@@ -43,7 +43,7 @@ public class PlayerSettings {
     public static final PlayerConfigValue<SneakMode, ByteBuf> CREATIVE_KILL = REGISTRAR
             .player(
                     VersionedIdentifier.of("0.1.0", OneForAll.id("creative_kill")),
-                    SneakMode.ALWAYS,
+                    SneakMode.NEVER,
                     SneakMode.CODEC,
                     SneakMode.PACKET_CODEC,
                     CommandAdapter.ofEnum(SneakMode.class),
