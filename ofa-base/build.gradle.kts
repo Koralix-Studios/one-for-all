@@ -88,9 +88,9 @@ fun processResources(obj: ProcessResources) {
         "common.version" to common.version,
         "deps.core.id" to coreModInfo.id,
         "deps.core.version" to coreModInfo.version,
-        "deps.fabric.yarn" to common.dep("fabric.yarn"),
-        "deps.fabric.loader" to common.dep("fabric.loader"),
-        "deps.fabric.api" to common.dep("fabric.api"),
+        "deps.fabric.yarn" to common.dep("fabric.yarn.dependency"),
+        "deps.fabric.loader" to common.dep("fabric.loader.dependency"),
+        "deps.fabric.api" to common.dep("fabric.api.dependency"),
         "deps.minecraft" to minecraft,
         "deps.java" to java.targetCompatibility.majorVersion
     )

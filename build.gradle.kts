@@ -88,9 +88,9 @@ tasks.processResources {
         "mod.name" to modInfo.name,
         "mod.description" to modInfo.description,
         "mod.version" to modInfo.version,
-        "deps.fabric.yarn" to modInfo.dep("fabric.yarn"),
-        "deps.fabric.loader" to modInfo.dep("fabric.loader"),
-        "deps.fabric.api" to modInfo.dep("fabric.api"),
+        "deps.fabric.yarn" to modInfo.dep("fabric.yarn.dependency"),
+        "deps.fabric.loader" to modInfo.dep("fabric.loader.dependency"),
+        "deps.fabric.api" to modInfo.dep("fabric.api.dependency"),
         "deps.minecraft" to minecraft,
         "deps.java" to java.targetCompatibility.majorVersion
     )

@@ -20,8 +20,13 @@ public class ServerPlayerEntityMixin {
     private void attack(Entity target, CallbackInfo ci) {
         if (PlayerSettings.CREATIVE_KILL.value(player.getUuid()).isActive(player, ServerSettings.CREATIVE_KILL) && target.isAttackable() && !target.handleAttack(player) && player.isCreative()) {
             if (target instanceof ServerPlayerEntity other) {
-                if (!other.isCreative())
-                    target.kill(other.getServerWorld());
+                if (!other.isCreative()) {
+                    //? if >=1.21.6 {
+                     target.kill(other.getWorld());
+                     //?} else {
+                    /*target.kill(other.getServerWorld());
+                    *///?}
+                }
             } else if (target.getWorld() instanceof ServerWorld world) {
                 target.kill(world);
             }

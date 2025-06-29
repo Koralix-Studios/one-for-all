@@ -8,7 +8,11 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.PacketCallbacks;
+//? if >=1.21.6 {
+ import io.netty.channel.ChannelFutureListener;
+ //?} else {
+/*import net.minecraft.network.PacketCallbacks;
+*///?}
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +26,16 @@ public class LoginManager {
         });
     }
 
-    private static @NotNull CompletableFuture<@Nullable PacketByteBuf> onHello(MinecraftClient client, ClientLoginNetworkHandler handler, @NotNull PacketByteBuf buf, Consumer<PacketCallbacks> consumer) {
+    private static @NotNull CompletableFuture<@Nullable PacketByteBuf> onHello(
+            MinecraftClient client,
+            ClientLoginNetworkHandler handler,
+            @NotNull PacketByteBuf buf,
+            //? if >=1.21.6 {
+             @Nullable Consumer<ChannelFutureListener> listener
+             //?} else {
+            /*@Nullable Consumer<PacketCallbacks> callbacks
+            *///?}
+    ) {
         String version = buf.readString();
         boolean enforceProtocol = buf.readBoolean();
 
