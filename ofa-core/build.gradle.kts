@@ -19,11 +19,18 @@ stonecutter {
     swap("mod.version", "\"${modInfo.id}\";")
 }
 
+repositories {
+    maven { url = uri("https://maven.fallenbreath.me/releases") }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:$minecraft")
     mappings("net.fabricmc:yarn:$minecraft+build.${common.dep("fabric.yarn")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${common.dep("fabric.loader")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${common.dep("fabric.api")}+$minecraft")
+
+    modImplementation("me.fallenbreath:conditional-mixin-fabric:0.6.4")
+    include("me.fallenbreath:conditional-mixin-fabric:0.6.4")
 }
 
 loom {

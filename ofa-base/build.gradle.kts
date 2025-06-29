@@ -24,6 +24,10 @@ stonecutter {
 
 project.evaluationDependsOn(core.path)
 
+repositories {
+    maven { url = uri("https://maven.fallenbreath.me/releases") }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:$minecraft")
     mappings("net.fabricmc:yarn:$minecraft+build.${common.dep("fabric.yarn")}:v2")
@@ -32,6 +36,8 @@ dependencies {
 
     implementation(project(core.path, configuration = "namedElements"))
     implementation(core.sourceSets["client"].output)
+
+    modCompileOnly("me.fallenbreath:conditional-mixin-fabric:0.6.4")
 }
 
 loom {

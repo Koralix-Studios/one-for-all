@@ -1,6 +1,8 @@
 package com.koralix.oneforall.base.client.mixin.flyinertia;
 
 import com.koralix.oneforall.base.client.settings.ClientSettings;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -11,7 +13,12 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-@Mixin(LivingEntity.class)
+@Restriction(
+        conflict = {
+                @Condition("carpet")
+        }
+)
+@Mixin(value = LivingEntity.class)
 public class LivingEntityMixin {
     @Unique
     private final @NotNull LivingEntity self = (LivingEntity) (Object) this;
