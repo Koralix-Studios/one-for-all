@@ -1,22 +1,47 @@
 package com.koralix.oneforall.base.client.mixin.flatdigger;
 
 import com.koralix.oneforall.base.client.settings.ClientSettings;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerInteractionManager.class)
-public class ClientPlayerInteractionManagerMixin {
-    @Redirect(method = "attackBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isBlockBreakingRestricted(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/GameMode;)Z"))
-    public boolean isBlockBreakingRestricted(ClientPlayerEntity instance, World world, BlockPos blockPos, GameMode gameMode) {
-        if (instance.isBlockBreakingRestricted(world, blockPos, gameMode)) return true;
-        if (!ClientSettings.FLAT_DIGGER.value()) return false;
+public abstract class ClientPlayerInteractionManagerMixin {
 
-        return instance.getBlockPos().getY() > blockPos.getY();
+    @Shadow public abstract void cancelBlockBreaking();
+
+    @Inject(method = "attackBlock", at = @At("HEAD"), cancellable = true)
+    public void attackBlock(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
+        if (!canBreakBlock(pos)) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(method = "updateBlockBreakingProgress", at = @At("HEAD"), cancellable = true)
+    public void updateBlockBreakingProgress(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
+        if (!canBreakBlock(pos)) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @Unique
+    private boolean canBreakBlock(BlockPos pos) {
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+
+        return pos.getY() >= player.getBlockPos().getY()
+                || player.isSneaking()
+                || player.getGameMode().isCreative()
+                || !ClientSettings.FLAT_DIGGER.value();
     }
 }
