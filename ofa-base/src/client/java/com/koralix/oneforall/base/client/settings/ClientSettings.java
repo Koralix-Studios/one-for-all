@@ -8,6 +8,7 @@ import com.koralix.oneforall.config.registry.ConfigRegistry;
 import com.koralix.oneforall.config.registry.VersionedIdentifier;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.codec.PacketCodecs;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +38,14 @@ public class ClientSettings {
             )
             .test(Objects::nonNull)
             .build();
+
+    static {
+        CENTER_FLOWERS.onChange((configValue, oldValue, newValue) -> {
+            MinecraftClient.getInstance().execute(() -> {
+                MinecraftClient.getInstance().worldRenderer.reload();
+            });
+        });
+    }
 
     public static final MonoConfigValue<Boolean, ByteBuf, ?> FLY_INERTIA = REGISTRAR
             .mono(
