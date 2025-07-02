@@ -53,7 +53,7 @@ public interface ConfigResult<T> {
         @Contract(value = " -> new", pure = true)
         @Override
         public @NotNull Optional<T> get() {
-            return Optional.of(value);
+            return Optional.ofNullable(value);
         }
 
         @Override
