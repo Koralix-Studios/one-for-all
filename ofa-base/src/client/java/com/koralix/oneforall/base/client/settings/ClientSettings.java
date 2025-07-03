@@ -69,6 +69,17 @@ public class ClientSettings {
             .test(Objects::nonNull)
             .build();
 
+    public static final MonoConfigValue<SurvivalCreativeMode, ByteBuf, ?> DISABLE_BREAK_DELAY = REGISTRAR
+            .mono(
+                    VersionedIdentifier.of("0.1.0", OneForAll.id("disable_break_delay")),
+                    SurvivalCreativeMode.NEVER,
+                    SurvivalCreativeMode.CODEC,
+                    SurvivalCreativeMode.PACKET_CODEC,
+                    CommandAdapter.ofEnum(SurvivalCreativeMode.class)
+            )
+            .test(Objects::nonNull)
+            .build();
+
     public static @NotNull ConfigRegistry register() {
         return REGISTRAR.complete();
     }

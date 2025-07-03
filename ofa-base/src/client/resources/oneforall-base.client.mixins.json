@@ -4,6 +4,7 @@
     "package": "com.koralix.oneforall.base.client.mixin",
     "compatibilityLevel": "JAVA_${deps.java}",
     "client": [
+        "disablebreakdelay.ClientPlayerInteractionManagerMixin",
         "centerflowers.AbstractBlockStateMixin",
         "consumefireworks.ClientPlayerInteractionManagerMixin",
         "consumefireworks.FireworkRocketEntityMixin",
