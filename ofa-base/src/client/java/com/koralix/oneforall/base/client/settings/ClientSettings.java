@@ -80,6 +80,17 @@ public class ClientSettings {
             .test(Objects::nonNull)
             .build();
 
+    public static final MonoConfigValue<Boolean, ByteBuf, ?> DISABLE_TILT_WHEN_HURT = REGISTRAR
+            .mono(
+                    VersionedIdentifier.of("0.1.0", OneForAll.id("disable_tilt_when_hurt")),
+                    false,
+                    Codec.BOOL,
+                    PacketCodecs.BOOLEAN,
+                    CommandAdapter.bool()
+            )
+            .test(Objects::nonNull)
+            .build();
+
     public static @NotNull ConfigRegistry register() {
         return REGISTRAR.complete();
     }
