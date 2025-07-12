@@ -6,14 +6,11 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.GameMode;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerInteractionManager.class)
@@ -42,6 +39,6 @@ public abstract class ClientPlayerInteractionManagerMixin {
         return pos.getY() >= player.getBlockPos().getY()
                 || player.isSneaking()
                 || player.getGameMode().isCreative()
-                || !ClientSettings.FLAT_DIGGER.value();
+                || !ClientSettings.FLAT_DIGGER.get();
     }
 }

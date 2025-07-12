@@ -1,83 +1,49 @@
 package com.koralix.oneforall.base.settings;
 
-import com.koralix.oneforall.OneForAll;
-import com.koralix.oneforall.config.MonoConfigValue;
-import com.koralix.oneforall.config.adapter.CommandAdapter;
-import com.koralix.oneforall.config.registry.ConfigRegistrar;
-import com.koralix.oneforall.config.registry.ConfigRegistry;
-import com.koralix.oneforall.config.registry.VersionedIdentifier;
-import com.mojang.serialization.Codec;
+import com.koralix.oneforall.base.BaseInit;
+import com.koralix.oneforall.config.ConfigCodec;
+import com.koralix.oneforall.config.impl.ServerConfigValue;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.server.command.ServerCommandSource;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class ServerSettings {
-    private static final ConfigRegistrar REGISTRAR = ConfigRegistry.builder("0.1.0", OneForAll.id("server_settings")).prepare();
-
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> CAREFUL_BREAK = REGISTRAR
-            .mono(
-                    VersionedIdentifier.of("0.1.0", OneForAll.id("careful_break")),
+    public static final ServerConfigValue<Boolean, ByteBuf> CAREFUL_BREAK = ServerConfigValue.create(
+                    "0.1.0", BaseInit.id("careful_break"),
                     true,
-                    Codec.BOOL,
-                    PacketCodecs.BOOLEAN,
-                    CommandAdapter.bool()
+                    ConfigCodec.BOOLEAN
             )
-            .test(Objects::nonNull)
-            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
+            .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> XP_BAR_MENDING = REGISTRAR
-            .mono(
-                    VersionedIdentifier.of("0.1.0", OneForAll.id("xp_bar_mending")),
+    public static final ServerConfigValue<Boolean, ByteBuf> XP_BAR_MENDING = ServerConfigValue.create(
+                    "0.1.0", BaseInit.id("xp_bar_mending"),
                     true,
-                    Codec.BOOL,
-                    PacketCodecs.BOOLEAN,
-                    CommandAdapter.bool()
+                    ConfigCodec.BOOLEAN
             )
-            .test(Objects::nonNull)
-            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
+            .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> CREATIVE_KILL = REGISTRAR
-            .mono(
-                    VersionedIdentifier.of("0.1.0", OneForAll.id("creative_kill")),
+    public static final ServerConfigValue<Boolean, ByteBuf> CREATIVE_KILL = ServerConfigValue.create(
+                    "0.1.0", BaseInit.id("creative_kill"),
                     true,
-                    Codec.BOOL,
-                    PacketCodecs.BOOLEAN,
-                    CommandAdapter.bool()
+                    ConfigCodec.BOOLEAN
             )
-            .test(Objects::nonNull)
-            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
+            .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> SPLIT_SCATTERED_ITEMS = REGISTRAR
-            .mono(
-                    VersionedIdentifier.of("0.1.0", OneForAll.id("split_scattered_items")),
+    public static final ServerConfigValue<Boolean, ByteBuf> SPLIT_SCATTERED_ITEMS = ServerConfigValue.create(
+                    "0.1.0", BaseInit.id("split_scattered_items"),
                     true,
-                    Codec.BOOL,
-                    PacketCodecs.BOOLEAN,
-                    CommandAdapter.bool()
+                    ConfigCodec.BOOLEAN
             )
-            .test(Objects::nonNull)
-            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
+            .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
 
-    public static final MonoConfigValue<ShulkerStackMode, ByteBuf, ?> STACK_SHULKER_BOXES = REGISTRAR
-            .mono(
-                    VersionedIdentifier.of("0.1.0", OneForAll.id("stack_shulker_boxes")),
+    public static final ServerConfigValue<ShulkerStackMode, ByteBuf> STACK_SHULKER_BOXES = ServerConfigValue.create(
+                    "0.1.0", BaseInit.id("stack_shulker_boxes"),
                     ShulkerStackMode.NEVER,
-                    ShulkerStackMode.CODEC,
-                    ShulkerStackMode.PACKET_CODEC,
-                    CommandAdapter.ofEnum(ShulkerStackMode.class)
+                    ConfigCodec.of(ShulkerStackMode.CODEC, ShulkerStackMode.PACKET_CODEC, ShulkerStackMode.COMMAND_ADAPTER)
             )
-            .test(Objects::nonNull)
-            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
+            .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
-
-    public static @NotNull ConfigRegistry register() {
-        return REGISTRAR.complete();
-    }
 }

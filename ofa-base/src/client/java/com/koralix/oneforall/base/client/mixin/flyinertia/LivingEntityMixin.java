@@ -30,7 +30,7 @@ public class LivingEntityMixin {
 
         Input input = player.input;
 
-        if (ClientSettings.FLY_INERTIA.value() || input.playerInput.jump() || input.playerInput.sneak() ||
+        if (ClientSettings.FLY_INERTIA.get() || input.playerInput.jump() || input.playerInput.sneak() ||
                 player.forwardSpeed != 0 || player.sidewaysSpeed != 0 || !player.getAbilities().flying) {
             return value;
         }

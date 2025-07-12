@@ -1,6 +1,7 @@
 package com.koralix.oneforall.base.mixin.splitscattereditems;
 
 import com.koralix.oneforall.base.settings.ServerSettings;
+import com.koralix.oneforall.entry.OneForAll;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ItemScatterer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +18,7 @@ public class ItemScattererMixin {
             )
     )
     private static ItemStack split(ItemStack stack, int count) {
-        if (ServerSettings.SPLIT_SCATTERED_ITEMS.value()) return stack.split(count);
+        if (ServerSettings.SPLIT_SCATTERED_ITEMS.get()) return stack.split(count);
         return stack.split(stack.getCount());
     }
 }

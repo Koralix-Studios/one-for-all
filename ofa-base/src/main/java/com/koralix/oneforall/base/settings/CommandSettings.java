@@ -1,45 +1,42 @@
 package com.koralix.oneforall.base.settings;
 
-import com.koralix.oneforall.OneForAll;
-import com.koralix.oneforall.config.MonoConfigValue;
-import com.koralix.oneforall.config.adapter.CommandAdapter;
-import com.koralix.oneforall.config.registry.ConfigRegistrar;
-import com.koralix.oneforall.config.registry.ConfigRegistry;
-import com.koralix.oneforall.config.registry.VersionedIdentifier;
-import com.mojang.serialization.Codec;
+import com.koralix.oneforall.base.BaseInit;
+import com.koralix.oneforall.config.ConfigCodec;
+import com.koralix.oneforall.config.ConfigValue;
+import com.koralix.oneforall.config.impl.ServerConfigValue;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class CommandSettings {
-    private static final ConfigRegistrar REGISTRAR = ConfigRegistry.builder("0.1.0", OneForAll.id("command_settings")).prepare();
+    public static final ServerConfigValue<Boolean, ByteBuf> COMMAND_SIGNAL = create("0.1.0", "command_signal");
+    public static final ServerConfigValue<Boolean, ByteBuf> COMMAND_BATCH = create("0.1.0", "command_batch");
+    public static final ServerConfigValue<Boolean, ByteBuf> COMMAND_ENDERCHEST = create("0.1.0", "command_enderchest");
+    public static final ServerConfigValue<Boolean, ByteBuf> COMMAND_BASE2BASE = create("0.1.0", "command_base2base");
+    public static final ServerConfigValue<Boolean, ByteBuf> COMMAND_STATSCORE = create("0.1.0", "command_statscore");
 
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> COMMAND_SIGNAL = create("0.1.0", "command_signal", false);
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> COMMAND_BATCH = create("0.1.0", "command_batch", false);
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> COMMAND_ENDERCHEST = create("0.1.0", "command_enderchest", false);
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> COMMAND_BASE2BASE = create("0.1.0", "command_base2base", false);
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> COMMAND_STATSCORE = create("0.1.0", "command_statscore", false);
-
-    private static MonoConfigValue<Boolean, ByteBuf, ?> create(
+    private static ServerConfigValue<Boolean, ByteBuf> create(
             @NotNull String version,
-            @NotNull String id,
-            boolean value
+            @NotNull String id
     ) {
-        return REGISTRAR
-                .mono(
-                        VersionedIdentifier.of(version, OneForAll.id(id)),
-                        value,
-                        Codec.BOOL,
-                        PacketCodecs.BOOLEAN,
-                        CommandAdapter.bool()
+        return ServerConfigValue.create(
+                        version,
+                        BaseInit.id(id),
+                        false,
+                        ConfigCodec.BOOLEAN
                 )
-                .test(Objects::nonNull)
+                .onChange(CommandSettings::update)
                 .build();
     }
 
-    public static @NotNull ConfigRegistry register() {
-        return REGISTRAR.complete();
+    private static void update(
+            @NotNull MinecraftServer server,
+            @NotNull ConfigValue<MinecraftServer, Boolean, ByteBuf> configValue,
+            boolean oldValue,
+            boolean newValue
+    ) {
+        PlayerManager manager = server.getPlayerManager();
+        manager.getPlayerList().forEach(manager::sendCommandTree);
     }
 }

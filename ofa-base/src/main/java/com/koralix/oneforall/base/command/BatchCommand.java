@@ -22,7 +22,8 @@ public class BatchCommand {
             @NotNull CommandRegistryAccess registryAccess,
             @NotNull CommandManager.RegistrationEnvironment environment
     ) {
-        LiteralCommandNode<ServerCommandSource> root = dispatcher.register(literal("batch").requires(source -> CommandSettings.COMMAND_BATCH.value()));
+        LiteralCommandNode<ServerCommandSource> root = dispatcher.register(literal("batch")
+                .requires(source -> CommandSettings.COMMAND_BATCH.get()));
 
         LiteralArgumentBuilder<ServerCommandSource> command = literal("batch")
                 .then(argument("size", IntegerArgumentType.integer(1))

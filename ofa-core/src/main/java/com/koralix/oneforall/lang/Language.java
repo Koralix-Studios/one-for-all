@@ -3,16 +3,21 @@ package com.koralix.oneforall.lang;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.CoreInit;
+import com.koralix.oneforall.config.ConfigCommandAdapter;
+import com.koralix.oneforall.entry.OneForAll;
+import com.koralix.oneforall.init.Initializer;
 import com.koralix.oneforall.session.Session;
 import com.koralix.oneforall.session.component.GameProfileComponent;
 import com.koralix.oneforall.session.component.LangComponent;
+import com.koralix.oneforall.session.component.PlayerComponent;
 import com.koralix.oneforall.settings.PlayerSettings;
 import com.koralix.oneforall.settings.ServerSettings;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.function.ValueLists;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +32,7 @@ public enum Language implements StringIdentifiable {
     ENGLISH("en_us", Locale.ENGLISH);
 
     public static final @NotNull Codec<Language> CODEC = StringIdentifiable.createCodec(Language::values);
+    public static final ConfigCommandAdapter<Language> COMMAND_ADAPTER = ConfigCommandAdapter.ofEnum(Language.class);
     private static final Map<String, Language> LANGUAGES;
     private static final IntFunction<Language> BY_ID = ValueLists.createIndexToValueFunction(
             Language::ordinal, values(), ValueLists.OutOfBoundsHandling.WRAP
@@ -49,12 +55,12 @@ public enum Language implements StringIdentifiable {
         this.code = code;
         this.locale = locale;
 
-        OneForAll.logger().info("Loading translations from {}", code);
+        CoreInit.logger().info("Loading translations from {}", code);
 
         Map<String, String> translationMap = new HashMap<>();
 
         Gson GSON = new Gson();
-        OneForAll.INTERNAL_DATA.extensions().forEach(ofa -> load(GSON, ofa.id(), code, translationMap));
+        Initializer.get().getExtensionManager().forEach(ofa -> load(GSON, ofa.id(), code, translationMap));
 
         this.translations = Map.copyOf(translationMap);
     }
@@ -76,11 +82,14 @@ public enum Language implements StringIdentifiable {
         LangComponent langComponent = session.get(LangComponent.TYPE);
         if (langComponent != null) return langComponent.language();
         GameProfileComponent profileComponent = session.get(GameProfileComponent.TYPE);
+        MinecraftServer server = OneForAll.server().orElseThrow();
         return profileComponent == null
-                ? ServerSettings.DEFAULT_LANGUAGE.value()
-                : PlayerSettings.DEFAULT_LANGUAGE
-                .value(profileComponent.profile().getId())
-                .orElse(ServerSettings.DEFAULT_LANGUAGE.value());
+                ? ServerSettings.DEFAULT_LANGUAGE.get()
+                : session.has(PlayerComponent.TYPE)
+                ? PlayerSettings.DEFAULT_LANGUAGE
+                .get(session.get(PlayerComponent.TYPE).player())
+                .orElse(ServerSettings.DEFAULT_LANGUAGE.get())
+                : ServerSettings.DEFAULT_LANGUAGE.get();
     }
 
     public static Language fromCode(String s) {

@@ -1,6 +1,6 @@
 package com.koralix.oneforall.base.settings;
 
-import com.koralix.oneforall.config.MonoConfigValue;
+import com.koralix.oneforall.config.ConfigCommandAdapter;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,9 +23,10 @@ public enum SneakMode implements StringIdentifiable {
             SneakMode::ordinal, values(), ValueLists.OutOfBoundsHandling.WRAP
     );
     public static final PacketCodec<ByteBuf, SneakMode> PACKET_CODEC = PacketCodecs.indexed(BY_ID, SneakMode::ordinal);
+    public static final ConfigCommandAdapter<SneakMode> COMMAND_ADAPTER = ConfigCommandAdapter.ofEnum(SneakMode.class);
 
-    public boolean isActive(@NotNull PlayerEntity player, @NotNull MonoConfigValue<Boolean, ?, ?> config) {
-        return config.value() && switch (this) {
+    public boolean isActive(@NotNull PlayerEntity player) {
+        return switch (this) {
             case NEVER -> false;
             case SNEAK -> player.isSneaking();
             case NOT_SNEAK -> !player.isSneaking();

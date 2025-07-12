@@ -1,6 +1,6 @@
 package com.koralix.oneforall.session;
 
-import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.CoreInit;
 import com.koralix.oneforall.lang.Language;
 import com.koralix.oneforall.session.component.LangComponent;
 import com.koralix.oneforall.session.component.VersionComponent;
@@ -23,10 +23,10 @@ public class LoginManager {
         ServerLoginConnectionEvents.QUERY_START.register(LoginManager::onQueryStart);
     }
 
-    private static @NotNull PacketByteBuf createHelloPacket() {
+    private static @NotNull PacketByteBuf createHelloPacket(@NotNull MinecraftServer server) {
         PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeString(OneForAll.version().getFriendlyString());
-        buf.writeBoolean(ServerSettings.ENFORCE_PROTOCOL.value());
+        buf.writeString(CoreInit.version().getFriendlyString());
+        buf.writeBoolean(ServerSettings.ENFORCE_PROTOCOL.get());
         return buf;
     }
 
@@ -36,11 +36,11 @@ public class LoginManager {
             LoginPacketSender sender,
             ServerLoginNetworking.LoginSynchronizer synchronizer
     ) {
-        if (!ServerSettings.PROTOCOL_ENABLED.value()) return;
+        if (!ServerSettings.PROTOCOL_ENABLED.get()) return;
 
         CompletableFuture<Void> future = new CompletableFuture<>();
 
-        ServerLoginNetworking.registerReceiver(handler, OneForAll.id("hello"), (server1, handler1, understood, buf, synchronizer1, responseSender) -> {
+        ServerLoginNetworking.registerReceiver(handler, CoreInit.id("hello"), (server1, handler1, understood, buf, synchronizer1, responseSender) -> {
             Optional<Text> error = onQueryResponse(server1, handler1, understood, buf, synchronizer1, responseSender);
 
             error.ifPresent(handler1::disconnect);
@@ -48,7 +48,7 @@ public class LoginManager {
             future.complete(null);
         });
 
-        sender.sendPacket(OneForAll.id("hello"), createHelloPacket());
+        sender.sendPacket(CoreInit.id("hello"), createHelloPacket(server));
 
         synchronizer.waitFor(future);
     }
@@ -64,8 +64,8 @@ public class LoginManager {
             else session.set(new LangComponent(language));
         });
 
-        if (!understood && ServerSettings.ENFORCE_PROTOCOL.value()) {
-            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.enforce_protocol"));
+        if (!understood && ServerSettings.ENFORCE_PROTOCOL.get()) {
+            return Optional.of(Text.translatable("text." + CoreInit.id() + ".disconnect.enforce_protocol"));
         } else if (!understood) {
             return Optional.empty();
         }
@@ -74,19 +74,19 @@ public class LoginManager {
         Optional<String> language = readSafe(buf, PacketByteBuf::readString);
 
         if (version.isEmpty() || language.isEmpty()) {
-            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.invalid_handshake"));
+            return Optional.of(Text.translatable("text." + CoreInit.id() + ".disconnect.invalid_handshake"));
         }
 
         try {
             VersionComponent versionComponent = new VersionComponent(version.get());
-            if (ServerSettings.ENFORCE_PROTOCOL.value() && !versionComponent.isCompatible()) {
-                if (!(OneForAll.version() instanceof SemanticVersion semver)) {
-                    return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.incompatible_version"));
+            if (ServerSettings.ENFORCE_PROTOCOL.get() && !versionComponent.isCompatible()) {
+                if (!(CoreInit.version() instanceof SemanticVersion semver)) {
+                    return Optional.of(Text.translatable("text." + CoreInit.id() + ".disconnect.incompatible_version"));
                 }
                 int major = semver.getVersionComponent(0);
                 int minor = semver.getVersionComponent(1);
                 return Optional.of(Text.translatable(
-                        "text." + OneForAll.id() + ".disconnect.incompatible_version.recommendation",
+                        "text." + CoreInit.id() + ".disconnect.incompatible_version.recommendation",
                         "%s.%s.*".formatted(major, minor),
                         "%s.*.*".formatted(major + 1)
                 ));
@@ -96,7 +96,7 @@ public class LoginManager {
             Language lang = Language.fromCode(language.get());
             if (lang != null) session.set(new LangComponent(lang));
         } catch (Exception e) {
-            return Optional.of(Text.translatable("text." + OneForAll.id() + ".disconnect.invalid_handshake"));
+            return Optional.of(Text.translatable("text." + CoreInit.id() + ".disconnect.invalid_handshake"));
         }
 
         return Optional.empty();

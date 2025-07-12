@@ -26,7 +26,7 @@ public class StatScoreCommand {
             @NotNull CommandManager.RegistrationEnvironment environment
     ) {
         LiteralArgumentBuilder<ServerCommandSource> literalArgumentBuilder = literal("statscore")
-                .requires(source -> CommandSettings.COMMAND_STATSCORE.value())
+                .requires(source -> CommandSettings.COMMAND_STATSCORE.get())
                 .executes(StatScoreCommand::remove)
                 .then(argument("title", TextArgumentType.text(registryAccess))
                         .then(argument("input", StringArgumentType.greedyString())

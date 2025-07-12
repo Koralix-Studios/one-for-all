@@ -6,17 +6,17 @@ import com.koralix.oneforall.session.Session;
 import com.koralix.oneforall.session.SessionHolder;
 import com.koralix.oneforall.session.component.VersionComponent;
 import net.minecraft.network.ClientConnection;
-//? if >=1.21.6 {
- import io.netty.channel.ChannelFutureListener;
-//?} else {
-/*import net.minecraft.network.PacketCallbacks;
-*///?}
 import net.minecraft.network.packet.Packet;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+//? if >=1.21.6 {
+import io.netty.channel.ChannelFutureListener;
+//?} else {
+/*import net.minecraft.network.PacketCallbacks;
+*///?}
 
 @Mixin(ClientConnection.class)
 public abstract class ClientConnectionMixin implements SessionHolder {
@@ -24,10 +24,10 @@ public abstract class ClientConnectionMixin implements SessionHolder {
     private void prepare(
             Packet<?> packet,
             //? if >=1.21.6 {
-             @Nullable ChannelFutureListener listener,
+            @Nullable ChannelFutureListener listener,
             //?} else {
             /*@Nullable PacketCallbacks callbacks,
-            *///?}
+             *///?}
             boolean flush,
             CallbackInfo ci
     ) {
@@ -41,10 +41,10 @@ public abstract class ClientConnectionMixin implements SessionHolder {
     private void reset(
             Packet<?> packet,
             //? if >=1.21.6 {
-             @Nullable ChannelFutureListener listener,
-             //?} else {
+            @Nullable ChannelFutureListener listener,
+            //?} else {
             /*@Nullable PacketCallbacks callbacks,
-            *///?}
+             *///?}
             boolean flush,
             CallbackInfo ci
     ) {

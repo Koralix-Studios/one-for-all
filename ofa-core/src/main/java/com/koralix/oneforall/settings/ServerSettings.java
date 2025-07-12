@@ -1,60 +1,36 @@
 package com.koralix.oneforall.settings;
 
-import com.koralix.oneforall.OneForAll;
-import com.koralix.oneforall.config.MonoConfigValue;
-import com.koralix.oneforall.config.adapter.CommandAdapter;
-import com.koralix.oneforall.config.registry.ConfigRegistrar;
-import com.koralix.oneforall.config.registry.ConfigRegistry;
-import com.koralix.oneforall.config.registry.VersionedIdentifier;
+import com.koralix.oneforall.CoreInit;
+import com.koralix.oneforall.config.ConfigCodec;
+import com.koralix.oneforall.config.impl.ServerConfigValue;
 import com.koralix.oneforall.lang.Language;
-import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.server.command.ServerCommandSource;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class ServerSettings {
-    private static final ConfigRegistrar REGISTRAR = ConfigRegistry.builder("0.1.0", OneForAll.id("server_settings")).prepare();
-
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> PROTOCOL_ENABLED = REGISTRAR
-            .mono(
-                    VersionedIdentifier.of("0.1.0", OneForAll.id("protocol_enabled")),
+    public static final ServerConfigValue<Boolean, ByteBuf> PROTOCOL_ENABLED = ServerConfigValue.create(
+                    "0.1.0",
+                    CoreInit.id("protocol_enabled"),
                     true,
-                    Codec.BOOL,
-                    PacketCodecs.BOOLEAN,
-                    CommandAdapter.bool()
+                    ConfigCodec.BOOLEAN
             )
-            .test(Objects::nonNull)
-            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
+            .write(actor -> actor.isOp(4))
             .build();
 
-    public static final MonoConfigValue<Boolean, ByteBuf, ?> ENFORCE_PROTOCOL = REGISTRAR
-            .mono(
-                    VersionedIdentifier.of("0.1.0", OneForAll.id("enforce_protocol")),
+    public static final ServerConfigValue<Boolean, ByteBuf> ENFORCE_PROTOCOL = ServerConfigValue.create(
+                    "0.1.0",
+                    CoreInit.id("enforce_protocol"),
                     false,
-                    Codec.BOOL,
-                    PacketCodecs.BOOLEAN,
-                    CommandAdapter.bool()
+                    ConfigCodec.BOOLEAN
             )
-            .test(Objects::nonNull)
-            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
+            .write(actor -> actor.isOp(4))
             .build();
 
-    public static final MonoConfigValue<Language, ByteBuf, ?> DEFAULT_LANGUAGE = REGISTRAR
-            .mono(
-                    VersionedIdentifier.of("0.1.0", OneForAll.id("default_language")),
+    public static final ServerConfigValue<Language, ByteBuf> DEFAULT_LANGUAGE = ServerConfigValue.create(
+                    "0.1.0",
+                    CoreInit.id("default_language"),
                     Language.ENGLISH,
-                    Language.CODEC,
-                    Language.PACKET_CODEC,
-                    CommandAdapter.ofEnum(Language.class)
+                    ConfigCodec.of(Language.CODEC, Language.PACKET_CODEC, Language.COMMAND_ADAPTER)
             )
-            .test(Objects::nonNull)
-            .testActor(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
+            .write(actor -> actor.isOp(4))
             .build();
-
-    public static @NotNull ConfigRegistry register() {
-        return REGISTRAR.complete();
-    }
 }

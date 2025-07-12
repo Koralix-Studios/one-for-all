@@ -23,7 +23,7 @@ public class EnderchestCommand {
             @NotNull CommandManager.RegistrationEnvironment environment
     ) {
         LiteralArgumentBuilder<ServerCommandSource> literalArgumentBuilder = literal("enderchest")
-                .requires((player) -> CommandSettings.COMMAND_ENDERCHEST.value() && player.hasPermissionLevel(3))
+                .requires(source -> CommandSettings.COMMAND_ENDERCHEST.get() && source.hasPermissionLevel(3))
                 .then(argument("player", EntityArgumentType.player())
                         .executes(context -> open(context.getSource(), EntityArgumentType.getPlayer(context, "player")))
                 );

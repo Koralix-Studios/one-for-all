@@ -5,4 +5,6 @@ import java.util.UUID;
 
 public interface ConfigActor {
     Optional<UUID> uuid();
+
+    boolean isOp(int level);
 }

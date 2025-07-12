@@ -1,5 +1,6 @@
 package com.koralix.oneforall.base.client.settings;
 
+import com.koralix.oneforall.config.ConfigCommandAdapter;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -21,6 +22,7 @@ public enum SurvivalCreativeMode implements StringIdentifiable {
             SurvivalCreativeMode::ordinal, values(), ValueLists.OutOfBoundsHandling.WRAP
     );
     public static final PacketCodec<ByteBuf, SurvivalCreativeMode> PACKET_CODEC = PacketCodecs.indexed(BY_ID, SurvivalCreativeMode::ordinal);
+    public static final @NotNull ConfigCommandAdapter<SurvivalCreativeMode> COMMAND_ADAPTER = ConfigCommandAdapter.ofEnum(SurvivalCreativeMode.class);
 
     @Override
     public @NotNull String asString() {

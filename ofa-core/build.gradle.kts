@@ -13,10 +13,14 @@ base {
 }
 
 stonecutter {
-    swap("mod.id", "\"${modInfo.id}\";")
-    swap("mod.name", "\"${modInfo.id}\";")
-    swap("mod.description", "\"${modInfo.id}\";")
-    swap("mod.version", "\"${modInfo.id}\";")
+    swaps["mod.id"] = "\"${modInfo.id}\";"
+    swaps["mod.name"] = "\"${modInfo.id}\";"
+    swaps["mod.description"] = "\"${modInfo.id}\";"
+    swaps["mod.version"] = "\"${modInfo.id}\";"
+    swaps["common.id"] = "\"${common.id}\";"
+    swaps["common.name"] = "\"${common.name}\";"
+    swaps["common.description"] = "\"${common.description}\";"
+    swaps["common.version"] = "\"${common.version}\";"
 }
 
 repositories {

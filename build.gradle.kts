@@ -19,10 +19,10 @@ base {
 }
 
 stonecutter {
-    swap("mod.id", "\"${modInfo.id}\";")
-    swap("mod.name", "\"${modInfo.name}\";")
-    swap("mod.description", "\"${modInfo.description}\";")
-    swap("mod.version", "\"${modInfo.version}\";")
+    swaps["mod.id"] = "\"${modInfo.id}\";"
+    swaps["mod.name"] = "\"${modInfo.name}\";"
+    swaps["mod.description"] = "\"${modInfo.description}\";"
+    swaps["mod.version"] = "\"${modInfo.version}\";"
 }
 
 projects.forEach {

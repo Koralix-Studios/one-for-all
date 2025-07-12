@@ -1,6 +1,7 @@
 package com.koralix.oneforall.base.mixin.stackshulkerboxes;
 
 import com.koralix.oneforall.base.settings.ServerSettings;
+import com.koralix.oneforall.entry.OneForAll;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.ItemEntity;
@@ -18,7 +19,7 @@ public class ItemEntityMixin {
             )
     )
     private boolean canMerge1(ItemEntity instance, Operation<Boolean> original) {
-        if (!ServerSettings.STACK_SHULKER_BOXES.value().onGround() && instance.getStack().isIn(ItemTags.SHULKER_BOXES))
+        if (!ServerSettings.STACK_SHULKER_BOXES.get().onGround() && instance.getStack().isIn(ItemTags.SHULKER_BOXES))
             return false;
         return original.call(instance);
     }

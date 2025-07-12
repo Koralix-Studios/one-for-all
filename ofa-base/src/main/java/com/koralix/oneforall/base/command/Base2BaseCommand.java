@@ -1,6 +1,6 @@
 package com.koralix.oneforall.base.command;
 
-import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.base.BaseInit;
 import com.koralix.oneforall.base.settings.CommandSettings;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -29,10 +29,10 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class Base2BaseCommand {
     private static final SimpleCommandExceptionType PARSE_EXCEPTION = new SimpleCommandExceptionType(
-            Text.stringifiedTranslatable("command." + OneForAll.id() + ".base2base.parse_error")
+            Text.stringifiedTranslatable("command." + BaseInit.id() + ".base2base.parse_error")
     );
     private static final SimpleCommandExceptionType BIG_PART_EXCEPTION = new SimpleCommandExceptionType(
-            Text.stringifiedTranslatable("command." + OneForAll.id() + ".base2base.big_part_error")
+            Text.stringifiedTranslatable("command." + BaseInit.id() + ".base2base.big_part_error")
     );
 
     private static final Collection<String> BINARY = List.of(
@@ -54,7 +54,7 @@ public class Base2BaseCommand {
             @NotNull CommandManager.RegistrationEnvironment environment
     ) {
         LiteralArgumentBuilder<ServerCommandSource> command = literal("base2base")
-                .requires(source -> CommandSettings.COMMAND_BASE2BASE.value())
+                .requires(source -> CommandSettings.COMMAND_BASE2BASE.get())
                 .then(argument("from", IntegerArgumentType.integer(1))
                         .then(argument("to", IntegerArgumentType.integer(1))
                                 .then(argument("value", StringArgumentType.greedyString())
@@ -97,7 +97,7 @@ public class Base2BaseCommand {
 
         ServerCommandSource source = context.getSource();
         source.sendFeedback(
-                () -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".base2base.result",
+                () -> Text.stringifiedTranslatable("command." + BaseInit.id() + ".base2base.result",
                         fromBase,
                         input,
                         toBase,

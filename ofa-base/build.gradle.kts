@@ -16,10 +16,10 @@ base {
 }
 
 stonecutter {
-    swap("mod.id", "\"${modInfo.id}\";")
-    swap("mod.name", "\"${modInfo.name}\";")
-    swap("mod.description", "\"${modInfo.description}\";")
-    swap("mod.version", "\"${modInfo.version}\";")
+    swaps["mod.id"] = "\"${modInfo.id}\";"
+    swaps["mod.name"] = "\"${modInfo.name}\";"
+    swaps["mod.description"] = "\"${modInfo.description}\";"
+    swaps["mod.version"] = "\"${modInfo.version}\";"
 }
 
 project.evaluationDependsOn(core.path)
@@ -92,6 +92,10 @@ fun processResources(obj: ProcessResources) {
         "common.name" to common.name,
         "common.description" to common.description,
         "common.version" to common.version,
+        "core.id" to coreModInfo.id,
+        "core.name" to coreModInfo.name,
+        "core.description" to coreModInfo.description,
+        "core.version" to coreModInfo.version,
         "deps.core.id" to coreModInfo.id,
         "deps.core.version" to coreModInfo.version,
         "deps.fabric.yarn" to common.dep("fabric.yarn.dependency"),

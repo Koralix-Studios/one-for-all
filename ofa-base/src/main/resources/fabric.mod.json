@@ -4,13 +4,10 @@
   "version": "${mod.version}",
   "entrypoints": {
     "ofa": [
-      "com.koralix.oneforall.base.Initializer"
+      "com.koralix.oneforall.base.BaseInit"
     ],
-    "ofa-client": [
-      "com.koralix.oneforall.base.client.ClientInitializer"
-    ],
-    "ofa-server": [
-      "com.koralix.oneforall.base.ServerInitializer"
+    "ofa:client": [
+      "com.koralix.oneforall.base.client.BaseClientInit"
     ]
   },
   "depends": {

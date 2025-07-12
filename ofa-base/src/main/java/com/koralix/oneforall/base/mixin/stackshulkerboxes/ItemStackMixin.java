@@ -2,6 +2,7 @@ package com.koralix.oneforall.base.mixin.stackshulkerboxes;
 
 import com.koralix.oneforall.base.settings.ServerSettings;
 import com.koralix.oneforall.base.settings.ShulkerStackMode;
+import com.koralix.oneforall.entry.OneForAll;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.ItemTags;
@@ -18,7 +19,7 @@ public abstract class ItemStackMixin {
 
     @Inject(method = "getMaxCount", at = @At("HEAD"), cancellable = true)
     private void getMaxCount(CallbackInfoReturnable<Integer> cir) {
-        if (ServerSettings.STACK_SHULKER_BOXES.value().equals(ShulkerStackMode.NEVER) || !this.isIn(ItemTags.SHULKER_BOXES))
+        if (ServerSettings.STACK_SHULKER_BOXES.get().equals(ShulkerStackMode.NEVER) || !this.isIn(ItemTags.SHULKER_BOXES))
             return;
         cir.setReturnValue(64);
     }

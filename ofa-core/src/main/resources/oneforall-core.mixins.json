@@ -4,14 +4,18 @@
     "package": "com.koralix.oneforall.mixin",
     "compatibilityLevel": "JAVA_${deps.java}",
     "mixins": [
-        "config.RegistriesMixin",
-        "config.ServerCommandSourceMixin",
+        "accessor.NbtIOAccessor",
+        "config.actor.ServerCommandSourceMixin",
+        "config.backend.MinecraftServerMixin",
+        "config.backend.ServerPlayerEntityMixin",
+        "core.MinecraftServerMixin",
         "lang.ClientConnectionMixin",
         "lang.TextCodecsMixin",
         "session.ClientConnectionMixin",
         "session.ServerCommonNetworkHandlerMixin",
         "session.ServerLoginNetworkHandlerMixin",
-        "session.ServerPlayerEntityMixin"
+        "session.ServerPlayerEntityMixin",
+        "session.ServerPlayNetworkHandlerMixin"
     ],
     "injectors": {
         "defaultRequire": 1

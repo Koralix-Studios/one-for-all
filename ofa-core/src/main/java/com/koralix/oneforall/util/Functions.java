@@ -27,6 +27,22 @@ public final class Functions {
         };
     }
 
+    public static <T, R> @NotNull Function<T, R> cached(@NotNull Function<T, R> function) {
+        return new Function<>() {
+            private R cachedValue = null;
+            private boolean isCached = false;
+
+            @Override
+            public R apply(T t) {
+                if (!isCached) {
+                    cachedValue = function.apply(t);
+                    isCached = true;
+                }
+                return cachedValue;
+            }
+        };
+    }
+
     @FunctionalInterface
     public interface FallibleFunction<T, R, E extends Throwable> {
         R apply(T value) throws E;

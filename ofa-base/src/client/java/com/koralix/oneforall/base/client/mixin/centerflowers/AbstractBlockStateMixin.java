@@ -19,7 +19,7 @@ public abstract class AbstractBlockStateMixin {
 
     @Inject(method = "getModelOffset", at = @At("HEAD"), cancellable = true)
     public void getModelOffset(BlockPos pos, CallbackInfoReturnable<Vec3d> cir) {
-        if (ClientSettings.CENTER_FLOWERS.value() && this.getBlock() instanceof FlowerBlock) {
+        if (ClientSettings.CENTER_FLOWERS.get() && this.getBlock() instanceof FlowerBlock) {
             cir.setReturnValue(Vec3d.ZERO);
         }
     }

@@ -1,5 +1,6 @@
 package com.koralix.oneforall.lang;
 
+import com.koralix.oneforall.entry.OneForAll;
 import com.koralix.oneforall.settings.ServerSettings;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -36,7 +37,7 @@ public class TranslationUnit {
 
         String key = translatable.getKey();
         String translation = language.translate(key)
-                .or(() -> ServerSettings.DEFAULT_LANGUAGE.value().translate(key))
+                .or(() -> ServerSettings.DEFAULT_LANGUAGE.get().translate(key))
                 .orElse(null);
 
         if (translation == null) return text;

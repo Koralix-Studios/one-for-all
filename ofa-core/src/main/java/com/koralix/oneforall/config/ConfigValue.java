@@ -1,43 +1,38 @@
 package com.koralix.oneforall.config;
 
-import com.koralix.oneforall.config.adapter.CommandAdapter;
-import com.koralix.oneforall.config.registry.ConfigEntry;
-import com.koralix.oneforall.config.registry.ConfigKey;
-import com.mojang.serialization.Codec;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
+public interface ConfigValue<K, T, B> {
+    @NotNull ConfigRegistry<K> registry();
 
-public interface ConfigValue<T, B extends ByteBuf, S> {
-    @NotNull ConfigEntry<T> entry();
+    @NotNull RegistryEntry.Reference<ConfigValue<K, T, B>> entry();
 
-    default @NotNull ConfigKey key() {
-        return this.entry().key();
+    @NotNull RegistryKey<ConfigValue<K, T, B>> key();
+
+    @NotNull String translationKey();
+
+    @NotNull Identifier id();
+
+    @NotNull ConfigMetadata metadata();
+
+    @NotNull T nominalValue();
+
+    @NotNull ConfigCodec<T, B> codec();
+
+    @NotNull ConfigTest<T> test();
+
+    @NotNull T get(@NotNull K backend);
+
+    boolean set(@NotNull K backend, @Nullable T value);
+
+    void onChange(@NotNull ConfigChangeListener<K, T, B> listener);
+
+    @FunctionalInterface
+    interface ConfigChangeListener<K, T, B> {
+        void onConfigChange(@NotNull K backend, @NotNull ConfigValue<K, T, B> configValue, @NotNull T oldValue, @NotNull T newValue);
     }
-
-    @NotNull T nominal();
-
-    @NotNull Codec<T> codec();
-
-    @NotNull PacketCodec<B, T> packetCodec();
-
-    @NotNull Codec<S> saveCodec();
-
-    void loadData(@NotNull S data);
-
-    @NotNull Optional<S> saveData();
-
-    void onChange(@NotNull Function<S, Boolean> observer);
-
-    void onChange(@NotNull Consumer<S> observer);
-
-    default @NotNull String translationKey() {
-        return "config." + this.key();
-    }
-
-    @NotNull CommandAdapter<T> commandAdapter();
 }

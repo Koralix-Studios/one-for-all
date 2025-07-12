@@ -15,7 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerLoginNetworkHandler.class)
 @Implements(@Interface(iface = SessionHolder.class, prefix = "holder$", unique = true))
 public abstract class ServerLoginNetworkHandlerMixin implements SessionHolder {
-    @Shadow @Final ClientConnection connection;
+    @Shadow
+    @Final
+    ClientConnection connection;
 
     public @NotNull Session holder$get() {
         return ((SessionHolder) this.connection).get();

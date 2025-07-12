@@ -1,45 +1,32 @@
 package com.koralix.oneforall.command;
 
-import com.koralix.oneforall.OneForAll;
-import com.koralix.oneforall.config.*;
-import com.koralix.oneforall.config.adapter.CommandAdapter;
-import com.koralix.oneforall.config.feature.FeatureRegistry;
-import com.koralix.oneforall.config.registry.ConfigEntry;
-import com.koralix.oneforall.config.registry.ConfigRegistry;
+import com.koralix.oneforall.CoreInit;
+import com.koralix.oneforall.config.ConfigActor;
+import com.koralix.oneforall.config.ConfigCommandAdapter;
+import com.koralix.oneforall.config.ConfigValue;
+import com.koralix.oneforall.config.impl.PlayerConfigValue;
+import com.koralix.oneforall.config.impl.ServerConfigValue;
+import com.koralix.oneforall.session.Session;
+import com.koralix.oneforall.session.SessionHolder;
+import com.koralix.oneforall.util.Functions;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
-
-import static com.mojang.brigadier.builder.RequiredArgumentBuilder.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import org.jetbrains.annotations.Nullable;
 
 public final class OfaCommand {
-    public static final DynamicCommandExceptionType CONFIG_TEST_EXCEPTION = new DynamicCommandExceptionType(
-            text -> (Text) text
-    );
-    private static final DynamicCommandExceptionType INVALID_CONFIG_REGISTRY_EXCEPTION = new DynamicCommandExceptionType(
-            key -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".invalid_config_registry", key)
-    );
-    private static final DynamicCommandExceptionType UNKNOWN_CONFIG_EXCEPTION = new DynamicCommandExceptionType(
-            key -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".unknown_config", key)
-    );
-    private static final DynamicCommandExceptionType INVALID_NBT_EXCEPTION = new DynamicCommandExceptionType(
-            nbt -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".invalid_nbt", nbt)
-    );
-    private static final SimpleCommandExceptionType INVALID_CONFIG_TYPE_EXCEPTION = new SimpleCommandExceptionType(
-            Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.unsupported_type")
-    );
-
     private OfaCommand() {
         // Prevent instantiation
     }
@@ -49,138 +36,141 @@ public final class OfaCommand {
             @NotNull CommandRegistryAccess registryAccess,
             @NotNull CommandManager.RegistrationEnvironment environment
     ) {
-        LiteralArgumentBuilder<ServerCommandSource> ofa = literal("ofa");
-
-        LiteralArgumentBuilder<ServerCommandSource> settings = literal("settings");
-        ConfigRegistry.REGISTRY.forEach(registry -> {
-            LiteralArgumentBuilder<ServerCommandSource> registryLiteral = literal(registry.id().toString());
-
-            registry.forEach(entry -> populate(entry, registryLiteral));
-
-            settings.then(registryLiteral);
-        });
-        ofa.then(settings);
-
-        LiteralArgumentBuilder<ServerCommandSource> features = literal("features");
-        FeatureRegistry.INSTANCE.forEach((id, feature) -> {
-            LiteralArgumentBuilder<ServerCommandSource> featureLiteral = literal(id);
-            feature.command(featureLiteral, (source, text, bool) -> source.sendFeedback(() -> text, bool));
-            features.then(featureLiteral);
-        });
-        ofa.then(features);
+        LiteralArgumentBuilder<ServerCommandSource> ofa = CommandManager.literal("ofa").then(
+                CommandManager.literal("settings")
+                        .then(server(CommandManager.literal("server")))
+                        .then(player(CommandManager.literal("player")))
+        );
 
         dispatcher.register(ofa);
     }
 
-    private static <T> void populate(@NotNull ConfigEntry<T> entry, @NotNull LiteralArgumentBuilder<ServerCommandSource> registryLiteral) {
-        LiteralArgumentBuilder<ServerCommandSource> entryLiteral = literal(entry.key().configId().toString());
+    private static LiteralArgumentBuilder<ServerCommandSource> server(
+            @NotNull LiteralArgumentBuilder<ServerCommandSource> root
+    ) {
+        ServerConfigValue.REGISTRY.registry.forEach(configValue -> server(root, configValue));
+        return root;
+    }
 
-        entry.configValue().commandAdapter().adapt(
+    private static <T, B> LiteralArgumentBuilder<ServerCommandSource> server(
+            @NotNull LiteralArgumentBuilder<ServerCommandSource> root,
+            @NotNull ConfigValue<MinecraftServer, T, B> configValue
+    ) {
+        return create(
+                configValue,
+                root,
+                context -> context.getSource().getServer(),
+                OfaCommand::get,
+                OfaCommand::set
+        );
+    }
+
+    private static LiteralArgumentBuilder<ServerCommandSource> player(
+            @NotNull LiteralArgumentBuilder<ServerCommandSource> root
+    ) {
+        PlayerConfigValue.REGISTRY.registry.forEach(configValue -> root.then(player(
+                configValue,
+                LiteralArgumentBuilder.literal("self"),
+                true
+        )));
+        LiteralArgumentBuilder<ServerCommandSource> other = LiteralArgumentBuilder
+                .literal("other");
+        PlayerConfigValue.REGISTRY.registry.forEach(configValue -> other.then(player(
+                configValue,
+                RequiredArgumentBuilder.argument("player", EntityArgumentType.player()),
+                false
+        )));
+        return root.then(other);
+    }
+
+    private static <A extends ArgumentBuilder<ServerCommandSource, A>, T, B> A player(
+            @NotNull ConfigValue<ServerPlayerEntity, T, B> configValue,
+            @NotNull A root,
+            boolean self
+    ) {
+        return create(
+                configValue,
+                root,
+                self
+                        ? context -> context.getSource().getPlayerOrThrow()
+                        : context -> EntityArgumentType.getPlayer(context, "player"),
+                OfaCommand::get,
+                OfaCommand::set
+        );
+    }
+
+    private static <T, B> LiteralArgumentBuilder<ServerCommandSource> session(
+            @NotNull ConfigValue<Session, T, B> configValue,
+            @NotNull LiteralArgumentBuilder<ServerCommandSource> root
+    ) {
+        return create(
+                configValue,
+                root,
+                context -> ((SessionHolder) context.getSource().getPlayerOrThrow()).get(),
+                OfaCommand::get,
+                OfaCommand::set
+        );
+    }
+
+    public static <S extends CommandSource, A extends ArgumentBuilder<S, A>, K, T, B> A create(
+            @NotNull ConfigValue<K, T, B> configValue,
+            @NotNull A root,
+            @NotNull Functions.FallibleFunction<CommandContext<S>, K, CommandSyntaxException> backendGetter,
+            @NotNull ConfigCommandAdapter.Getter<S, K, T, B> getter,
+            @NotNull ConfigCommandAdapter.Setter<S, K, T, B> setter
+    ) {
+        LiteralArgumentBuilder<S> entry = LiteralArgumentBuilder.literal(configValue.id().toString());
+
+        entry = entry
+                .requires(source -> configValue.test().read((ConfigActor) source))
+                .executes(context -> getter.get(context, configValue, backendGetter.apply(context)));
+
+        configValue.codec().commandAdapter().adapt(
                 "value",
-                entryLiteral,
-                (argument, getter) -> {
-                    if (PlayerConfigValue.class.isAssignableFrom(entry.configValue().getClass())) {
-                        RequiredArgumentBuilder<ServerCommandSource, ?> builder = argument("target", EntityArgumentType.player());
-                        argument.then(builder.executes(context -> setOther(context, entry, getter)));
-                    }
-                    argument.executes(context -> selfSet(context, entry, getter));
-                });
-        entryLiteral.executes(context -> selfGet(context, entry));
-        if (PlayerConfigValue.class.isAssignableFrom(entry.configValue().getClass())) {
-            RequiredArgumentBuilder<ServerCommandSource, ?> builder = argument("target", EntityArgumentType.player());
-            entryLiteral.then(builder.executes(context -> getOther(context, entry)));
-        }
+                entry,
+                (argument, arg) -> {
+                    argument
+                            .requires(source -> configValue.test().write((ConfigActor) source))
+                            .executes(context -> setter.set(context, configValue, backendGetter.apply(context), arg.get(context, "value")));
+                }
+        );
 
-        registryLiteral.then(entryLiteral);
+        return root.then(entry);
     }
 
-    private static <T> int getMono(ServerCommandSource source, @NotNull MonoConfigValue<T, ?, ?> configValue, ConfigActor actor) throws CommandSyntaxException {
-        ConfigResult<T> result = configValue.value(actor);
-        if (result.isError()) throw CONFIG_TEST_EXCEPTION.create(result.message());
-        source.sendFeedback(() -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.get", Text.stringifiedTranslatable(configValue.translationKey() + ".name"), result.get().orElseThrow().toString()), false);
+    private static <K, T, B> int get(
+            @NotNull CommandContext<ServerCommandSource> context,
+            @NotNull ConfigValue<K, T, B> configValue,
+            @NotNull K backend
+    ) {
+        T value = configValue.get(backend);
+        context.getSource().sendFeedback(() -> Text.stringifiedTranslatable(
+                "command." + CoreInit.id() + ".config.get",
+                Text.translatable(configValue.translationKey() + ".name"),
+                value.toString()
+        ), false);
         return 1;
     }
 
-    private static <T> int getMono(@NotNull MonoConfigValue<T, ?, ?> configValue, ServerCommandSource source) throws CommandSyntaxException {
-        return getMono(source, configValue, (ConfigActor) source);
-    }
-
-    private static <K, T> int getMulti(ServerCommandSource source, @NotNull MultiConfigValue<K, T, ?, ?> configValue, ConfigActor actor, K key) throws CommandSyntaxException {
-        ConfigResult<T> result = configValue.value(actor, key);
-        if (result.isError()) throw CONFIG_TEST_EXCEPTION.create(result.message());
-        source.sendFeedback(() -> Text.stringifiedTranslatable("command." + OneForAll.id() + ".config.get", Text.stringifiedTranslatable(configValue.translationKey() + ".name"), result.get().orElseThrow().toString()), false);
+    private static <K, T, B> int set(
+            @NotNull CommandContext<ServerCommandSource> context,
+            @NotNull ConfigValue<K, T, B> configValue,
+            @NotNull K backend,
+            @Nullable T value
+    ) {
+        if (configValue.set(backend, value)) {
+            context.getSource().sendFeedback(() -> Text.stringifiedTranslatable(
+                    "command." + CoreInit.id() + ".config." + (value == null ? "reset" : "set"),
+                    Text.translatable(configValue.translationKey() + ".name"),
+                    configValue.get(backend).toString()
+            ), true);
+        } else {
+            context.getSource().sendError(Text.translatable("command." + CoreInit.id() + ".config.set.fail",
+                    Text.translatable(configValue.translationKey() + ".name"),
+                    value.toString()
+            ));
+            return 0;
+        }
         return 1;
-    }
-
-    private static <K, T> int getMulti(@NotNull MultiConfigValue<K, T, ?, ?> configValue, ServerCommandSource source, K key) throws CommandSyntaxException {
-        return getMulti(source, configValue, (ConfigActor) source, key);
-    }
-
-    private static int selfGet(CommandContext<ServerCommandSource> context, @NotNull ConfigEntry<?> entry) throws CommandSyntaxException {
-        ConfigValue<?, ?, ?> configValue = entry.configValue();
-        if (configValue instanceof MonoConfigValue<?, ?, ?> monoConfigValue) {
-            return getMono(monoConfigValue, context.getSource());
-        } else if (PlayerConfigValue.class.isAssignableFrom(configValue.getClass())) {
-            return getMulti((PlayerConfigValue<?, ?>) configValue, context.getSource(), context.getSource().getPlayerOrThrow().getUuid());
-        }
-        throw INVALID_CONFIG_TYPE_EXCEPTION.create();
-    }
-
-    private static int getOther(CommandContext<ServerCommandSource> context, @NotNull ConfigEntry<?> entry) throws CommandSyntaxException {
-        ConfigValue<?, ?, ?> configValue = entry.configValue();
-        if (configValue instanceof MonoConfigValue<?, ?, ?> monoConfigValue) {
-            return getMono(monoConfigValue, context.getSource());
-        } else if (PlayerConfigValue.class.isAssignableFrom(configValue.getClass())) {
-            return getMulti((PlayerConfigValue<?, ?>) configValue, context.getSource(), EntityArgumentType.getPlayer(context, "target").getUuid());
-        }
-        throw INVALID_CONFIG_TYPE_EXCEPTION.create();
-    }
-
-    private static <T> int setMono(ServerCommandSource source, @NotNull MonoConfigValue<T, ?, ?> configValue, ConfigActor actor, T value) throws CommandSyntaxException {
-        ConfigResult<T> result = configValue.value(actor, value);
-        if (result.isError()) throw CONFIG_TEST_EXCEPTION.create(result.message());
-        source.sendFeedback(() -> Text.of(result.message()), true);
-        return result instanceof ConfigResult.ValidChange<T> ? 1 : 0;
-    }
-
-    private static <T> int setMono(@NotNull MonoConfigValue<T, ?, ?> configValue, ServerCommandSource source, T value) throws CommandSyntaxException {
-        return setMono(source, configValue, (ConfigActor) source, value);
-    }
-
-    private static <K, T> int setMulti(ServerCommandSource source, @NotNull MultiConfigValue<K, T, ?, ?> configValue, ConfigActor actor, K key, T value) throws CommandSyntaxException {
-        ConfigResult<T> result = configValue.value(actor, key, value);
-        if (result.isError()) throw CONFIG_TEST_EXCEPTION.create(result.message());
-        source.sendFeedback(() -> Text.of(result.message()), true);
-        return result instanceof ConfigResult.ValidChange<T> ? 1 : 0;
-    }
-
-    private static <K, T> int setMulti(@NotNull MultiConfigValue<K, T, ?, ?> configValue, ServerCommandSource source, K key, T value) throws CommandSyntaxException {
-        return setMulti(source, configValue, (ConfigActor) source, key, value);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> int selfSet(CommandContext<ServerCommandSource> context, @NotNull ConfigEntry<T> entry, @NotNull CommandAdapter.CommandAdapterGetter<T> getter) throws CommandSyntaxException {
-        ConfigValue<T, ?, ?> configValue = entry.configValue();
-        T value = getter.get(context, "value");
-        ServerCommandSource source = context.getSource();
-        if (configValue instanceof MonoConfigValue<T, ?, ?> monoConfigValue) {
-            return setMono(monoConfigValue, source, value);
-        } else if (PlayerConfigValue.class.isAssignableFrom(configValue.getClass())) {
-            return setMulti((PlayerConfigValue<T, ?>) configValue, source, source.getPlayerOrThrow().getUuid(), value);
-        }
-        throw INVALID_CONFIG_TYPE_EXCEPTION.create();
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> int setOther(CommandContext<ServerCommandSource> context, @NotNull ConfigEntry<T> entry, @NotNull CommandAdapter.CommandAdapterGetter<T> getter) throws CommandSyntaxException {
-        ConfigValue<T, ?, ?> configValue = entry.configValue();
-        T value = getter.get(context, "value");
-        ServerCommandSource source = context.getSource();
-        if (configValue instanceof MonoConfigValue<T, ?, ?> monoConfigValue) {
-            return setMono(monoConfigValue, source, value);
-        } else if (PlayerConfigValue.class.isAssignableFrom(configValue.getClass())) {
-            return setMulti((PlayerConfigValue<T, ?>) configValue, source, EntityArgumentType.getPlayer(context, "target").getUuid(), value);
-        }
-        throw INVALID_CONFIG_TYPE_EXCEPTION.create();
     }
 }

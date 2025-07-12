@@ -4,16 +4,19 @@
     "version": "${mod.version}",
     "entrypoints": {
         "main": [
-            "com.koralix.oneforall.Initializer"
+            "com.koralix.oneforall.init.Initializer"
         ],
         "client": [
-            "com.koralix.oneforall.client.ClientInitializer"
-        ],
-        "server": [
-            "com.koralix.oneforall.ServerInitializer"
+            "com.koralix.oneforall.client.init.ClientInitializer"
         ],
         "preLaunch": [
-            "com.koralix.oneforall.PreLaunchInitializer"
+            "com.koralix.oneforall.init.Initializer"
+        ],
+        "ofa": [
+            "com.koralix.oneforall.CoreInit"
+        ],
+        "ofa:client": [
+            "com.koralix.oneforall.client.CoreClientInit"
         ]
     },
     "depends": {
@@ -23,6 +26,10 @@
         "java": "${deps.java}"
     },
     "mixins": [
-        "${mod.id}.mixins.json"
+        "${mod.id}.mixins.json",
+        {
+            "config": "${mod.id}.client.mixins.json",
+            "environment": "client"
+        }
     ]
 }

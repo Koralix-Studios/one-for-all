@@ -27,7 +27,7 @@ public class ClientPlayerInteractionManagerMixin {
 
     @Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
     private void interactItem(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        if (ClientSettings.CONSUME_FIREWORKS.value()) return;
+        if (ClientSettings.CONSUME_FIREWORKS.get()) return;
 
         FireworksComponent fireworksComponent = player.getStackInHand(hand).get(DataComponentTypes.FIREWORKS);
 

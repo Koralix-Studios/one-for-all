@@ -2,6 +2,7 @@ package com.koralix.oneforall.base.mixin.stackshulkerboxes;
 
 import com.koralix.oneforall.base.settings.ServerSettings;
 import com.koralix.oneforall.base.settings.ShulkerStackMode;
+import com.koralix.oneforall.entry.OneForAll;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.inventory.Inventory;
@@ -24,8 +25,8 @@ public class ScreenHandlerMixin {
     private static int getMaxCount(
             @NotNull Inventory instance, @NotNull ItemStack stack, @NotNull Operation<Integer> original
     ) {
-        if (ServerSettings.STACK_SHULKER_BOXES.value().equals(ShulkerStackMode.NEVER)) return original.call(instance, stack);
-        if (!ServerSettings.STACK_SHULKER_BOXES.value().equals(ShulkerStackMode.ALWAYS) && stack.isIn(ItemTags.SHULKER_BOXES)) return Math.min(instance.getMaxCountPerStack(), stack.getItem().getMaxCount());
+        if (ServerSettings.STACK_SHULKER_BOXES.get().equals(ShulkerStackMode.NEVER)) return original.call(instance, stack);
+        if (!ServerSettings.STACK_SHULKER_BOXES.get().equals(ShulkerStackMode.ALWAYS) && stack.isIn(ItemTags.SHULKER_BOXES)) return Math.min(instance.getMaxCountPerStack(), stack.getItem().getMaxCount());
         return original.call(instance, stack);
     }
 }

@@ -4,16 +4,6 @@ plugins {
 }
 stonecutter active "1.21.6"
 
-stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
-    group = "project"
-    ofTask("build")
-}
-
-stonecutter registerChiseled tasks.register("chiseledClean", stonecutter.chiseled) {
-    group = "project"
-    ofTask("clean")
-}
-
 allprojects {
     repositories {
         mavenLocal()

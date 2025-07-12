@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 public record LangComponent(Language language) implements SessionComponent<LangComponent> {
     public static final Type TYPE = new Type();
-    public static final class Type implements SessionComponentType<LangComponent> {}
 
     @Override
     public @NotNull SessionComponentType<LangComponent> type() {
@@ -19,5 +18,8 @@ public record LangComponent(Language language) implements SessionComponent<LangC
         return "LangComponent{" +
                 "language='" + language + '\'' +
                 '}';
+    }
+
+    public static final class Type implements SessionComponentType<LangComponent> {
     }
 }

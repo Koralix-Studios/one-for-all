@@ -16,7 +16,7 @@ public class GameRendererMixin {
             cancellable = true
     )
     private void tiltViewWhenHurt(MatrixStack matrices, float tickProgress, CallbackInfo ci) {
-        if (ClientSettings.DISABLE_TILT_WHEN_HURT.value()) {
+        if (ClientSettings.DISABLE_TILT_WHEN_HURT.get()) {
             ci.cancel();
         }
     }

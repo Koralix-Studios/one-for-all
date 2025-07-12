@@ -1,5 +1,6 @@
 package com.koralix.oneforall.base.settings;
 
+import com.koralix.oneforall.config.ConfigCommandAdapter;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -23,6 +24,7 @@ public enum ShulkerStackMode implements StringIdentifiable {
             ShulkerStackMode::ordinal, values(), ValueLists.OutOfBoundsHandling.WRAP
     );
     public static final PacketCodec<ByteBuf, ShulkerStackMode> PACKET_CODEC = PacketCodecs.indexed(BY_ID, ShulkerStackMode::ordinal);
+    public static final ConfigCommandAdapter<ShulkerStackMode> COMMAND_ADAPTER = ConfigCommandAdapter.ofEnum(ShulkerStackMode.class);
 
     @Override
     public @NotNull String asString() {

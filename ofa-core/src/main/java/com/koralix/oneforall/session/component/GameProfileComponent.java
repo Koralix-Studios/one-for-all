@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 public record GameProfileComponent(GameProfile profile) implements SessionComponent<GameProfileComponent> {
     public static final Type TYPE = new GameProfileComponent.Type();
-    public static final class Type implements SessionComponentType<GameProfileComponent> {}
 
     @Override
     public @NotNull SessionComponentType<GameProfileComponent> type() {
@@ -19,5 +18,8 @@ public record GameProfileComponent(GameProfile profile) implements SessionCompon
         return "LangComponent{" +
                 "profile='" + profile.toString() + '\'' +
                 '}';
+    }
+
+    public static final class Type implements SessionComponentType<GameProfileComponent> {
     }
 }

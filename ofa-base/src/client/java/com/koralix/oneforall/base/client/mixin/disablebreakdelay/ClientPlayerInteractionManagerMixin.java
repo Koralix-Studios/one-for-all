@@ -14,7 +14,7 @@ public class ClientPlayerInteractionManagerMixin {
 
     @Redirect(method = "updateBlockBreakingProgress", at = @At(value = "FIELD", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;blockBreakingCooldown:I", opcode = Opcodes.PUTFIELD, ordinal = 2))
     private void survivalDisableBreakDelay(ClientPlayerInteractionManager instance, int value) {
-        if (ClientSettings.DISABLE_BREAK_DELAY.value().onSurvival()) {
+        if (ClientSettings.DISABLE_BREAK_DELAY.get().onSurvival()) {
             blockBreakingCooldown = 0;
         } else {
             blockBreakingCooldown = value;
@@ -23,7 +23,7 @@ public class ClientPlayerInteractionManagerMixin {
 
     @Redirect(method = "updateBlockBreakingProgress", at = @At(value = "FIELD", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;blockBreakingCooldown:I", opcode = Opcodes.PUTFIELD, ordinal = 1))
     private void creativeDisableBreakDelay(ClientPlayerInteractionManager instance, int value) {
-        if (ClientSettings.DISABLE_BREAK_DELAY.value().onCreative()) {
+        if (ClientSettings.DISABLE_BREAK_DELAY.get().onCreative()) {
             blockBreakingCooldown = 0;
         } else {
             blockBreakingCooldown = value;
@@ -32,7 +32,7 @@ public class ClientPlayerInteractionManagerMixin {
 
     @Redirect(method = "attackBlock", at = @At(value = "FIELD", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;blockBreakingCooldown:I", opcode = Opcodes.PUTFIELD))
     private void creativeBreakDelayChange2(ClientPlayerInteractionManager instance, int value) {
-        if (ClientSettings.DISABLE_BREAK_DELAY.value().onCreative()) {
+        if (ClientSettings.DISABLE_BREAK_DELAY.get().onCreative()) {
             blockBreakingCooldown = 0;
         } else {
             blockBreakingCooldown = value;

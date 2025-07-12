@@ -28,7 +28,7 @@ public class SignalCommand {
             @NotNull CommandManager.RegistrationEnvironment environment
     ) {
         LiteralArgumentBuilder<ServerCommandSource> command = literal("signal")
-                .requires(source -> CommandSettings.COMMAND_SIGNAL.value() && source.hasPermissionLevel(2));
+                .requires(source -> CommandSettings.COMMAND_SIGNAL.get() && source.hasPermissionLevel(2));
 
         RequiredArgumentBuilder<ServerCommandSource, Integer> ss = argument("ss", IntegerArgumentType.integer(0));
 

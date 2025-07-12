@@ -1,5 +1,6 @@
 package com.koralix.oneforall.client.settings;
 
+import com.koralix.oneforall.config.ConfigCommandAdapter;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -20,6 +21,7 @@ public enum ProtocolUsageCondition implements StringIdentifiable {
             ProtocolUsageCondition::ordinal, values(), ValueLists.OutOfBoundsHandling.WRAP
     );
     public static final PacketCodec<ByteBuf, ProtocolUsageCondition> PACKET_CODEC = PacketCodecs.indexed(BY_ID, ProtocolUsageCondition::ordinal);
+    public static final ConfigCommandAdapter<ProtocolUsageCondition> COMMAND_ADAPTER = ConfigCommandAdapter.ofEnum(ProtocolUsageCondition.class);
 
     public boolean isActive(boolean enforceProtocol) {
         return switch (this) {

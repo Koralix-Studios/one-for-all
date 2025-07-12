@@ -1,6 +1,6 @@
 package com.koralix.oneforall.session.component;
 
-import com.koralix.oneforall.OneForAll;
+import com.koralix.oneforall.CoreInit;
 import com.koralix.oneforall.session.SessionComponent;
 import com.koralix.oneforall.session.SessionComponentType;
 import net.fabricmc.loader.api.SemanticVersion;
@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 public record VersionComponent(Version version) implements SessionComponent<VersionComponent> {
     public static final Type TYPE = new Type();
-    public static final class Type implements SessionComponentType<VersionComponent> {}
 
     public VersionComponent(String version) throws VersionParsingException {
         this(Version.parse(version));
@@ -30,7 +29,7 @@ public record VersionComponent(Version version) implements SessionComponent<Vers
      * @return true if the current version is compatible, false otherwise.
      */
     public boolean isCompatible() {
-        if (!(OneForAll.version() instanceof SemanticVersion currentSemVer)) return false;
+        if (!(CoreInit.version() instanceof SemanticVersion currentSemVer)) return false;
         if (!(this.version instanceof SemanticVersion componentSemVer)) return false;
         if (currentSemVer.getVersionComponentCount() < 2 || componentSemVer.getVersionComponentCount() < 2)
             return false;
@@ -43,5 +42,8 @@ public record VersionComponent(Version version) implements SessionComponent<Vers
         return "VersionComponent{" +
                 "version='" + version + '\'' +
                 '}';
+    }
+
+    public static final class Type implements SessionComponentType<VersionComponent> {
     }
 }
