@@ -9,7 +9,7 @@ import net.minecraft.server.command.ServerCommandSource;
 public class ServerSettings {
     public static final ServerConfigValue<Boolean, ByteBuf> CAREFUL_BREAK = ServerConfigValue.create(
                     "0.1.0", BaseInit.id("careful_break"),
-                    true,
+                    false,
                     ConfigCodec.BOOLEAN
             )
             .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
@@ -17,7 +17,7 @@ public class ServerSettings {
 
     public static final ServerConfigValue<Boolean, ByteBuf> XP_BAR_MENDING = ServerConfigValue.create(
                     "0.1.0", BaseInit.id("xp_bar_mending"),
-                    true,
+                    false,
                     ConfigCodec.BOOLEAN
             )
             .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
@@ -25,7 +25,7 @@ public class ServerSettings {
 
     public static final ServerConfigValue<Boolean, ByteBuf> CREATIVE_KILL = ServerConfigValue.create(
                     "0.1.0", BaseInit.id("creative_kill"),
-                    true,
+                    false,
                     ConfigCodec.BOOLEAN
             )
             .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
