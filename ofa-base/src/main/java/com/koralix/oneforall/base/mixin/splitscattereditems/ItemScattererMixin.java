@@ -1,7 +1,6 @@
 package com.koralix.oneforall.base.mixin.splitscattereditems;
 
 import com.koralix.oneforall.base.settings.ServerSettings;
-import com.koralix.oneforall.entry.OneForAll;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ItemScatterer;
 import org.spongepowered.asm.mixin.Mixin;

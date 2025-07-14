@@ -2,7 +2,7 @@ package com.koralix.oneforall.client.config.impl;
 
 import com.koralix.oneforall.config.*;
 import com.koralix.oneforall.config.storage.NbtFileConfigStorage;
-import com.koralix.oneforall.init.Initializer;
+import com.koralix.oneforall.entry.OneForAll;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
@@ -13,10 +13,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class ClientConfigValue<T, B> extends AbstractConfigValue<MinecraftClient, T, B> {
     public static final ConfigRegistry<MinecraftClient> REGISTRY = new ConfigRegistry<>(
-            Initializer.id("client_settings"),
+            OneForAll.id("client_settings"),
             new NbtFileConfigStorage<>(
                     FabricLoader.getInstance().getConfigDir()
-                            .resolve(Initializer.COMMON_ID)
+                            .resolve(OneForAll.MOD_ID)
                             .resolve("client_settings.nbt")
             )
     );

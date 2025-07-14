@@ -1,6 +1,5 @@
 package com.koralix.oneforall.lang;
 
-import com.koralix.oneforall.entry.OneForAll;
 import com.koralix.oneforall.settings.ServerSettings;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;

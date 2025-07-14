@@ -1,6 +1,5 @@
 package com.koralix.oneforall.config;
 
-import com.koralix.oneforall.config.backend.ConfigBackend;
 import com.koralix.oneforall.config.backend.ConfigBundle;
 import com.koralix.oneforall.config.storage.ConfigStorage;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;

@@ -4,7 +4,6 @@ import com.koralix.oneforall.config.*;
 import com.koralix.oneforall.config.storage.MultiplexedConfigStorage;
 import com.koralix.oneforall.config.storage.NbtFileConfigStorage;
 import com.koralix.oneforall.entry.OneForAll;
-import com.koralix.oneforall.init.Initializer;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.minecraft.server.MinecraftServer;
@@ -15,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ServerConfigValue<T, B> extends AbstractConfigValue<MinecraftServer, T, B> {
     public static final ConfigRegistry<MinecraftServer> REGISTRY = new ConfigRegistry<>(
-            Initializer.id("server_settings"),
+            OneForAll.id("server_settings"),
             new MultiplexedConfigStorage<>(server -> new NbtFileConfigStorage<>(
-                    server.getSavePath(WorldSavePath.ROOT).resolve(Initializer.COMMON_ID).resolve("server_settings.nbt")
+                    server.getSavePath(WorldSavePath.ROOT).resolve(OneForAll.MOD_ID).resolve("server_settings.nbt")
             ))
     );
 

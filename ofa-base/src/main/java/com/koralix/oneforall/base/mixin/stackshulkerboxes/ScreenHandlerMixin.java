@@ -2,7 +2,6 @@ package com.koralix.oneforall.base.mixin.stackshulkerboxes;
 
 import com.koralix.oneforall.base.settings.ServerSettings;
 import com.koralix.oneforall.base.settings.ShulkerStackMode;
-import com.koralix.oneforall.entry.OneForAll;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.inventory.Inventory;

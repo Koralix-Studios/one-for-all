@@ -3,7 +3,7 @@ package com.koralix.oneforall.config.impl;
 import com.koralix.oneforall.config.*;
 import com.koralix.oneforall.config.storage.MultiplexedConfigStorage;
 import com.koralix.oneforall.config.storage.NbtFileConfigStorage;
-import com.koralix.oneforall.init.Initializer;
+import com.koralix.oneforall.entry.OneForAll;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class PlayerConfigValue<T, B> extends AbstractConfigValue<ServerPlayerEntity, T, B> {
     public static final ConfigRegistry<ServerPlayerEntity> REGISTRY = new ConfigRegistry<>(
-            Initializer.id("player_settings"),
+            OneForAll.id("player_settings"),
             new MultiplexedConfigStorage<>(player -> new NbtFileConfigStorage<>(
-                    player.getServer().getSavePath(WorldSavePath.ROOT).resolve(Initializer.COMMON_ID).resolve("player_settings")
+                    player.getServer().getSavePath(WorldSavePath.ROOT).resolve(OneForAll.MOD_ID).resolve("player_settings")
                             .resolve(player.getUuidAsString() + ".nbt")
             ))
     );

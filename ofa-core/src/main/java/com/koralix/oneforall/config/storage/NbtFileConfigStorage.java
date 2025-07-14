@@ -5,7 +5,6 @@ import com.koralix.oneforall.config.backend.ConfigBackend;
 import com.koralix.oneforall.config.backend.ConfigBundle;
 import com.koralix.oneforall.util.NbtIoExt;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtSizeTracker;
 import org.jetbrains.annotations.NotNull;

@@ -9,22 +9,15 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class Initializer implements ModInitializer, PreLaunchEntrypoint {
-    public static final String COMMON_ID = /*$ common.id*/ "oneforall";
-    public static final Logger LOGGER = LoggerFactory.getLogger(COMMON_ID + "/Bootstrap");
-
     private static final OnceCell<Initializer> INSTANCE = new OnceCell<>();
     private static final String MOD_ID = /*$ mod.id*/ "oneforall-core";
     private ExtensionManager extensionManager;
@@ -39,14 +32,9 @@ public class Initializer implements ModInitializer, PreLaunchEntrypoint {
         return INSTANCE.optional();
     }
 
-    @Contract("_ -> new")
-    public static @NotNull Identifier id(@NotNull String path) {
-        return Identifier.of(COMMON_ID, path);
-    }
-
     @Override
     public void onPreLaunch() {
-        LOGGER.info("Setting up OneForAll...");
+        OneForAll.LOGGER.info("Setting up OneForAll...");
         INSTANCE.set(this);
 
         loadExtensions();
@@ -62,7 +50,7 @@ public class Initializer implements ModInitializer, PreLaunchEntrypoint {
     }
 
     private void loadExtensions() {
-        LOGGER.debug("Loading extensions for OneForAll...");
+        OneForAll.LOGGER.debug("Loading extensions for OneForAll...");
 
         ExtensionManager.Builder builder = new ExtensionManager.Builder();
 
@@ -93,7 +81,7 @@ public class Initializer implements ModInitializer, PreLaunchEntrypoint {
             extensionsList.append("\n\t- ").append(ofa.id());
         });
 
-        LOGGER.info("OneForAll initialized with {} extensions:{}", extensionManager.count(), extensionsList);
+        OneForAll.LOGGER.info("OneForAll initialized with {} extensions:{}", extensionManager.count(), extensionsList);
     }
 
     private void assertInitialized() {

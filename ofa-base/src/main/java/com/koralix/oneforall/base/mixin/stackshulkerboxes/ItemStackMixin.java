@@ -2,7 +2,6 @@ package com.koralix.oneforall.base.mixin.stackshulkerboxes;
 
 import com.koralix.oneforall.base.settings.ServerSettings;
 import com.koralix.oneforall.base.settings.ShulkerStackMode;
-import com.koralix.oneforall.entry.OneForAll;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.ItemTags;

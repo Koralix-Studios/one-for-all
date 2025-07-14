@@ -1,5 +1,6 @@
 package com.koralix.oneforall.mixin.core;
 
+import com.koralix.oneforall.entry.OneForAll;
 import com.koralix.oneforall.init.Initializer;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +14,7 @@ public class MinecraftServerMixin {
     private void onRun(CallbackInfo ci) {
         MinecraftServer self = (MinecraftServer) (Object) this;
         Initializer.get().server(self);
-        Initializer.LOGGER.info(
+        OneForAll.LOGGER.info(
                 "\"{}\" has been selected as the server mode",
                 self.isDedicated()
                         ? "Dedicated Server"
@@ -26,6 +27,6 @@ public class MinecraftServerMixin {
     @Inject(method = "shutdown", at = @At("HEAD"))
     private void onShutdown(CallbackInfo ci) {
         Initializer.get().server(null);
-        Initializer.LOGGER.info("Exiting server mode");
+        OneForAll.LOGGER.info("Exiting server mode");
     }
 }

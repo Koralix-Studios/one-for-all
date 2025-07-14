@@ -1,13 +1,11 @@
 package com.koralix.oneforall.util;
 
-import com.koralix.oneforall.config.ConfigRegistry;
-import com.koralix.oneforall.config.backend.ConfigBundle;
-import com.mojang.serialization.*;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Decoder;
+import com.mojang.serialization.Encoder;
 import net.fabricmc.loader.api.Version;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.BiFunction;
 
 public class CustomCodecs {
     public static final Codec<Version> VERSION = Codec.STRING.xmap(
