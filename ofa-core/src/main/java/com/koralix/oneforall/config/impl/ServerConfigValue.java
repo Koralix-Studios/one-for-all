@@ -1,6 +1,5 @@
 package com.koralix.oneforall.config.impl;
 
-import com.koralix.oneforall.CoreInit;
 import com.koralix.oneforall.config.*;
 import com.koralix.oneforall.config.storage.MultiplexedConfigStorage;
 import com.koralix.oneforall.config.storage.NbtFileConfigStorage;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ServerConfigValue<T, B> extends AbstractConfigValue<MinecraftServer, T, B> {
     public static final ConfigRegistry<MinecraftServer> REGISTRY = new ConfigRegistry<>(
-            CoreInit.id("server_settings"),
+            Initializer.id("server_settings"),
             new MultiplexedConfigStorage<>(server -> new NbtFileConfigStorage<>(
                     server.getSavePath(WorldSavePath.ROOT).resolve(Initializer.COMMON_ID).resolve("server_settings.nbt")
             ))

@@ -1,20 +1,24 @@
 {
-    "text.${mod.id}.disconnect.enforce_protocol": "Connection failed: The server requires protocol support to join.",
-    "text.${mod.id}.disconnect.invalid_handshake": "Connection failed: The client sent an invalid handshake packet.",
-    "text.${mod.id}.disconnect.incompatible_version": "Connection failed: The client and server versions are incompatible.",
-    "text.${mod.id}.disconnect.incompatible_version.recommendation": "Connection failed: The client and server versions are incompatible. Use any version between %s (included) and %s (excluded).",
-    "command.${mod.id}.config.get": "Configuration '%s' has value: %s.",
-    "command.${mod.id}.config.set": "Configuration '%s' changed to '%s'.",
-    "command.${mod.id}.config.set.fail": "Failed to change configuration '%s' to '%s'.",
-    "command.${mod.id}.config.reset": "Configuration '%s' has been reset to its default value: %s.",
-    "config.${mod.id}:client_settings/${mod.id}:protocol_enabled.name": "Protocol Support",
-    "config.${mod.id}:client_settings/${mod.id}:protocol_enabled.description": "Enable protocol support for the ${common.name} mod. This is required to connect to servers that enforce protocol support.",
-    "config.${mod.id}:server_settings/${mod.id}:protocol_enabled.name": "Protocol Support (Server)",
-    "config.${mod.id}:server_settings/${mod.id}:protocol_enabled.description": "Enable protocol support on the server. This allows clients with protocol support enabled to use it.",
-    "config.${mod.id}:server_settings/${mod.id}:enforce_protocol.name": "Enforce Protocol",
-    "config.${mod.id}:server_settings/${mod.id}:enforce_protocol.description": "Require clients to have protocol support enabled in order to join the server.",
-    "config.${mod.id}:server_settings/${mod.id}:default_language.name": "Default Language",
-    "config.${mod.id}:server_settings/${mod.id}:default_language.description": "The default language used by the server for messages and communication when a player does not have the client-side mod installed or has not selected a language.",
-    "config.${mod.id}:player_settings/${mod.id}:default_language.name": "Default Language (Player)",
-    "config.${mod.id}:player_settings/${mod.id}:default_language.description": "The language used for server-side messages and translations for this player when the client-side mod is not installed or the player has not selected a language. Overrides the server default for this player."
+    "text.${common.id}.disconnect.enforce_protocol": "Connection failed: The server requires protocol support to join.",
+    "text.${common.id}.disconnect.invalid_handshake": "Connection failed: The client sent an invalid handshake packet.",
+    "text.${common.id}.disconnect.incompatible_version": "Connection failed: The client and server versions are incompatible.",
+    "text.${common.id}.disconnect.incompatible_version.recommendation": "Connection failed: The client and server versions are incompatible. Use any version between %s (included) and %s (excluded).",
+
+    "command.${common.id}.config.get": "Configuration '%s' has value: %s.",
+    "command.${common.id}.config.set": "Configuration '%s' changed to '%s'.",
+    "command.${common.id}.config.set.fail": "Failed to change configuration '%s' to '%s'.",
+    "command.${common.id}.config.reset": "Configuration '%s' has been reset to its default value: %s.",
+
+    "config.${common.id}:client_settings/${mod.id}:protocol_enabled.name": "Protocol Support",
+    "config.${common.id}:client_settings/${mod.id}:protocol_enabled.description": "Enable protocol support for the ${common.name} mod. This is required to connect to servers that enforce protocol support.",
+
+    "config.${common.id}:server_settings/${mod.id}:protocol_enabled.name": "Protocol Support (Server)",
+    "config.${common.id}:server_settings/${mod.id}:protocol_enabled.description": "Enable protocol support on the server. This allows clients with protocol support enabled to use it.",
+    "config.${common.id}:server_settings/${mod.id}:enforce_protocol.name": "Enforce Protocol",
+    "config.${common.id}:server_settings/${mod.id}:enforce_protocol.description": "Require clients to have protocol support enabled in order to join the server.",
+    "config.${common.id}:server_settings/${mod.id}:default_language.name": "Default Language",
+    "config.${common.id}:server_settings/${mod.id}:default_language.description": "The default language used by the server for messages and communication when a player does not have the client-side mod installed or has not selected a language.",
+
+    "config.${common.id}:player_settings/${mod.id}:default_language.name": "Default Language (Player)",
+    "config.${common.id}:player_settings/${mod.id}:default_language.description": "The language used for server-side messages and translations for this player when the client-side mod is not installed or the player has not selected a language. Overrides the server default for this player."
 }

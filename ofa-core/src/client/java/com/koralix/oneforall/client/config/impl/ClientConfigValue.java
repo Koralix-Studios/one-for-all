@@ -1,6 +1,5 @@
 package com.koralix.oneforall.client.config.impl;
 
-import com.koralix.oneforall.CoreInit;
 import com.koralix.oneforall.config.*;
 import com.koralix.oneforall.config.storage.NbtFileConfigStorage;
 import com.koralix.oneforall.init.Initializer;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ClientConfigValue<T, B> extends AbstractConfigValue<MinecraftClient, T, B> {
     public static final ConfigRegistry<MinecraftClient> REGISTRY = new ConfigRegistry<>(
-            CoreInit.id("client_settings"),
+            Initializer.id("client_settings"),
             new NbtFileConfigStorage<>(
                     FabricLoader.getInstance().getConfigDir()
                             .resolve(Initializer.COMMON_ID)

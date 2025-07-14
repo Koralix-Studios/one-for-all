@@ -1,6 +1,5 @@
 package com.koralix.oneforall.config.impl;
 
-import com.koralix.oneforall.CoreInit;
 import com.koralix.oneforall.config.*;
 import com.koralix.oneforall.config.storage.MultiplexedConfigStorage;
 import com.koralix.oneforall.config.storage.NbtFileConfigStorage;
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PlayerConfigValue<T, B> extends AbstractConfigValue<ServerPlayerEntity, T, B> {
     public static final ConfigRegistry<ServerPlayerEntity> REGISTRY = new ConfigRegistry<>(
-            CoreInit.id("player_settings"),
+            Initializer.id("player_settings"),
             new MultiplexedConfigStorage<>(player -> new NbtFileConfigStorage<>(
                     player.getServer().getSavePath(WorldSavePath.ROOT).resolve(Initializer.COMMON_ID).resolve("player_settings")
                             .resolve(player.getUuidAsString() + ".nbt")

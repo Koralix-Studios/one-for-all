@@ -6,6 +6,7 @@ import com.koralix.oneforall.config.ConfigCommandAdapter;
 import com.koralix.oneforall.config.ConfigValue;
 import com.koralix.oneforall.config.impl.PlayerConfigValue;
 import com.koralix.oneforall.config.impl.ServerConfigValue;
+import com.koralix.oneforall.init.Initializer;
 import com.koralix.oneforall.session.Session;
 import com.koralix.oneforall.session.SessionHolder;
 import com.koralix.oneforall.util.Functions;
@@ -145,7 +146,7 @@ public final class OfaCommand {
     ) {
         T value = configValue.get(backend);
         context.getSource().sendFeedback(() -> Text.stringifiedTranslatable(
-                "command." + CoreInit.id() + ".config.get",
+                "command." + Initializer.COMMON_ID + ".config.get",
                 Text.translatable(configValue.translationKey() + ".name"),
                 value.toString()
         ), false);
@@ -160,12 +161,12 @@ public final class OfaCommand {
     ) {
         if (configValue.set(backend, value)) {
             context.getSource().sendFeedback(() -> Text.stringifiedTranslatable(
-                    "command." + CoreInit.id() + ".config." + (value == null ? "reset" : "set"),
+                    "command." + Initializer.COMMON_ID + ".config." + (value == null ? "reset" : "set"),
                     Text.translatable(configValue.translationKey() + ".name"),
                     configValue.get(backend).toString()
             ), true);
         } else {
-            context.getSource().sendError(Text.translatable("command." + CoreInit.id() + ".config.set.fail",
+            context.getSource().sendError(Text.translatable("command." + Initializer.COMMON_ID + ".config.set.fail",
                     Text.translatable(configValue.translationKey() + ".name"),
                     value.toString()
             ));

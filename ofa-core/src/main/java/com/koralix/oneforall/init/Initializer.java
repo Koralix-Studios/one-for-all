@@ -9,7 +9,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -35,6 +37,11 @@ public class Initializer implements ModInitializer, PreLaunchEntrypoint {
 
     public static @NotNull Optional<Initializer> optional() {
         return INSTANCE.optional();
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull Identifier id(@NotNull String path) {
+        return Identifier.of(COMMON_ID, path);
     }
 
     @Override

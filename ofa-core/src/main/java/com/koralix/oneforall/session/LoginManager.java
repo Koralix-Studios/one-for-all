@@ -1,6 +1,7 @@
 package com.koralix.oneforall.session;
 
 import com.koralix.oneforall.CoreInit;
+import com.koralix.oneforall.init.Initializer;
 import com.koralix.oneforall.lang.Language;
 import com.koralix.oneforall.session.component.LangComponent;
 import com.koralix.oneforall.session.component.VersionComponent;
@@ -65,7 +66,7 @@ public class LoginManager {
         });
 
         if (!understood && ServerSettings.ENFORCE_PROTOCOL.get()) {
-            return Optional.of(Text.translatable("text." + CoreInit.id() + ".disconnect.enforce_protocol"));
+            return Optional.of(Text.translatable("text." + Initializer.COMMON_ID + ".disconnect.enforce_protocol"));
         } else if (!understood) {
             return Optional.empty();
         }
@@ -74,19 +75,19 @@ public class LoginManager {
         Optional<String> language = readSafe(buf, PacketByteBuf::readString);
 
         if (version.isEmpty() || language.isEmpty()) {
-            return Optional.of(Text.translatable("text." + CoreInit.id() + ".disconnect.invalid_handshake"));
+            return Optional.of(Text.translatable("text." + Initializer.COMMON_ID + ".disconnect.invalid_handshake"));
         }
 
         try {
             VersionComponent versionComponent = new VersionComponent(version.get());
             if (ServerSettings.ENFORCE_PROTOCOL.get() && !versionComponent.isCompatible()) {
                 if (!(CoreInit.version() instanceof SemanticVersion semver)) {
-                    return Optional.of(Text.translatable("text." + CoreInit.id() + ".disconnect.incompatible_version"));
+                    return Optional.of(Text.translatable("text." + Initializer.COMMON_ID + ".disconnect.incompatible_version"));
                 }
                 int major = semver.getVersionComponent(0);
                 int minor = semver.getVersionComponent(1);
                 return Optional.of(Text.translatable(
-                        "text." + CoreInit.id() + ".disconnect.incompatible_version.recommendation",
+                        "text." + Initializer.COMMON_ID + ".disconnect.incompatible_version.recommendation",
                         "%s.%s.*".formatted(major, minor),
                         "%s.*.*".formatted(major + 1)
                 ));
@@ -96,7 +97,7 @@ public class LoginManager {
             Language lang = Language.fromCode(language.get());
             if (lang != null) session.set(new LangComponent(lang));
         } catch (Exception e) {
-            return Optional.of(Text.translatable("text." + CoreInit.id() + ".disconnect.invalid_handshake"));
+            return Optional.of(Text.translatable("text." + Initializer.COMMON_ID + ".disconnect.invalid_handshake"));
         }
 
         return Optional.empty();
