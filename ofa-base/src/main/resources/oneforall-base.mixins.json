@@ -4,6 +4,7 @@
     "package": "com.koralix.oneforall.base.mixin",
     "compatibilityLevel": "JAVA_${deps.java}",
     "mixins": [
+        "angryzombifiedpiglinsdropxp.ZombifiedPiglinEntityMixin",
         "carefulbreak.BlockMixin",
         "creativekill.ServerPlayerEntityMixin",
         "splitscattereditems.ItemScattererMixin",

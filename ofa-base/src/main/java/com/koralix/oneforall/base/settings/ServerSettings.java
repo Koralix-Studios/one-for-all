@@ -46,4 +46,12 @@ public class ServerSettings {
             )
             .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
             .build();
+
+    public static final ServerConfigValue<Boolean, ByteBuf> angryZombifiedPiglinsDropXP = ServerConfigValue.create(
+                    "0.1.0", BaseInit.id("angry_zombified_piglins_drop_xp"),
+                    false,
+                    ConfigCodec.BOOLEAN
+            )
+            .write(actor -> !(actor instanceof ServerCommandSource source) || source.hasPermissionLevel(4))
+            .build();
 }
