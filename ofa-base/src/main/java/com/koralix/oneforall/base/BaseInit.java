@@ -2,14 +2,12 @@ package com.koralix.oneforall.base;
 
 import com.koralix.oneforall.OFA;
 import com.koralix.oneforall.base.command.*;
-import com.koralix.oneforall.base.parser.computable.ComputeUnit;
 import com.koralix.oneforall.base.settings.CommandSettings;
 import com.koralix.oneforall.base.settings.PlayerSettings;
 import com.koralix.oneforall.base.settings.ServerSettings;
 import com.koralix.oneforall.entry.OneForAll;
 import com.koralix.oneforall.util.wrap.OnceCell;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.Version;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
@@ -36,8 +34,6 @@ public class BaseInit implements OneForAll {
         CommandRegistrationCallback.EVENT.register(EnderchestCommand::register);
         CommandRegistrationCallback.EVENT.register(SignalCommand::register);
         CommandRegistrationCallback.EVENT.register(StatScoreCommand::register);
-
-        ServerLifecycleEvents.SERVER_STARTING.register(ComputeUnit::get);
     }
 
     @Contract(pure = true)

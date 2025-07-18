@@ -39,6 +39,9 @@
 
     "command.${mod.id}.base2base.parse_error": "Representación de número inválida",
     "command.${mod.id}.base2base.big_part_error": "Cada parte debe ser menor que la base",
-    "command.${mod.id}.base2base.result": "Base %s: %s\nBase %s: %s"
+    "command.${mod.id}.base2base.result": "Base %s: %s\nBase %s: %s",
+
+    "statscore.${mod.id}.mined": "Bloques Minados",
+    "statscore.${mod.id}.pickaxe": "Bloques Minados con Pico"
 }
 
