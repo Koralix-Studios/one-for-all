@@ -7,6 +7,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.server.OperatorEntry;
@@ -29,7 +30,7 @@ import java.util.Collection;
 @Mixin(OpCommand.class)
 public class OpCommandMixin {
     @Unique
-    private static final SimpleCommandExceptionType INSUFFICIENT_LEVEL_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("commands.op.failed.level"));
+    private static final DynamicCommandExceptionType INSUFFICIENT_LEVEL_EXCEPTION = new DynamicCommandExceptionType(o -> Text.translatable("commands.op.failed.level", o));
 
     @Shadow @Final private static SimpleCommandExceptionType ALREADY_OPPED_EXCEPTION;
 
@@ -63,7 +64,7 @@ public class OpCommandMixin {
         if (player != null) {
             OperatorEntry entry = oplist.get(player.getGameProfile());
             if (entry == null || entry.getPermissionLevel() < level) {
-                throw INSUFFICIENT_LEVEL_EXCEPTION.create();
+                throw INSUFFICIENT_LEVEL_EXCEPTION.create(level);
             }
         }
 
@@ -78,7 +79,7 @@ public class OpCommandMixin {
             } else {
                 oplist.add(new OperatorEntry(gameProfile, level, oplist.canBypassPlayerLimit(gameProfile)));
                 ++i;
-                source.sendFeedback(/* method_52012 */ () -> Text.translatable("commands.op.success.level", gameProfile.getName()), true);
+                source.sendFeedback(/* method_52012 */ () -> Text.translatable("commands.op.success.level", gameProfile.getName(), level), true);
             }
         }
 
