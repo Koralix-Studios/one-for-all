@@ -24,6 +24,8 @@
     "config.${common.id}:server_settings/${mod.id}:command_statscore.description": "Enable the command '/statscore' to view statistics of players on the scoreboard.",
     "config.${common.id}:server_settings/${mod.id}:command_where.name": "Command Where",
     "config.${common.id}:server_settings/${mod.id}:command_where.description": "Enable the command '/where' to get the coordinates of the specified player.",
+    "config.${common.id}:server_settings/${mod.id}:command_op_level.name": "Command OP Level",
+    "config.${common.id}:server_settings/${mod.id}:command_op_level.description": "Enable the 'level' argument for the '/op' command to set the OP level of a player.",
 
     "config.${common.id}:player_settings/${mod.id}:careful_break.name": "Careful Break",
     "config.${common.id}:player_settings/${mod.id}:careful_break.description": "Configures how careful break is triggered for the player. When enabled, blocks broken by the player will send their drops directly to the player's inventory instead of dropping them on the ground.",
@@ -44,6 +46,8 @@
     "command.${mod.id}.base2base.parse_error": "Invalid number representation",
     "command.${mod.id}.base2base.big_part_error": "Each part must be less than the base",
     "command.${mod.id}.base2base.result": "Base %s: %s\nBase %s: %s",
+    "commands.op.success.level": "Set OP level of %s to %s",
+    "commands.op.failed.level": "Insufficient permission to set OP level to %s",
 
     "statscore.${mod.id}.mined": "Mined Blocks",
     "statscore.${mod.id}.pickaxe": "Pickaxe Mined Blocks"

@@ -16,6 +16,7 @@ public class CommandSettings {
     public static final ServerConfigValue<Boolean, ByteBuf> COMMAND_BASE2BASE = create("0.1.0", "command_base2base");
     public static final ServerConfigValue<Boolean, ByteBuf> COMMAND_STATSCORE = create("0.1.0", "command_statscore");
     public static final ServerConfigValue<Boolean, ByteBuf> COMMAND_WHERE = create("0.1.0", "command_where");
+    public static final ServerConfigValue<Boolean, ByteBuf> COMMAND_OP_LEVEL = create("0.1.0", "command_op_level");
 
     private static ServerConfigValue<Boolean, ByteBuf> create(
             @NotNull String version,
