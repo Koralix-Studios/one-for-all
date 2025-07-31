@@ -11,6 +11,8 @@
     "config.${common.id}:server_settings/${mod.id}:stack_shulker_boxes.description": "Control how shulker boxes are stacked for all players on the server.",
     "config.${common.id}:server_settings/${mod.id}:angry_zombified_piglins_drop_xp.name": "Angry Zombified Piglins Drop XP",
     "config.${common.id}:server_settings/${mod.id}:angry_zombified_piglins_drop_xp.description": "When enabled, angry zombified piglins drop XP when killed no matter if they are killed by a player or not.",
+    "config.${common.id}:server_settings/${mod.id}:skipOpLevel2.name": "Skip OP Level 2",
+    "config.${common.id}:server_settings/${mod.id}:skipOpLevel2.description": "When enabled, players with OP level 1 can use commands that require OP level 3. This allows players with OP level 1 to use commands like '/ban' or '/kick' but not '/gamemode'.",
 
     "config.${common.id}:server_settings/${mod.id}:command_base2base.name": "Command Base to Base",
     "config.${common.id}:server_settings/${mod.id}:command_base2base.description": "Enable the command '/base2base' to convert numbers between different bases (e.g., binary, decimal, hexadecimal).",

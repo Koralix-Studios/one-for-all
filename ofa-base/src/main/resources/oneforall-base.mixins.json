@@ -7,6 +7,7 @@
         "angryzombifiedpiglinsdropxp.ZombifiedPiglinEntityMixin",
         "carefulbreak.BlockMixin",
         "creativekill.ServerPlayerEntityMixin",
+        "skipoplevel2.ServerCommandSourceMixin",
         "splitscattereditems.ItemScattererMixin",
         "stackshulkerboxes.HopperBlockEntityMixin",
         "stackshulkerboxes.ItemEntityMixin",

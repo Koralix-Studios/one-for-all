@@ -15,6 +15,7 @@ import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.dedicated.command.OpCommand;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
@@ -53,13 +54,20 @@ public class OpCommandMixin {
         ServerCommandSource source = context.getSource();
         Collection<GameProfile> targets = GameProfileArgumentType.getProfileArgument(context, "targets");
         int level = IntegerArgumentType.getInteger(context, "level");
-        if (!source.hasPermissionLevel(level)) throw INSUFFICIENT_LEVEL_EXCEPTION.create();
 
         PlayerManager playerManager = source.getServer().getPlayerManager();
+        OperatorList oplist = playerManager.getOpList();
         int i = 0;
 
+        ServerPlayerEntity player = source.getPlayer();
+        if (player != null) {
+            OperatorEntry entry = oplist.get(player.getGameProfile());
+            if (entry == null || entry.getPermissionLevel() < level) {
+                throw INSUFFICIENT_LEVEL_EXCEPTION.create();
+            }
+        }
+
         for (GameProfile gameProfile : targets) {
-            OperatorList oplist = playerManager.getOpList();
             if (playerManager.isOperator(gameProfile)) {
                 if (oplist.get(gameProfile).getPermissionLevel() != level) {
                     oplist.remove(gameProfile);
