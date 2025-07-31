@@ -70,11 +70,12 @@ public final class OfaCommand {
     ) {
         PlayerConfigValue.REGISTRY.registry.forEach(configValue -> root.then(player(
                 configValue,
-                LiteralArgumentBuilder.literal("self"),
+                CommandManager.literal("self"),
                 true
         )));
-        LiteralArgumentBuilder<ServerCommandSource> other = LiteralArgumentBuilder
-                .literal("other");
+        LiteralArgumentBuilder<ServerCommandSource> other = CommandManager
+                .literal("other")
+                .requires(source -> source.hasPermissionLevel(3));
         PlayerConfigValue.REGISTRY.registry.forEach(configValue -> other.then(player(
                 configValue,
                 RequiredArgumentBuilder.argument("player", EntityArgumentType.player()),
