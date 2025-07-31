@@ -34,6 +34,7 @@ public class BaseInit implements OneForAll {
         CommandRegistrationCallback.EVENT.register(EnderchestCommand::register);
         CommandRegistrationCallback.EVENT.register(SignalCommand::register);
         CommandRegistrationCallback.EVENT.register(StatScoreCommand::register);
+        CommandRegistrationCallback.EVENT.register(WhereCommand::register);
     }
 
     @Contract(pure = true)
