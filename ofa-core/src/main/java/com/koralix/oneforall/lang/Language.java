@@ -29,7 +29,8 @@ import java.util.*;
 import java.util.function.IntFunction;
 
 public enum Language implements StringIdentifiable {
-    ENGLISH("en_us", Locale.ENGLISH);
+    ENGLISH("en_us", Locale.ENGLISH),
+    SPANISH("es_es", Locale.forLanguageTag("es-ES"));
 
     public static final @NotNull Codec<Language> CODEC = StringIdentifiable.createCodec(Language::values);
     public static final ConfigCommandAdapter<Language> COMMAND_ADAPTER = ConfigCommandAdapter.ofEnum(Language.class);
@@ -82,7 +83,6 @@ public enum Language implements StringIdentifiable {
         LangComponent langComponent = session.get(LangComponent.TYPE);
         if (langComponent != null) return langComponent.language();
         GameProfileComponent profileComponent = session.get(GameProfileComponent.TYPE);
-        MinecraftServer server = OneForAll.server().orElseThrow();
         return profileComponent == null
                 ? ServerSettings.DEFAULT_LANGUAGE.get()
                 : session.has(PlayerComponent.TYPE)
