@@ -99,19 +99,6 @@ public final class OfaCommand {
         );
     }
 
-    private static <T, B> LiteralArgumentBuilder<ServerCommandSource> session(
-            @NotNull ConfigValue<Session, T, B> configValue,
-            @NotNull LiteralArgumentBuilder<ServerCommandSource> root
-    ) {
-        return create(
-                configValue,
-                root,
-                context -> ((SessionHolder) context.getSource().getPlayerOrThrow()).get(),
-                OfaCommand::get,
-                OfaCommand::set
-        );
-    }
-
     public static <S extends CommandSource, A extends ArgumentBuilder<S, A>, K, T, B> A create(
             @NotNull ConfigValue<K, T, B> configValue,
             @NotNull A root,
