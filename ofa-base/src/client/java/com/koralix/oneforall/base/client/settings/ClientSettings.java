@@ -21,6 +21,11 @@ public class ClientSettings {
                     false,
                     ConfigCodec.BOOLEAN
             )
+            .onChange((client, configValue, oldValue, newValue) -> {
+                client.execute(() -> {
+                    MinecraftClient.getInstance().worldRenderer.reload();
+                });
+            })
             .build();
 
     public static final ClientConfigValue<Boolean, ByteBuf> FLY_INERTIA = ClientConfigValue.create(
@@ -37,11 +42,6 @@ public class ClientSettings {
                     false,
                     ConfigCodec.BOOLEAN
             )
-            .onChange((client, configValue, oldValue, newValue) -> {
-                client.execute(() -> {
-                    MinecraftClient.getInstance().worldRenderer.reload();
-                });
-            })
             .build();
 
     public static final ClientConfigValue<SurvivalCreativeMode, ByteBuf> DISABLE_BREAK_DELAY = ClientConfigValue.create(
