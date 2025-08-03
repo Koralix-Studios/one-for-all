@@ -59,4 +59,13 @@ public class ClientSettings {
                     ConfigCodec.BOOLEAN
             )
             .build();
+
+    public static final ClientConfigValue<Integer, ByteBuf> PREVENT_BREAKING_TOOLS = ClientConfigValue.create(
+                    "0.1.0",
+                    BaseInit.id("prevent_breaking_tools"),
+                    0,
+                    ConfigCodec.integer(0, Integer.MAX_VALUE)
+            )
+            .test(e -> e != null && e >= 0)
+            .build();
 }

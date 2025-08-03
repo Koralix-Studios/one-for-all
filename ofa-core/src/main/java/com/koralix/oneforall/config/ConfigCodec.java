@@ -18,6 +18,14 @@ public record ConfigCodec<T, B>(
             ConfigCommandAdapter.BOOLEAN
     );
 
+    public static @NotNull ConfigCodec<Integer, ByteBuf> integer(int minValue, int maxValue) {
+        return of(
+                Codec.INT,
+                PacketCodecs.INTEGER,
+                ConfigCommandAdapter.integer(minValue, maxValue)
+        );
+    }
+
     @Contract("_, _, _ -> new")
     public static <T, B> @NotNull ConfigCodec<T, B> of(
             @NotNull Codec<T> codec,

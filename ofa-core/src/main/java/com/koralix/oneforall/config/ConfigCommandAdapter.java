@@ -1,6 +1,7 @@
 package com.koralix.oneforall.config;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -30,6 +31,21 @@ public interface ConfigCommandAdapter<T> {
             parent.then(argument);
         }
     };
+
+    static @NotNull ConfigCommandAdapter<Integer> integer(int minValue, int maxValue) {
+        return new ConfigCommandAdapter<>() {
+            @Override
+            public <S> void adapt(
+                    @NotNull String name,
+                    @NotNull ArgumentBuilder<S, ?> parent,
+                    @NotNull BiConsumer<ArgumentBuilder<S, ?>, ArgumentValueGetter<Integer>> consumer
+            ) {
+                RequiredArgumentBuilder<S, Integer> argument = argument(name, IntegerArgumentType.integer(minValue, maxValue));
+                consumer.accept(argument, IntegerArgumentType::getInteger);
+                parent.then(argument);
+            }
+        };
+    }
 
     @Contract("_ -> new")
     static <E extends Enum<E> & StringIdentifiable> @NotNull ConfigCommandAdapter<E> ofEnum(Class<E> enumClass) {
