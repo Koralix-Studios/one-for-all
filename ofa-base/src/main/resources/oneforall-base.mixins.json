@@ -1,0 +1,24 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.koralix.oneforall.base.mixin",
+    "compatibilityLevel": "JAVA_${deps.java}",
+    "mixins": [
+        "angryzombifiedpiglinsdropxp.ZombifiedPiglinEntityMixin",
+        "carefulbreak.BlockMixin",
+        "creativekill.ServerPlayerEntityMixin",
+        "skipoplevel2.ServerCommandSourceMixin",
+        "splitscattereditems.ItemScattererMixin",
+        "stackshulkerboxes.HopperBlockEntityMixin",
+        "stackshulkerboxes.ItemEntityMixin",
+        "stackshulkerboxes.ItemStackMixin",
+        "stackshulkerboxes.ScreenHandlerMixin",
+        "statscore.PlayerManagerMixin",
+        "statscore.StatHandlerMixin",
+        "statscore.UserCacheMixin",
+        "xpbarmending.ServerPlayerEntityMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

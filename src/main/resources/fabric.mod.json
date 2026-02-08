@@ -1,40 +1,13 @@
 {
     "schemaVersion": 1,
-    "id": "${id}",
-    "version": "${version}",
-    "name": "${name}",
-    "description": "One Mod to rule them all, One Mod to find them, One Mod to bring them all and in the darkness bind them.",
-    "authors": [
-        "JohanVonElectrum", "ArtikGz"
-    ],
-    "environment": "*",
-    "entrypoints": {
-        "main": [
-            "com.koralix.oneforall.OneForAll"
-        ],
-        "client": [
-            "com.koralix.oneforall.ClientInitializer"
-        ],
-        "server": [
-            "com.koralix.oneforall.ServerInitializer"
-        ]
-    },
-    "mixins": [
-        "${id}.mixins.json",
-        "${id}.features.mixins.json",
-        {
-            "config": "${id}.client.mixins.json",
-            "environment": "client"
-        },
-        {
-            "config": "${id}.server.mixins.json",
-            "environment": "server"
-        }
-    ],
-    "accessWidener": "${id}.accesswidener",
+    "id": "${mod.id}",
+    "name": "${mod.name}",
+    "description": "${mod.description}",
+    "version": "${mod.version}",
     "depends": {
-        "minecraft": "${minecraft_dependency}",
-        "fabricloader": "${fabric_loader}",
-        "fabric": "${fabric_api}"
+        "minecraft": "${deps.minecraft}",
+        "fabricloader": "${deps.fabric.loader}",
+        "fabric": "${deps.fabric.api}",
+        "java": "${deps.java}"
     }
 }

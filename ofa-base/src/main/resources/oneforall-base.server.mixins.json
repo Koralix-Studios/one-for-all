@@ -1,0 +1,12 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.koralix.oneforall.base.mixin",
+    "compatibilityLevel": "JAVA_${deps.java}",
+    "mixins": [
+        "oplevel.OpCommandMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

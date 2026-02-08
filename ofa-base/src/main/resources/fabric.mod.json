@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod.id}",
+  "version": "${mod.version}",
+  "entrypoints": {
+    "ofa": [
+      "com.koralix.oneforall.base.BaseInit"
+    ],
+    "ofa:client": [
+      "com.koralix.oneforall.base.client.BaseClientInit"
+    ]
+  },
+  "depends": {
+    "minecraft": "${deps.minecraft}",
+    "fabricloader": "${deps.fabric.loader}",
+    "fabric": "${deps.fabric.api}",
+    "java": "${deps.java}",
+    "${deps.core.id}": "${deps.core.version}"
+  },
+  "mixins": [
+    "${mod.id}.mixins.json",
+    {
+      "config": "${mod.id}.client.mixins.json",
+      "environment": "client"
+    },
+    {
+      "config": "${mod.id}.server.mixins.json",
+      "environment": "server"
+    }
+  ]
+}

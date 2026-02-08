@@ -1,0 +1,24 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.koralix.oneforall.base.client.mixin",
+    "compatibilityLevel": "JAVA_${deps.java}",
+    "client": [
+        "centerflowers.AbstractBlockStateMixin",
+        "consumefireworks.ClientPlayerInteractionManagerMixin",
+        "consumefireworks.FireworkRocketEntityMixin",
+        "disablebreakdelay.ClientPlayerInteractionManagerMixin",
+        "disabletiltwhenhurt.GameRendererMixin",
+        "flatdigger.ClientPlayerInteractionManagerMixin",
+        "flyinertia.LivingEntityMixin",
+        "preventbreakingtools.ClientPlayerInteractionManagerMixin",
+        "preventbreakingtools.MinecraftClientMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "plugin": "com.koralix.oneforall.MixinConfigPluginOFA",
+    "mixins": [
+        "preventbreakingtools.ItemStackMixin"
+    ]
+}

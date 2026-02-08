@@ -1,0 +1,25 @@
+{
+    "text.${common.id}.disconnect.enforce_protocol": "Conexión fallida: El servidor requiere soporte de protocolo para unirse.",
+    "text.${common.id}.disconnect.invalid_handshake": "Conexión fallida: El cliente envió un paquete de saludo inválido.",
+    "text.${common.id}.disconnect.incompatible_version": "Conexión fallida: Las versiones del cliente y del servidor son incompatibles.",
+    "text.${common.id}.disconnect.incompatible_version.recommendation": "Conexión fallida: Las versiones del cliente y del servidor son incompatibles. Usa cualquier versión entre %s (incluida) y %s (excluida).",
+
+    "command.${common.id}.config.get": "La configuración '%s' tiene el valor: %s.",
+    "command.${common.id}.config.set": "La configuración '%s' cambió a '%s'.",
+    "command.${common.id}.config.set.fail": "No se pudo cambiar la configuración '%s' a '%s'.",
+    "command.${common.id}.config.reset": "La configuración '%s' se ha restablecido a su valor predeterminado: %s.",
+
+    "config.${common.id}:client_settings/${mod.id}:protocol_enabled.name": "Soporte de Protocolo",
+    "config.${common.id}:client_settings/${mod.id}:protocol_enabled.description": "Habilita el soporte de protocolo para el mod ${common.name}. Esto es necesario para conectarse a servidores que requieren soporte de protocolo.",
+
+    "config.${common.id}:server_settings/${mod.id}:protocol_enabled.name": "Soporte de Protocolo (Servidor)",
+    "config.${common.id}:server_settings/${mod.id}:protocol_enabled.description": "Habilita el soporte de protocolo en el servidor. Esto permite que los clientes con soporte de protocolo habilitado lo usen.",
+    "config.${common.id}:server_settings/${mod.id}:enforce_protocol.name": "Requerir Protocolo",
+    "config.${common.id}:server_settings/${mod.id}:enforce_protocol.description": "Requiere que los clientes tengan soporte de protocolo habilitado para unirse al servidor.",
+    "config.${common.id}:server_settings/${mod.id}:default_language.name": "Idioma Predeterminado",
+    "config.${common.id}:server_settings/${mod.id}:default_language.description": "El idioma predeterminado utilizado por el servidor para mensajes y comunicación cuando un jugador no tiene instalado el mod del lado del cliente o no ha seleccionado un idioma.",
+
+    "config.${common.id}:player_settings/${mod.id}:default_language.name": "Idioma Predeterminado (Jugador)",
+    "config.${common.id}:player_settings/${mod.id}:default_language.description": "El idioma utilizado para mensajes y traducciones del lado del servidor para este jugador cuando el mod del lado del cliente no está instalado o el jugador no ha seleccionado un idioma. Sobrescribe el valor predeterminado del servidor para este jugador."
+}
+
